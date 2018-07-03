@@ -1,4 +1,4 @@
-# PowerSync
+# PowerSync #
 *Under Development*
 
 The fundamental philosphy of PowerSync is that many data integration operations are repetitive and do not require large scale ETL frameworks to accomplish. The goal of PowerSync is to handle these common scenarios as a library of robust PowerShell commands. These commands can be used individually to tackle administrative/operational tasks, or can be composed into more a sophisticated data integration framework.
@@ -26,9 +26,9 @@ Situations where PowerSync is not a good fit:
  - Long running processes
  - Highly customized workflows
  
- ## PowerSync.ps1
+## PowerSync.ps1 ##
 
-## PowerSync-Manifest.ps1
+## PowerSync-Manifest.ps1 ##
 Runs PowerSync for a collection of items defined in a manifest file (CSV format), and performs an Extract, Load, Transform for each item. The TSQL used
 at each stage is defined in separate .SQL files and (optionally) passed into PowerSync. PowerSync attempts to pass every field in the manifest into each 
 TSQL script using SQMCMD :setvar syntax, and also applies SQLCMD variables that only exist in the script. 
