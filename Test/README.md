@@ -3,3 +3,5 @@ In order to run the unit tests, you must install SQL Server LocalDB.  The follow
  - SQL Server 2017
  - Instance:  (LocalDb)\MSSQLLocalDB
  - Visual Studio Code 1.24 as our text editor/debugger
+
+Afterwards, simply run the RunTests.ps1 script.

@@ -1,25 +1,22 @@
-class MSSQLProvider : DataProvider
-{   
-    MSSQLProvider ([String] $ConnectionString) : base($ConnectionString)
-    {
+class MSSQLProvider : DataProvider {   
+    MSSQLProvider ([String] $ConnectionString) : base($ConnectionString) {
         $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
         $this.Connection.Open()
     }
     
-    [object] GetQuerySchema([string]$Query)
-    {
+    [object] GetQuerySchema([string]$Query) {
         $cmd = $this.CreateCommand("SET FMTONLY ON; $Query")
         $reader = $cmd.ExecuteReader()
         $schemaTable = $reader.GetSchemaTable()
         $reader.Close()
+        $cmd.CommandText = "SET FMTONLY OFF"
+        $cmd.ExecuteNonQuery()
         return $schemaTable
     }
 
-    [string] ScriptCreateTable([string]$TableName, [object]$SchemaTable)
-    {
+    [string] ScriptCreateTable([string]$TableName, [object]$SchemaTable) {
         $colScript = ""
-        foreach ($col in $SchemaTable)
-        {
+        foreach ($col in $SchemaTable) {
             # Extract key variables from the Table Schema
             $name = $col[0]
             $size = $col[2]
@@ -34,27 +31,21 @@ class MSSQLProvider : DataProvider
             $colScript += "`r`n [$name] [$type]"
 
             # Some data types require special processing...
-            if ($type -eq 'VARCHAR' -or $type -eq 'NVARCHAR' -or $type -eq 'CHAR')
-            {
-                if ($size -eq 2147483647)
-                {
+            if ($type -eq 'VARCHAR' -or $type -eq 'NVARCHAR' -or $type -eq 'CHAR') {
+                if ($size -eq 2147483647) {
                     $colScript + '(MAX)'
                 }
-                else 
-                {
+                else {
                     $colScript += "($size)"
                 }
             }
-            elseif ($type -eq 'DECIMAL')
-            {
+            elseif ($type -eq 'DECIMAL') {
                 $colScript += "($precision, $scale)"
             }
-            if ($isNullable)
-            {
+            if ($isNullable) {
                 $colScript += ' NULL'
             }
-            else
-            {
+            else {
                 $colScript += ' NOT NULL'
             }
             $colScript += ", "
@@ -67,20 +58,17 @@ class MSSQLProvider : DataProvider
         return "CREATE TABLE [$s].[$t]($colScript)"
     }
 
-    [string] GetSchemaName([string]$TableName)
-    {
+    [string] GetSchemaName([string]$TableName) {
         $parts = $TableName.Split('.').Replace('[', '').Replace(']', '')
         return $parts[0]
     }
 
-    [string] GetTableName([string]$TableName)
-    {
+    [string] GetTableName([string]$TableName) {
         $parts = $TableName.Split('.').Replace('[', '').Replace(']', '')
         return $parts[1]
     }
 
-    [void] BulkCopyData([System.Data.Common.DbDataReader]$DataReader, [string]$TableName)
-    {
+    [void] BulkCopyData([System.Data.Common.DbDataReader]$DataReader, [string]$TableName) {
         $blk = New-Object Data.SqlClient.SqlBulkCopy($this.ConnectionString)
         $blk.DestinationTableName = $TableName
         $blk.BulkCopyTimeout = $this.Timeout
@@ -88,15 +76,13 @@ class MSSQLProvider : DataProvider
         $blk.WriteToServer($DataReader)
     }
 
-    [void] RenameTable([string]$OldTableName, [string]$NewTableName, [switch]$Overwrite)
-    {
+    [void] RenameTable([string]$OldTableName, [string]$NewTableName, [switch]$Overwrite) {
         $t = $this.GetTableName($NewTableName)
 
         # If overwrite is enabled, drop target table first.
-        if ($Overwrite)
-        {
-            $this.ExecScript(`
-                "
+        if ($Overwrite) {
+            $this.ExecNonQuery(`
+                    "
                 SET XACT_ABORT ON
                 BEGIN TRAN
                 IF (OBJECT_ID('$NewTableName') IS NOT NULL)
@@ -105,24 +91,21 @@ class MSSQLProvider : DataProvider
                 COMMIT TRAN
                 ")
         }
-        else
-        {
-            $this.ExecScript("EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'")
+        else {
+            $this.ExecNonQuery("EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'")
         }
     }
 
-    [void] CreateAutoIndex([string]$TableName)
-    {
+    [void] CreateAutoIndex([string]$TableName) {
         $s = $this.GetSchemaName($TableName)
         $t = $this.GetTableName($TableName)
         $i = $s + '_' + $t.Substring(0, $t.Length - 32)
-        $this.ExecScript("CREATE CLUSTERED COLUMNSTORE INDEX [CCIX_$i] ON $TableName WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)")
+        $this.ExecNonQuery("CREATE CLUSTERED COLUMNSTORE INDEX [CCIX_$i] ON $TableName WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)")
     }
 
-    [void] DropTable([string]$TableName)
-    {
-        $this.ExecScript(`
-        "IF (OBJECT_ID('$TableName') IS NOT NULL)
+    [void] DropTable([string]$TableName) {
+        $this.ExecNonQuery(`
+                "IF (OBJECT_ID('$TableName') IS NOT NULL)
             DROP TABLE $TableName")
     }
 }
