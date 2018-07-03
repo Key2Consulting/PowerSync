@@ -41,4 +41,3 @@ Scripts are called in the following order:
  2) Extract
  3) Transform
  4) Publish (called once for entire process)
-Executed against the source to prepare the extraction (i.e. identify incremental extraction range). Any results returned
