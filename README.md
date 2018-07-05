@@ -1,5 +1,5 @@
 # PowerSync #
-*Under Development*
+*Currently Under Development*
 
 The fundamental philosphy of PowerSync is that many data integration operations are repetitive and do not require large scale ETL frameworks to accomplish. The goal of PowerSync is to handle these common scenarios as a library of robust PowerShell commands. These commands can be used individually to tackle administrative/operational tasks, or can be composed into more a sophisticated data integration framework.
 
