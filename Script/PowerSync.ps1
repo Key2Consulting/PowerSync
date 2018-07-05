@@ -25,13 +25,14 @@ param
     [Parameter(HelpMessage = "Optionally overwrite target table if already exists.", Mandatory = $false)]
     [switch] $Overwrite,
     [Parameter(HelpMessage = "Optionally create index automatically (columnstore preferred).", Mandatory = $false)]
-    [switch] $AutoIndex,
-    [Parameter(HelpMessage = "The designated output log file (defaults to current folder).", Mandatory = $false)]
-    [string] $LogPath = "$(Get-Location)\Log.txt"
+    [switch] $AutoIndex
 )
 
 # Module Dependencies
 . "$PSScriptRoot\PowerSync-Common.ps1"
 
 # Invoke Copy-Data command with the given parameters
+Write-Log "PowerSync-Manifest Started"
+$stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
 Copy-Data $SrcConnectionString $DstConnectionString $ExtractQuery $LoadTableName -Overwrite:$Overwrite -AutoIndex:$AutoIndex
+Write-Log "PowerSync-Manifest Completed in $($stopWatch.Elapsed.TotalSeconds)"

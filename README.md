@@ -9,7 +9,7 @@ Features:
  - Quickly copy a table, view, or the results of query to a target database.
  - Copy single table, or an entire list (manifest) of tables.
  - Dynamically creates target table based on extract query (think SELECT INTO).
- - Can optionally automatically create [clustered columnstore] indexes on target.
+ - Can optionally and automatically create [clustered columnstore] indexes on target.
  - Does not depend on link servers.
  - Perform full or incremental updates.
  - Can extract data from any ADO.NET or OLEDB compatible data source.

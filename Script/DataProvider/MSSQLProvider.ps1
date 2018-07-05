@@ -33,7 +33,7 @@ class MSSQLProvider : DataProvider {
             # Some data types require special processing...
             if ($type -eq 'VARCHAR' -or $type -eq 'NVARCHAR' -or $type -eq 'CHAR') {
                 if ($size -eq 2147483647) {
-                    $colScript + '(MAX)'
+                    $colScript += '(MAX)'
                 }
                 else {
                     $colScript += "($size)"
@@ -97,10 +97,17 @@ class MSSQLProvider : DataProvider {
     }
 
     [void] CreateAutoIndex([string]$TableName) {
-        $s = $this.GetSchemaName($TableName)
-        $t = $this.GetTableName($TableName)
-        $i = $s + '_' + $t.Substring(0, $t.Length - 32)
-        $this.ExecNonQuery("CREATE CLUSTERED COLUMNSTORE INDEX [CCIX_$i] ON $TableName WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)")
+        try {
+            $s = $this.GetSchemaName($TableName)
+            $t = $this.GetTableName($TableName)
+            $i = $s + '_' + $t.Substring(0, $t.Length - 32)
+            $this.ExecNonQuery("CREATE CLUSTERED COLUMNSTORE INDEX [CCIX_$i] ON $TableName WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)")
+        }
+        catch {
+            # If the error is due to a column that cannot participate in a CCIX, then 
+            # create the next best kind of index
+            # TODO: DECIDE ON ANOTHER INDEX TYPE, EITHER NONCLUSTERED CCIX WITH THE INVALID COLS REMOVED, OR ???
+        }
     }
 
     [void] DropTable([string]$TableName) {

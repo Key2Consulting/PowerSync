@@ -8,8 +8,7 @@ at each stage is defined in separate .SQL files and (optionally) passed into Pow
 TSQL script using SQMCMD :setvar syntax, and also applies SQLCMD variables that only exist in the script.
 
 PowerSync-Manifest also supports writebacks to the manifest file itself. This is useful for tracking runtime information like the last incremental
-extraction value (for incremental loads), the last run date/time, or count of extracted records. Operations are also logged to a file, but can additionally
-be logged to a database.
+extraction value (for incremental loads), the last run date/time, or count of extracted records. Operations are also logged to a file.
 
 Scripts are called in the following order:
  1) Prepare (supports writeback)
@@ -45,7 +44,7 @@ param
     [Parameter(HelpMessage = "Optionally create index automatically (columnstore preferred).", Mandatory = $false)]
     [switch] $AutoIndex,
     [Parameter(HelpMessage = "The designated output log file (defaults to current folder).", Mandatory = $false)]
-    [string] $LogPath = "$(Get-Location)\Log.txt"
+    [string] $LogPath = "$(Get-Location)\Log.txt"    
 )
 
 # Module Dependencies
@@ -86,7 +85,7 @@ function Exec-Script([DataProvider]$Provider, [string]$ScriptPath, [psobject]$Va
         $query = Compile-Script $ScriptPath $Vars
         if ($SupportWriteback) {
             $reader = $Provider.ExecReader($query)
-            $reader.Read()
+            $b = $reader.Read()
             for ($i=0;$i -lt $reader.FieldCount; $i++) {
                 $col = $reader.GetName($i)
                 if ([bool]($Vars.PSobject.Properties.name -match "$col")) {
@@ -105,17 +104,22 @@ function Save-Manifest([psobject]$Manifest, [string]$Path) {
     $Manifest | Export-Csv -Path $Path -NoTypeInformation
 }
 
+Write-Log "PowerSync-Manifest Started"
+$stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
+
 try {
     # Process the manifest file
     $manifest = Import-Csv $ManifestPath
     foreach ($item in $manifest) {
         try {
+            $stopWatchStep = [System.Diagnostics.Stopwatch]::StartNew()
             # Create connections to source and destination for the current manifest item
             $src = New-DataProvider $SrcConnectionString
             $dst = New-DataProvider $DstConnectionString
 
             # Load special fields from manifest file (required to exist by convention)
             $tableName = $item.'LoadTableName'
+            Write-Log "Started Processing $tableName"
 
             # Prepare Phase
             Exec-Script $src $PrepareScriptPath $item $true
@@ -128,9 +132,12 @@ try {
             # Transform Phase
             Exec-Script $dst $TransformScriptPath  $item $true
             Save-Manifest $manifest $ManifestPath
+
+            Write-Log "Completed Processing $tableName in $($stopWatchStep.Elapsed.TotalSeconds)"
         }
         catch {
             [exception]$ex = $_.exception
+            Write-Log $ex "Error"
             throw $ex
         }
         finally {
@@ -143,4 +150,7 @@ try {
     Exec-Script $PublishScriptPath  $item $false
 }
 catch {
+    Write-Log "The following error was encountered (processing will continue): $ex" "Error"
 }
+
+Write-Log "PowerSync-Manifest Completed in $($stopWatch.Elapsed.TotalSeconds)"

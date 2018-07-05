@@ -12,6 +12,18 @@ https://github.com/Key2Consulting/PowerSync/
 . "$PSScriptRoot\DataProvider\DataProvider.ps1"
 . "$PSScriptRoot\DataProvider\MSSQLProvider.ps1"
 
+# Logging
+function Write-Log([string]$Message, [string]$Severity) {
+    if ($Severity -eq "") {
+        $Severity = "Info"
+    }
+    $Entry = "$(Get-Date) ($Severity): $Message`r`n"
+    Write-Host $Entry
+    if ($LogPath) {
+        Add-Content $LogPath -value $Entry
+    }
+}
+
 # A data factory to create the correct DataProvider implementation based on inspecting the Connection String
 function New-DataProvider($ConnectionString) {
     $sb = New-Object System.Data.Common.DbConnectionStringBuilder
@@ -55,7 +67,7 @@ function Copy-Data {
         
         # Bulk copy data to destination
         $reader = $src.ExecReader($ExtractQuery)
-        $src.BulkCopyData($reader, $tableName)
+        $dst.BulkCopyData($reader, $tableName)
         $reader.Close()
         
         # If AutoIndex, create index now
@@ -66,10 +78,12 @@ function Copy-Data {
     }
     catch {
         [exception]$ex = $_.exception
+        Write-Log $ex "Error"
 
         # Clean up the hashed table (if exists)
         if ($dst -ne $null -and $tableName -ne $null) {
             $dst.DropTable($tableName)
+            Write-Log "Cleaned up temp table $tableName"
         }
         throw $ex
     }
