@@ -12,17 +12,51 @@ https://github.com/Key2Consulting/PowerSync/
 . "$PSScriptRoot\DataProvider\DataProvider.ps1"
 . "$PSScriptRoot\DataProvider\MSSQLProvider.ps1"
 
+# Global Parameters
+    $global:LogFileName = $null
+
 # Logging
-function Write-Log([string]$Message, [string]$Severity) {
-    if ($Severity -eq "") {
-        $Severity = "Info"
+function Write-Log(
+    [Parameter(HelpMessage = "Logging Message", Mandatory = $true)]
+        [string] $Message,
+    [Parameter(HelpMessage = "Type of Message (Info, Error, Warning...)", Mandatory = $false)]   
+        [string]$MessageType = "Information", 
+    [Parameter(HelpMessage = "Severity number.  Default = 0 (low)", Mandatory = $false)]   
+        [int]$Severity = 0
+        )
+{
+    # Set Logging File Name
+    If (!$global:LogFileName) {
+        $DateName = Get-Date -format "yyyyMMdd_HHmmssffff" 
+        $NewID  = Get-UniqueID -MaxLength 5
+        $global:LogFileName = "PowerSyncLog_" + $DateName + "_" + $NewID + ".csv"
     }
-    $Entry = "$(Get-Date) ($Severity): $Message`r`n"
-    Write-Host $Entry
-    if ($LogPath) {
-        Add-Content $LogPath -value $Entry
+
+    #Output log messaage
+    Write-Host (Get-Date) + "$MessageType($Severity): $Message" 
+
+    #Build log data
+     $line = [pscustomobject]@{
+        'DateTime' = (Get-Date)
+        'MessageType' = $MessageType
+        'Message' = $Message
+        'Severity' = $Severity
     }
+
+    
+    $LogFilePath = "$(Get-Location)\Logs"
+
+    # Create Logs folder, if it doesn't exist
+    If(!(Test-Path -Path $LogFilePath)) {
+          New-Item -ItemType directory -Path $LogFilePath
+    }
+    
+    $LogFilePath = "$LogFilePath\$global:LogFileName"
+
+    ## Ensure that $LogFilePath is set to a global variable at the top of script
+    $line | Export-Csv -Path $LogFilePath -Append -NoTypeInformation
 }
+
 
 # A data factory to create the correct DataProvider implementation based on inspecting the Connection String
 function New-DataProvider($ConnectionString) {
@@ -93,11 +127,19 @@ function Copy-Data {
     }
 }
 
-function Get-UniqueID([string]$BaseToken) {
+function Get-UniqueID(
+    [string]$BaseToken
+    ,[int]$MaxLength) 
+{    
     if ($BaseToken) {
-        return $BaseToken + (New-Guid).ToString().Replace("-", "")
+        $ReturnValue = $BaseToken + (New-Guid).ToString().Replace("-", "")
     }
     else {
-        return (New-Guid).ToString().Replace("-", "")
+        $ReturnValue = (New-Guid).ToString().Replace("-", "")
     }   
+
+    If ($MaxLength){
+        $ReturnValue = $ReturnValue.Substring(0,$MaxLength)
+    }
+    return $ReturnValue
 }

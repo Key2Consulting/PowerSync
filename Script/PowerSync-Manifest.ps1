@@ -26,25 +26,25 @@ https://github.com/Key2Consulting/PowerSync/
 param
 (
     [Parameter(HelpMessage = "Connection string of the data source.", Mandatory = $true)]
-    [string] $SrcConnectionString,
+        [string] $SrcConnectionString,
     [Parameter(HelpMessage = "Connection string of the data destination.", Mandatory = $true)]
-    [string] $DstConnectionString,
+        [string] $DstConnectionString,
     [Parameter(HelpMessage = "Path to the manifest file.", Mandatory = $true)]
-    [string] $ManifestPath,
+        [string] $ManifestPath,
     [Parameter(HelpMessage = "Path to the prepare script.", Mandatory = $false)]
-    [string] $PrepareScriptPath,
+        [string] $PrepareScriptPath,
     [Parameter(HelpMessage = "Path to the extract script.", Mandatory = $true)]
-    [string] $ExtractScriptPath,
+        [string] $ExtractScriptPath,
     [Parameter(HelpMessage = "Path to the transform script.", Mandatory = $false)]
-    [string] $TransformScriptPath,
+        [string] $TransformScriptPath,
     [Parameter(HelpMessage = "Path to the publish script.", Mandatory = $false)]
-    [string] $PublishScriptPath,
+        [string] $PublishScriptPath,
     [Parameter(HelpMessage = "Optionally overwrite target table if already exists.", Mandatory = $false)]
-    [switch] $Overwrite,
+     [switch] $Overwrite,
     [Parameter(HelpMessage = "Optionally create index automatically (columnstore preferred).", Mandatory = $false)]
-    [switch] $AutoIndex,
+        [switch] $AutoIndex,
     [Parameter(HelpMessage = "The designated output log file (defaults to current folder).", Mandatory = $false)]
-    [string] $LogPath = "$(Get-Location)\Log.txt"    
+        [string] $LogPath = "$(Get-Location)"    
 )
 
 # Module Dependencies
@@ -137,7 +137,7 @@ try {
         }
         catch {
             [exception]$ex = $_.exception
-            Write-Log $ex "Error"
+            Write-Log $ex "Error" 9
             throw $ex
         }
         finally {
@@ -147,10 +147,12 @@ try {
     }
 
     # Publish Phase
-    Exec-Script $PublishScriptPath  $item $false
+    $dst = New-DataProvider $DstConnectionString
+    Exec-Script $dst $PublishScriptPath  $item $false
 }
 catch {
-    Write-Log "The following error was encountered (processing will continue): $ex" "Error"
+    [exception]$ex = $_.exception
+    Write-Log "The following error was encountered (processing will continue): $ex" "Error" 9 
 }
 
 Write-Log "PowerSync-Manifest Completed in $($stopWatch.Elapsed.TotalSeconds)"
