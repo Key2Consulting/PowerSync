@@ -33,7 +33,7 @@ function Write-Log(
     }
 
     #Output log messaage
-    Write-Host (Get-Date) + "$MessageType($Severity): $Message" 
+    Write-Host (Get-Date) "$MessageType($Severity): $Message" 
 
     #Build log data
      $line = [pscustomobject]@{
@@ -112,7 +112,7 @@ function Copy-Data {
     }
     catch {
         [exception]$ex = $_.exception
-        Write-Log $ex "Error"
+        Write-Log $ex "Error" 9
 
         # Clean up the hashed table (if exists)
         if ($dst -ne $null -and $tableName -ne $null) {
