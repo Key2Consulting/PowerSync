@@ -19,7 +19,7 @@ https://github.com/Key2Consulting/PowerSync/
 function Write-Log(
     [Parameter(HelpMessage = "Logging Message", Mandatory = $true)]
         [string] $Message,
-    [Parameter(HelpMessage = "Type of Message (Info, Error, Warning...)", Mandatory = $false)]   
+    [Parameter(HelpMessage = "Type of Message (Info, Error, Warning..)", Mandatory = $false)]   
         [string]$MessageType = "Information", 
     [Parameter(HelpMessage = "Severity number.  Default = 0 (low)", Mandatory = $false)]   
         [int]$Severity = 0
