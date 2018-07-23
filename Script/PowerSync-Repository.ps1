@@ -101,6 +101,7 @@ $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
 try {
     # Process the manifest table
     
+#TODO: Move to SQL Script
     $SqlQuery = "SELECT * FROM $ManifestTableName"
     $ServerAConnection = new-object system.data.SqlClient.SqlConnection($SrcConnectionString);
     
@@ -135,9 +136,10 @@ try {
             Write-Log "Started Processing $tableName"
 
     #TODO:  Fix  Exec-Script for Writeback. TO Writeback to SQL
-    #TODO: Fix Save-Manifest
             # Prepare Phase
             Exec-Script $src $PrepareScriptPath $item $true
+    #TODO: Covert to SQL
+    #      Pass $item instead of the whole $mainfest
             #Save-Manifest $manifest $ManifestPath
 
             # Extract Phase
