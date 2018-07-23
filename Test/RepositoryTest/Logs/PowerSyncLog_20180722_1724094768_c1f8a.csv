@@ -1,0 +1,47 @@
+"DateTime","MessageType","Message","Severity"
+"7/22/2018 5:24:09 PM","Information","Started Processing Load.RepositoryTest1
+","0"
+"7/22/2018 5:24:17 PM","Error","System.Management.Automation.MethodInvocationException: Exception calling ""ExecuteReader"" with ""0"" argument(s): ""The identifier that starts with '
+
+
+--Add Row to Primary Logging Table
+	INSERT INTO  (ScriptName,StartDateTime) VALUES('$Message',GETDATE()) 
+ --
+  SELECT ' is too long. Maximum length is 128.
+Unclosed quotation mark after the character string '
+
+
+--Add Row to Primary Logging Table
+	INSERT INTO  (ScriptName,StartDateTime) VALUES('$Message',GETDATE()) 
+ --
+  SELECT @'."" ---> System.Data.SqlClient.SqlException: The identifier that starts with '
+
+
+--Add Row to Primary Logging Table
+	INSERT INTO  (ScriptName,StartDateTime) VALUES('$Message',GETDATE()) 
+ --
+  SELECT ' is too long. Maximum length is 128.
+Unclosed quotation mark after the character string '
+
+
+--Add Row to Primary Logging Table
+	INSERT INTO  (ScriptName,StartDateTime) VALUES('$Message',GETDATE()) 
+ --
+  SELECT @'.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader()
+   at CallSite.Target(Closure , CallSite , Object )
+   --- End of inner exception stack trace ---
+   at System.Management.Automation.ExceptionHandlingOps.CheckActionPreference(FunctionContext funcContext, Exception exception)
+   at System.Management.Automation.Interpreter.ActionCallInstruction`2.Run(InterpretedFrame frame)
+   at System.Management.Automation.Interpreter.EnterTryCatchFinallyInstruction.Run(InterpretedFrame frame)
+   at System.Management.Automation.Interpreter.EnterTryCatchFinallyInstruction.Run(InterpretedFrame frame)","9"

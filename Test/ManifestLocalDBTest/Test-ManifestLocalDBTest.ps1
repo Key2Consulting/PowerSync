@@ -10,6 +10,8 @@ Set-Location $PSScriptRoot
     -ExtractScriptPath "$(Get-Location)\Extract.sql" `
     -TransformScriptPath "$(Get-Location)\Transform.sql" `
     -PublishScriptPath "$(Get-Location)\Publish.sql" `
+    #LogPath
+
     -Overwrite -AutoIndex
 
 Write-Output "ManifestLocalDBTest.1 Passed"

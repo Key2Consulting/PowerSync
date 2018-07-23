@@ -44,7 +44,7 @@ param
     [Parameter(HelpMessage = "Optionally create index automatically (columnstore preferred).", Mandatory = $false)]
         [switch] $AutoIndex,
     [Parameter(HelpMessage = "The designated output log file (defaults to current folder).", Mandatory = $false)]
-        [string] $LogPath = "$(Get-Location)"    
+        [string] $LogPath = "$(Get-Location)\Logs"    
 )
 
 # Module Dependencies
@@ -83,18 +83,22 @@ function Compile-Script([string]$ScriptPath, [psobject]$Vars) {
 function Exec-Script([DataProvider]$Provider, [string]$ScriptPath, [psobject]$Vars, [bool]$SupportWriteback) {
     if ($ScriptPath) {
         $query = Compile-Script $ScriptPath $Vars
-        if ($SupportWriteback) {
-            $reader = $Provider.ExecReader($query)
-            $b = $reader.Read()
-            for ($i=0;$i -lt $reader.FieldCount; $i++) {
-                $col = $reader.GetName($i)
-                if ([bool]($Vars.PSobject.Properties.name -match "$col")) {
-                    $Vars."$col" = $reader[$col]
+
+        if ($query -ne "") {
+
+            if ($SupportWriteback) {
+                $reader = $Provider.ExecReader($query)
+                $b = $reader.Read()
+                for ($i=0;$i -lt $reader.FieldCount; $i++) {
+                    $col = $reader.GetName($i)
+                    if ([bool]($Vars.PSobject.Properties.name -match "$col")) {
+                        $Vars."$col" = $reader[$col]
+                    }
                 }
             }
-        }
-        else {
-            $Provider.ExecNonQuery($query)
+            else {
+                $Provider.ExecNonQuery($query)
+            }
         }
     }
 }
@@ -104,7 +108,9 @@ function Save-Manifest([psobject]$Manifest, [string]$Path) {
     $Manifest | Export-Csv -Path $Path -NoTypeInformation
 }
 
-Write-Log "PowerSync-Manifest Started"
+#The 1st time the log is called, Pass in the LogPath
+Write-Log "PowerSync-Manifest Started" -LogPath $LogPath 
+
 $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
 
 try {
