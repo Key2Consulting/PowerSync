@@ -262,19 +262,6 @@ function Load-TableIntoArray ([System.Data.DataTable]$table){
     return $array.ToArray()    
 }
 
-
-# A data factory to create the correct DataProvider implementation based on inspecting the Connection String
-function New-DataProvider($ConnectionString) {
-    $sb = New-Object System.Data.Common.DbConnectionStringBuilder
-    $sb.set_ConnectionString($ConnectionString)
-    if ($sb.'Provider' -eq $null -and $sb.'Server' -ne $null) {
-        return New-Object MSSQLProvider($ConnectionString)
-    }
-    else {
-        throw "No DataProvider available for connection string"
-    }
-}
-
 # Coordinates the copy operation of a single table
 function Copy-Data {
     param

@@ -1,5 +1,29 @@
-class MSSQLProvider : DataProvider {   
-    MSSQLProvider ([String] $ConnectionString) : base($ConnectionString) {
+# Represents the abstract base class for the DataProvider interface, and includes some functionality common to all providers
+class MSSQLDataProvider : DataProvider {
+
+    MSSQLDataProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
+    }
+
+    [hashtable] Prepare() {
+        return $this.Configuration;
+    }
+
+    [object] Extract() {
+        return $null;
+    }
+
+    [hashtable] Load([object] $DataReader) {
+        return $null;
+    }
+    
+    [hashtable] Transform() {
+        return $null;
+    }
+}
+
+<#
+class MSSQLDataProvider : DataProvider {   
+    MSSQLDataProvider ([String] $ConnectionString) : base($ConnectionString) {
         $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
         $this.Connection.Open()
     }
@@ -116,3 +140,4 @@ class MSSQLProvider : DataProvider {
             DROP TABLE $TableName")
     }
 }
+#>

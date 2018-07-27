@@ -3,7 +3,10 @@
 Copyright (c) Key2 Consulting, LLC. All rights reserved. Licensed under the MIT license.
 See LICENSE in the project root for license information.
 .DESCRIPTION
-Runs PowerSync for a collection of items defined in a manifest file (CSV format), and performs an Extract, Load, Transform for each item. The TSQL used
+Single Mode:  Executes an extraction query against a source, and copies the results into a new table on the destination. This command only supports full extractions, 
+but it will publish in a transactionally consistent manner (i.e. does not drop then recreate, but rather stages and swaps).
+
+Manifest Mode:  Runs PowerSync for a collection of items defined in a manifest file (CSV format), and performs an Extract, Load, Transform for each item. The TSQL used
 at each stage is defined in separate .SQL files and (optionally) passed into PowerSync. PowerSync attempts to pass every field in the manifest into each 
 TSQL script using SQMCMD :setvar syntax, and also applies SQLCMD variables that only exist in the script.
 
@@ -25,27 +28,37 @@ https://github.com/Key2Consulting/PowerSync/
 # Command Parameters
 param
 (
+    # Common
     [Parameter(HelpMessage = "Connection string of the data source.", Mandatory = $true)]
         [string] $SrcConnectionString,
     [Parameter(HelpMessage = "Connection string of the data destination.", Mandatory = $true)]
         [string] $DstConnectionString,
-    [Parameter(HelpMessage = "Path to the manifest file.", Mandatory = $true)]
-        [string] $ManifestPath,
-    [Parameter(HelpMessage = "Path to the prepare script.", Mandatory = $false)]
-        [string] $PrepareScriptPath,
+    [Parameter(HelpMessage = "Script executed against source prior to extraction (writeback enabled).", Mandatory = $false)]
+        [string] $PrepareSrcScript,
+    [Parameter(HelpMessage = "Script executed against destination prior to extraction (writeback enabled).", Mandatory = $false)]
+        [string] $PrepareDstScript,
     [Parameter(HelpMessage = "Path to the extract script.", Mandatory = $true)]
-        [string] $ExtractScriptPath,
+        [string] $ExtractScript,
     [Parameter(HelpMessage = "Path to the transform script.", Mandatory = $false)]
-        [string] $TransformScriptPath,
+        [string] $TransformScript,
     [Parameter(HelpMessage = "Path to the publish script.", Mandatory = $false)]
-        [string] $PublishScriptPath,
+        [string] $PublishScript,
     [Parameter(HelpMessage = "Optionally overwrite target table if already exists.", Mandatory = $false)]
-     [switch] $Overwrite,
+        [switch] $Overwrite,
     [Parameter(HelpMessage = "Optionally create index automatically (columnstore preferred).", Mandatory = $false)]
         [switch] $AutoIndex,
     [Parameter(HelpMessage = "The designated output log file (defaults to current folder).", Mandatory = $false)]
-        [string] $LogPath = "$(Get-Location)\Logs"    
+        [string] $LogPath = "$(Get-Location)\Logs",
+
+    # Mode-specific
+    [Parameter(HelpMessage = "Path to the manifest file.", Mandatory = $false)]
+        [string] $ManifestPath,
+    [Parameter(HelpMessage = "Actual manifest object preloaded (does not support writeback).", Mandatory = $false)]
+        [hashtable] $Manifest
+
 )
+
+Set-StrictMode -Version 2
 
 # Module Dependencies
 . "$PSScriptRoot\PowerSync-Common.ps1"
@@ -53,7 +66,7 @@ param
 # Loads a TSQL script from disk, applies any SQLCMD variables passed in, and returns the compiled script.
 function Compile-Script([string]$ScriptPath, [psobject]$Vars) {
     # Load the script into a variable
-    $script = [IO.File]::ReadAllText($ScriptPath)
+    $script = Get-Content $ScriptPath -Raw
     # This regular expression is used to identify :setvar commands in the TSQL script, and uses capturing 
     # groups to separate the variable name from the value.
     $regex = ':setvar\s*([A-Za-z0-9]*)\s*"?([A-Za-z0-9 .]*)"?'
@@ -89,7 +102,7 @@ function Exec-Script([DataProvider]$Provider, [string]$ScriptPath, [psobject]$Va
             if ($SupportWriteback) {
                 $reader = $Provider.ExecReader($query)
                 $b = $reader.Read()
-                for ($i=0;$i -lt $reader.FieldCount; $i++) {
+                for ($i = 0; $i -lt $reader.FieldCount; $i++) {
                     $col = $reader.GetName($i)
                     if ([bool]($Vars.PSobject.Properties.name -match "$col")) {
                         $Vars."$col" = $reader[$col]
@@ -109,7 +122,7 @@ function Save-Manifest([psobject]$Manifest, [string]$Path) {
 }
 
 #The 1st time the log is called, Pass in the LogPath
-Write-Log "PowerSync-Manifest Started" -LogPath $LogPath 
+Write-Log "PowerSync-Manifest Started" -LogPath $LogPath
 
 $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
 

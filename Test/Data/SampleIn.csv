@@ -1,0 +1,6 @@
+﻿ID,Color,Size,InStock,AvailableOnline,Description
+1,Red,Small,Yes,TRUE,"It's a red, furry ball, that's not too big, not too small"
+2,Blue,Medium,No,FALSE,"A box that's blue, a gift for a friend, or for you"
+3,Yellow,Large,Yes,TRUE,"Yellow is not the same as ""Gold"""
+4,Green,Small,No,FALSE,Green is no longer envious
+5,Purple,Medium,Yes,FALSE,"Purple nurples are, in fact, purple"

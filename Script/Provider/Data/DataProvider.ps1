@@ -1,14 +1,30 @@
 # Represents the abstract base class for the DataProvider interface, and includes some functionality common to all providers
-class DataProvider {
-    [string] $ConnectionString
-    [System.Data.Common.DbConnection] $Connection       # created by derived class
+class DataProvider : Provider {
     [int] $Timeout = 3 * 3600   # 3 hours
 
     # Constructor - assumes derived class will create the Connection object in its constructor
-    DataProvider ([string] $ConnectionString) {
-        $this.ConnectionString = $ConnectionString
+    DataProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
     }
 
+    [hashtable] Prepare() {
+        throw "Not Implemented"
+        return $null;
+    }
+
+    [object] Extract() {
+        throw "Not Implemented"
+    }
+
+    [hashtable] Load([object] $DataReader) {
+        throw "Not Implemented"
+    }
+    
+    [hashtable] Transform() {
+        throw "Not Implemented"
+        return $null;
+    }
+
+    <# 
     # Cleans up any open connections or other unmanaged resources
     [void] Close() {
         if ($this.Connection -ne $null) {
@@ -57,5 +73,5 @@ class DataProvider {
     # Renames a given table, optionally overwriting it if already exists
     [void] RenameTable([string]$OldTableName, [string]$NewTableName, [switch]$Overwrite) {
         throw "Not Implemented"
-    }
+    } #>
 }
