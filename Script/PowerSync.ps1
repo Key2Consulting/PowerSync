@@ -111,22 +111,8 @@ try {
             # Prepare Source
             $outManifest = $pSource.Prepare()
             $pManifest.WriteManifestItem($sourceConfig)
-            
-            # Load special fields from manifest file (required to exist by convention)
-            # $tableName = $item.'LoadTableName'
-            # Write-Log "Started Processing $tableName"
-
-            # # Prepare Phase
-            # Exec-Script $src $PrepareScriptPath $item $true
-            # Save-Manifest $manifest $ManifestPath
-
-            # # Extract Phase
-            # $extractQuery = Compile-Script $ExtractScriptPath $item
-            # Copy-Data $SrcConnectionString $DstConnectionString $extractQuery $tableName -Overwrite:$Overwrite -AutoIndex:$AutoIndex
-
-            # # Transform Phase
-            # Exec-Script $dst $TransformScriptPath  $item $true
-            # Save-Manifest $manifest $ManifestPath
+        
+            # Need to do this work here
 
             $identifier = $item.RuntimeID
             $pLog.WriteInformation("Completed Processing $identifier in $($stopWatchStep.Elapsed.TotalSeconds) seconds.")
