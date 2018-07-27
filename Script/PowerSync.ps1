@@ -129,7 +129,7 @@ try {
             # Save-Manifest $manifest $ManifestPath
 
             $identifier = $item.RuntimeID
-            $pLog.WriteInformation("Completed Processing $identifier in $($stopWatchStep.Elapsed.TotalSeconds)")
+            $pLog.WriteInformation("Completed Processing $identifier in $($stopWatchStep.Elapsed.TotalSeconds) seconds.")
             $pLog.EndLog()
         }
         catch {
