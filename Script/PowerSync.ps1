@@ -113,6 +113,7 @@ try {
             $pManifest.WriteManifestItem($sourceConfig)
         
             # Need to do this work here
+            # and this
 
             $identifier = $item.RuntimeID
             $pLog.WriteInformation("Completed Processing $identifier in $($stopWatchStep.Elapsed.TotalSeconds) seconds.")
