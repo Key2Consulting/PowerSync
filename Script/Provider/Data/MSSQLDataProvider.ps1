@@ -5,7 +5,7 @@ class MSSQLDataProvider : DataProvider {
     }
 
     [hashtable] Prepare() {
-        return $this.Configuration;
+        return $this.Configuration;     # todo
     }
 
     [object] Extract() {
@@ -17,7 +17,7 @@ class MSSQLDataProvider : DataProvider {
     }
     
     [hashtable] Transform() {
-        return $null;
+        return $this.Configuration;     # todo
     }
 }
 
