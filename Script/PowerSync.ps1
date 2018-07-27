@@ -120,7 +120,7 @@ try {
             $reader = $pSource.Extract()
             $pTarget.Load($reader)
 
-            # Transform
+            # Transform Target
             $writeback = $pTarget.Transform()
             $pManifest.WriteManifestItem($writeback)
 
