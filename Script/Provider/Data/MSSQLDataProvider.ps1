@@ -5,7 +5,7 @@ class MSSQLDataProvider : DataProvider {
     }
 
     [hashtable] Prepare() {
-        return $this.Configuration;     # todo
+        return $this.ExecWriteback("PrepareScript")
     }
 
     [object] Extract() {
@@ -19,10 +19,41 @@ class MSSQLDataProvider : DataProvider {
     [hashtable] Transform() {
         return $this.Configuration;     # todo
     }
+
+    [hashtable] ExecWriteback([string] $ScriptName) {
+        $sql = $this.CompileScript($ScriptName)
+        $h = $this.Configuration
+        if ($sql -ne $null) {
+            try {
+                # Execute Query
+                $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
+                $this.Connection.Open()
+                $cmd = $this.Connection.CreateCommand()
+                $cmd.CommandText = $sql
+                $cmd.CommandTimeout = $this.GetConfigSetting("Timeout", 3 * 3600)
+                $reader = $cmd.ExecuteReader()
+
+                # Copy results into hashtable (only single row supported)
+                $b = $reader.Read()
+                for ($i=0;$i -lt $reader.FieldCount; $i++) {
+                    $col = $reader.GetName($i)
+                    if ($h.ContainsKey($col)) {
+                        $h."$col" = $reader[$col]
+                    }
+                }
+            }
+            finally {
+                if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
+                    $this.Connection.Close()
+                }
+            }
+        }
+        return $h
+    }
 }
 
 <#
-class MSSQLDataProvider : DataProvider {   
+class MSSQLDataProvider : DataProvider {
     MSSQLDataProvider ([String] $ConnectionString) : base($ConnectionString) {
         $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
         $this.Connection.Open()
@@ -31,7 +62,7 @@ class MSSQLDataProvider : DataProvider {
     [object] GetQuerySchema([string]$Query) {
         $cmd = $this.CreateCommand("SET FMTONLY ON; $Query")
         $reader = $cmd.ExecuteReader()
-        $schemaTable = $reader.GetSchemaTable()
+        c
         $reader.Close()
         $cmd.CommandText = "SET FMTONLY OFF"
         $cmd.ExecuteNonQuery()

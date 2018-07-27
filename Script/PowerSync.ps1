@@ -91,20 +91,20 @@ try {
     $pLog.WriteInformation("PowerSync Started")
     $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
     
-    # Process the manifest file
+    # Process the manifest
     $manifestContent = $pManifest.ReadManifest()
     
     foreach ($item in $manifestContent) {
         try {
             $pLog.BeginLog()
             $stopWatchStep = [System.Diagnostics.Stopwatch]::StartNew()
-            # Create connections to source and destination for the current manifest item
-            #
-            # Caller can set provider default configuration on the command line, but the manifest can optionally
+            
+            # Caller sets  default configuration on the command line, but the manifest can
             # override those settings.
             $sourceConfig = $pManifest.OverrideManifest("Source", $Source, "", $item)
             $targetConfig = $pManifest.OverrideManifest("Target", $Target, "", $item)
             
+            # Create connections to source and destination for the current manifest item
             $pSource = New-Provider "Data" $sourceConfig 'Source'
             $pTarget = New-Provider "Data" $targetConfig 'Target'
 

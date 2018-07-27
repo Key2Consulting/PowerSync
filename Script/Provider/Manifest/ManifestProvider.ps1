@@ -23,7 +23,7 @@ class ManifestProvider : Provider {
         $h = $null
         foreach ($item in $this.Manifest) {
             if ($item.RuntimeID -eq $ManifestItem.RuntimeID) {
-                $h = [hashtable]$item
+                $h = $item
                 break
             }
         }
