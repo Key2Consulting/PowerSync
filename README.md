@@ -36,8 +36,8 @@ TSQL script using SQMCMD :setvar syntax, and also applies SQLCMD variables that 
 PowerSync-Manifest also supports writebacks to the manifest file itself. This is useful for tracking runtime information like the last incremental 
 extraction value (for incremental loads), or the last run date/time.
 
-Scripts are called in the following order:
- 1) Preparation (incremental extract range, writebacks)
+Event execution order:
+ 1) Prepare (incremental extract range, writebacks)
  2) Extract
- 3) Transform
- 4) Publish (called once for entire process)
+ 3) Load
+ 4) Transform
