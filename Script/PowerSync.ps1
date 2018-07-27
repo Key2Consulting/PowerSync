@@ -109,6 +109,7 @@ try {
             $pTarget = New-Provider "Data" $targetConfig 'Target'
 
             # Prepare Source
+<<<<<<< HEAD
             $writeback = $pSource.Prepare()
             $pManifest.WriteManifestItem($writeback)
             
@@ -123,6 +124,13 @@ try {
             # Transform
             $writeback = $pTarget.Transform()
             $pManifest.WriteManifestItem($writeback)
+=======
+            $outManifest = $pSource.Prepare()
+            $pManifest.WriteManifestItem($sourceConfig)
+        
+            # Need to do this work here
+            # and this
+>>>>>>> 0f1b0d4ad1cfdf431d72a9ba4a02554c6ec65a94
 
             # Final logging. Note that the only field we know this item has is the RuntimeID. However, that's a sequential
             # number and not very informative. So we'll search the columns and attempt to identify something useful to display.
