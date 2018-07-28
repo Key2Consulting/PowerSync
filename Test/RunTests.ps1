@@ -12,14 +12,14 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot\ManifestLocalDBTest"
     -Source @{
         # ConnectionString = "Provider=PSText;Data Source=$dataFolder\SampleIn.csv;Header=True;Format=CSV";
         ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
-        PrepareScript = "$testFolder\SourcePrepare.sql";
-        ExtractScript = "$testFolder\SourceExtract.sql";
+        PrepareScript = "$testFolder\PrepareSource.sql";
+        ExtractScript = "$testFolder\Extract.sql";
     } `
     -Target @{
         #ConnectionString = "Provider=PSText;Data Source=$dataFolder\SampleOut.csv;Header=True;Format=TAB";
         ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
-        PrepareScript = "$testFolder\TargetPrepare.sql";
-        TransformScript = "$testFolder\TargetTransform.sql";
+        PrepareScript = "$testFolder\PrepareTarget.sql";
+        TransformScript = "$testFolder\Transform.sql";
         SchemaName="dbo";
         TableName = "MyTable";
         AutoIndex = $true;

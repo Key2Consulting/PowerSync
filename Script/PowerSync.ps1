@@ -79,43 +79,59 @@ function New-Provider([string] $Type, [hashtable] $Configuration, [string] $Name
     return $provider
 }
 
-# Create Log Provider
-$pLog = New-Provider "Log" $Log
-$pLog.BeginLog()
-
-# Create Manifest Provider
-$pManifest = New-Provider "Manifest" $Manifest
-
 # Process Manifest
 try {
+    # Create Log Provider
+    $pLog = New-Provider "Log" $Log
+    $pLog.BeginLog()
+
+    # Create Manifest Provider
+    $pManifest = New-Provider "Manifest" $Manifest
+
     $pLog.WriteInformation("PowerSync Started")
     $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
     
-    # Process the manifest file
+    # Process the manifest
     $manifestContent = $pManifest.ReadManifest()
     
     foreach ($item in $manifestContent) {
         try {
             $pLog.BeginLog()
             $stopWatchStep = [System.Diagnostics.Stopwatch]::StartNew()
-            # Create connections to source and destination for the current manifest item
-            #
-            # Caller can set provider default configuration on the command line, but the manifest can optionally
+            
+            # Caller sets  default configuration on the command line, but the manifest can
             # override those settings.
             $sourceConfig = $pManifest.OverrideManifest("Source", $Source, "", $item)
             $targetConfig = $pManifest.OverrideManifest("Target", $Target, "", $item)
             
+            # Create connections to source and destination for the current manifest item
             $pSource = New-Provider "Data" $sourceConfig 'Source'
             $pTarget = New-Provider "Data" $targetConfig 'Target'
 
             # Prepare Source
-            $outManifest = $pSource.Prepare()
-            $pManifest.WriteManifestItem($sourceConfig)
-        
-            # Need to do this work here
+            $writeback = $pSource.Prepare()
+            $pManifest.WriteManifestItem($writeback)
+            
+            # Prepare Target
+            $writeback = $pTarget.Prepare()
+            $pManifest.WriteManifestItem($writeback)
 
-            $identifier = $item.RuntimeID
-            $pLog.WriteInformation("Completed Processing $identifier in $($stopWatchStep.Elapsed.TotalSeconds) seconds.")
+            # Extract and Load (writeback not supported)
+            $reader = $pSource.Extract()
+            $pTarget.Load($reader)
+
+            # Transform Target
+            $writeback = $pTarget.Transform()
+            $pManifest.WriteManifestItem($writeback)
+
+            # Final logging. Note that the only field we know this item has is the RuntimeID. However, that's a sequential
+            # number and not very informative. So we'll search the columns and attempt to identify something useful to display.
+            $possibleFields = $item.Keys.Where({$_.Contains('Table')})
+            if ($possibleFields.Count -gt 0) {
+                $friendlyIdentifier = $item[$possibleFields[$possibleFields.Count - 1]]      # publish table names tend to be listed last
+                $friendlyIdentifier = "($friendlyIdentifier)"
+            }
+            $pLog.WriteInformation("Completed Processing item $($item.RuntimeID) $friendlyIdentifier in $($stopWatchStep.Elapsed.TotalSeconds) seconds.")
             $pLog.EndLog()
         }
         catch {

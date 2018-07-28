@@ -1,4 +1,4 @@
 "SourceTableName","LoadTableName","PublishTableName","ProcessType","IncrementalField","LastIncrementalValue","LastRunDateTime","RuntimeID"
-"sys.objects","Load.ManifestLocalDBTest1","dbo.ManifestLocalDBTest1","Full","create_date","","7/20/2018 4:46:35 PM","1"
+"sys.objects","Load.ManifestLocalDBTest1","dbo.ManifestLocalDBTest1","Full","create_date","","7/27/2018 5:02:16 PM","1"
 "sys.objects","Load.ManifestLocalDBTest2","dbo.ManifestLocalDBTest2","Incremental","modify_date","","7/20/2018 2:41:19 PM","2"
 "sys.columns","Load.ManifestLocalDBTest3","dbo.ManifestLocalDBTest3","Incremental","object_id","","7/20/2018 2:41:19 PM","3"
