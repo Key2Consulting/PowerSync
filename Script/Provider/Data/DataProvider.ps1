@@ -26,6 +26,9 @@ class DataProvider : Provider {
         return $null;
     }
 
+    [void] Close() {
+    }
+
     <# 
     # Cleans up any open connections or other unmanaged resources
     [void] Close() {

@@ -12,16 +12,16 @@ class MSSQLDataProvider : DataProvider {
     }
 
     [System.Data.Common.DbDataReader] Extract() {
+        # Attempt to load the Extract Script
         $sql = $this.CompileScript("ExtractScript")
-        $h = $this.Configuration
-        
         if ($sql -eq $null) {
-            throw "No ExtractScript set on target."
+            throw "No ExtractScript set."
         }
 
-        # Execute Query
+        # Execute the Extraction and return the results to the caller.  Note that the connection
+        # remains open at this point, until the provider's Close method is called.
         $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
-        $this.Connection.Open()        
+        $this.Connection.Open()
         $cmd = $this.Connection.CreateCommand()
         $cmd.CommandText = $sql
         $cmd.CommandTimeout = $this.Timeout
@@ -95,6 +95,13 @@ class MSSQLDataProvider : DataProvider {
             }
         }
         return $h
+    }
+
+    [void] Close() {
+        # If a connection is established, close connection now.
+        if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
+            $this.Connection.Close()
+        }
     }
 
      [string] ScriptCreateTable([string]$TableName, [object]$SchemaTable) {

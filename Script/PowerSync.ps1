@@ -138,9 +138,8 @@ try {
             $pLog.WriteException($_.exception, $false)
         }
         finally {
-            # TODO: HOW SHOULD WE CLEAN THESE UP?
-            #$pSource.Close()
-            #$pTarget.Close()
+            $pSource.Close()
+            $pTarget.Close()
         }
     }
 }
