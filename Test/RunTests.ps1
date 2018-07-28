@@ -27,8 +27,9 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot"
         ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
         PrepareScript = "$testFolder\Package\PrepareTarget.sql";
         TransformScript = "$testFolder\Package\Transform.sql";
+        TableName = "dbo.ManifestLocalDBTest1"
         AutoIndex = $true;
-        AutoCreate = $true;
+        AutoCreate = $false;
         Overwrite = $true;
         BatchSize = 10000;
     }

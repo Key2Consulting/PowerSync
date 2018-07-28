@@ -138,6 +138,7 @@ try {
             # Final logging. Note that the only field we know this item has is the RuntimeID. However, that's a sequential
             # number and not very informative, so we'll search the columns and attempt to identify something useful to display.
             $possibleFields = $item.Keys.Where({$_.Contains('Table')})
+            $friendlyIdentifier = ""
             if ($possibleFields.Count -gt 0) {
                 $friendlyIdentifier = $item[$possibleFields[$possibleFields.Count - 1]]      # publish table names tend to be listed last
                 $friendlyIdentifier = "($friendlyIdentifier)"
