@@ -11,7 +11,7 @@ class MSSQLDataProvider : DataProvider {
         return $this.ExecQuery("PrepareScript", $true)
     }
 
-    [System.Data.Common.DbDataReader] Extract() {
+    [System.Data.IDataReader] Extract() {
         # Attempt to load the Extract Script
         $sql = $this.CompileScript("ExtractScript")
         if ($sql -eq $null) {
@@ -28,7 +28,7 @@ class MSSQLDataProvider : DataProvider {
         return $cmd.ExecuteReader()
     }
 
-    [hashtable] Load([System.Data.Common.DbDataReader] $DataReader) {
+    [hashtable] Load([System.Data.IDataReader] $DataReader) {
         if ($this.TableName -eq $null) {
             throw "TableName is a required field."
         }
@@ -60,7 +60,7 @@ class MSSQLDataProvider : DataProvider {
     }
     
     [hashtable] Transform() {
-        return $this.Configuration;     # todo
+        return $this.ExecQuery("TransformScript", $true)
     }
 
     [hashtable] ExecQuery([string] $ScriptName, [bool] $SupportWriteback) {

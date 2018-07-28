@@ -29,7 +29,8 @@ class LogProvider : Provider {
     }
 
     [void] WriteException([object] $Exception, [bool] $Rethrow) {
-        $this.ProcessLog("Exception", $Exception.ToString(), $null, $null)
+        $callerName = (Get-PSCallStack)[1].Command
+        $this.ProcessLog("Exception", "$callerName - $($Exception.ToString())", $null, $null)
         if ($Rethrow -eq $true) {
             throw $Exception
         }

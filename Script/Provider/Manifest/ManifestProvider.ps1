@@ -19,21 +19,23 @@ class ManifestProvider : Provider {
     }
 
     [void] WriteManifestItem([hashtable]$ManifestItem) {
-        # Find the manifest item from our internal list
-        $h = $null
-        foreach ($item in $this.Manifest) {
-            if ($item.RuntimeID -eq $ManifestItem.RuntimeID) {
-                $h = $item
-                break
+        if ($ManifestItem) {
+            # Find the manifest item from our internal list
+            $h = $null
+            foreach ($item in $this.Manifest) {
+                if ($item.RuntimeID -eq $ManifestItem.RuntimeID) {
+                    $h = $item
+                    break
+                }
             }
-        }
-        # Update any matching properties from the passed in manifest item
-        foreach ($key in $ManifestItem.Keys) {
-            if ($h.Contains($key)) {
-                $h."$key" = $ManifestItem."$key"
+            # Update any matching properties from the passed in manifest item
+            foreach ($key in $ManifestItem.Keys) {
+                if ($h.Contains($key)) {
+                    $h."$key" = $ManifestItem."$key"
+                }
             }
+            $this.CommitManifestItem($h)
         }
-        $this.CommitManifestItem($h)
     }
 
     # Implemented by derived classes to fetch the entire manifest from storage

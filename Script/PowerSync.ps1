@@ -35,8 +35,10 @@ Set-StrictMode -Version 2
 . "$PSScriptRoot\Provider\Manifest\ManifestProvider.ps1"
 . "$PSScriptRoot\Provider\Manifest\MSSQLManifestProvider.ps1"
 . "$PSScriptRoot\Provider\Manifest\TextManifestProvider.ps1"
+. "$PSScriptRoot\Provider\Manifest\NoManifestProvider.ps1"
 . "$PSScriptRoot\Provider\Data\DataProvider.ps1"
 . "$PSScriptRoot\Provider\Data\MSSQLDataProvider.ps1"
+. "$PSScriptRoot\Provider\Data\TextDataProvider.ps1"
 
 # A data factory to create the correct Provider implementation based on inspecting the ConnectionString and Type
 function New-Provider([string] $Type, [hashtable] $Configuration, [string] $Namespace = '') {
@@ -49,7 +51,7 @@ function New-Provider([string] $Type, [hashtable] $Configuration, [string] $Name
     
     # LogProvider
     if ($Type -eq "Log") {
-        if ($sb.ContainsKey('Provider') -eq $false) {
+        if ($sb.ContainsKey('Server') -eq $true) {
             $provider = New-Object MSSQLLogProvider($Namespace, $Configuration)
         }
         elseif ($sb.'Provider' -eq "PSText") {
@@ -58,17 +60,23 @@ function New-Provider([string] $Type, [hashtable] $Configuration, [string] $Name
     }
     # ManifestProvider
     elseif ($Type -eq "Manifest") {
-        if ($sb.ContainsKey('Provider') -eq $false) {
+        if ($sb.ContainsKey('Server') -eq $true) {
             $provider = New-Object MSSQLManifestProvider($Namespace, $Configuration)
         }
-        elseif ($sb.'Provider' -eq "PSText") {
+        elseif ($sb.ContainsKey('Provider') -and $sb.'Provider' -eq "PSText") {
             $provider = New-Object TextManifestProvider($Namespace, $Configuration)
+        }
+        else {
+            $provider = New-Object NoManifestProvider($Namespace, $Configuration)
         }
     }
     # DataProvider
     elseif ($Type -eq "Data") {
-        if ($sb.ContainsKey('Provider') -eq $false) {
+        if ($sb.ContainsKey('Server') -eq $true) {
             $provider = New-Object MSSQLDataProvider($Namespace, $Configuration)
+        }
+        elseif ($sb.ContainsKey('Provider') -and $sb.'Provider' -eq "PSText") {
+            $provider = New-Object TextDataProvider($Namespace, $Configuration)
         }
     }
 
@@ -85,13 +93,16 @@ try {
     $pLog = New-Provider "Log" $Log
     $pLog.BeginLog()
 
-    # Create Manifest Provider
-    $pManifest = New-Provider "Manifest" $Manifest
-
     $pLog.WriteInformation("PowerSync Started")
     $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
     
-    # Process the manifest
+    # Process the manifest.  If it doesn't exist, we assume we're processing a single item,
+    # and that the configuration for the source/target was set on the command line. We'll still 
+    # need manifest provider so that downstream code works, it just won't be connected to anything.
+    if ($Manifest -eq $null) {
+        $Manifest = @{ConnectionString = ""}
+    }
+    $pManifest = New-Provider "Manifest" $Manifest
     $manifestContent = $pManifest.ReadManifest()
     
     foreach ($item in $manifestContent) {
@@ -125,7 +136,7 @@ try {
             $pManifest.WriteManifestItem($writeback)
 
             # Final logging. Note that the only field we know this item has is the RuntimeID. However, that's a sequential
-            # number and not very informative. So we'll search the columns and attempt to identify something useful to display.
+            # number and not very informative, so we'll search the columns and attempt to identify something useful to display.
             $possibleFields = $item.Keys.Where({$_.Contains('Table')})
             if ($possibleFields.Count -gt 0) {
                 $friendlyIdentifier = $item[$possibleFields[$possibleFields.Count - 1]]      # publish table names tend to be listed last

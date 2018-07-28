@@ -38,8 +38,8 @@ class Provider {
             $match = [regex]::Match($script, $regex)
             if ($match.Success) {
                 $script = $script.Remove($match.Index, $match.Length)
-                $name = $match.Groups[1]
-                $value = $match.Groups[2]
+                $name = $match.Groups[1].Value
+                $value = $match.Groups[2].Value
                 if ($vars.ContainsKey($name) -eq $true) {
                     $value = $vars."$name"
                 }
@@ -79,5 +79,10 @@ class Provider {
         }
 
         return $r
+    }
+
+    [void] HandleException($Exception) {
+        $callerName = (Get-PSCallStack)[1].Command
+        throw "Error in $callerName" + $Exception.ToString()
     }
 }
