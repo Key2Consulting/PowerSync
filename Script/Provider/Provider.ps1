@@ -19,13 +19,13 @@ class Provider {
     [string] CompileScript([string]$ScriptName) {
         # The script variable could either be a file path or an actual script, so attempt
         # to load the script from disk first to figure it out.
-        $scriptPath = $this.Configuration["$($this.Namespace)$ScriptName"]
+        $scriptPath = $this.GetConfigSetting($ScriptName, $null)
         $vars = $this.Configuration
         try {
             $script = [IO.File]::ReadAllText($scriptPath)
         }
         catch {
-            $script = $scriptPath       # must be an actual script
+            $script = $ScriptName       # must be an actual script
         }
 
         # This regular expression is used to identify :setvar commands in the TSQL script, and uses capturing 
@@ -38,9 +38,9 @@ class Provider {
             $match = [regex]::Match($script, $regex)
             if ($match.Success) {
                 $script = $script.Remove($match.Index, $match.Length)
-                $name = $match.Groups[1]
-                $value = $match.Groups[2]
-                if ($vars."$name") {
+                $name = $match.Groups[1].Value
+                $value = $match.Groups[2].Value
+                if ($vars.ContainsKey($name) -eq $true) {
                     $value = $vars."$name"
                 }
                 $script = $script.Replace('$(' + $name + ')', $value)
@@ -53,11 +53,36 @@ class Provider {
     }
 
     [object] GetConfigSetting([string] $Setting, [object] $DefaultValue) {
-        if ($this.Configuration.ContainsKey($Setting)) {
-            return $this.Configuration[$Setting]
+        $key = "$($this.Namespace)$Setting"
+        if ($this.Configuration.ContainsKey($key)) {
+            return $this.Configuration[$key]
         }
         else {
             return $DefaultValue
         }
+    }
+
+    [string] GetUniqueID([string] $BaseToken, [int]$MaxLength) {
+        $guid = (New-Guid).ToString().Replace("-", "")
+    
+        # If BaseToken is passed in, add the GUID to the end of the BaseToken
+        if ($BaseToken) {
+            $r = $BaseToken + "_" + $guid 
+        }
+        else {
+            $r = $guid
+        }   
+
+        # If MaxLength is passed in, limit the GUID to MaxLength characters
+        If ($MaxLength -and $r.Length > $MaxLength){
+            $r = $r.Substring(0, $MaxLength)
+        }
+
+        return $r
+    }
+
+    [void] HandleException($Exception) {
+        $callerName = (Get-PSCallStack)[1].Command
+        throw "Error in $callerName" + $Exception.ToString()
     }
 }

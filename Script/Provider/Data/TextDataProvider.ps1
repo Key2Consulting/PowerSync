@@ -5,8 +5,31 @@ class TextDataProvider : DataProvider {
 
     TextDataProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
     }
+
+    [hashtable] Prepare() {
+        # Can text providers support scripting?  Regex?
+        return $null;
+    }
+
+    [System.Data.IDataReader] Extract() {
+        $r = New-Object TextDataReader
+        #$provider = New-Object TextDataProvider($Namespace, $Configuration)
+        return $r
+    }
+
+    [hashtable] Load([System.Data.IDataReader] $DataReader) {
+        throw "Not Implemented"
+    }
     
-    [object] GetQuerySchema([string]$Query) {
+    [hashtable] Transform() {
+        # Can text providers support scripting?  Regex?
+        return $null;
+    }
+
+    [void] Close() {
+    }
+
+    [object] GetQuerySchema() {
         # adapted from https://blog.netnerds.net/2015/01/powershell-high-performance-techniques-for-importing-csv-to-sql-server/
 
         #$reader = New-Object System.IO.StreamReader($this.FilePath)
@@ -29,36 +52,12 @@ class TextDataProvider : DataProvider {
             throw "Not Implemented:  TextProvider no header option"
         }
 
-        # $csvsplit += '(?=(?:[^"]|"[^"]*")*$)'
-        # $regexOptions = [System.Text.RegularExpressions.RegexOptions]::ExplicitCapture
-        # $columns = [regex]::Split($firstLine, $csvSplit, $regexOptions)
-
-        #$reader.readLine()
-
         return $schemaList
     }
+}
 
-    [string] ScriptCreateTable([string]$TableName, [object]$SchemaTable) {
-        return $null
-    }
-
-    [string] GetSchemaName([string]$TableName) {
-        return $null
-    }
-
-    [string] GetTableName([string]$TableName) {
-        return $null
-    }
-
-    [void] BulkCopyData([System.Data.Common.DbDataReader]$DataReader, [string]$TableName) {
-    }
-
-    [void] RenameTable([string]$OldTableName, [string]$NewTableName, [switch]$Overwrite) {
-    }
-
-    [void] CreateAutoIndex([string]$TableName) {
-    }
-
-    [void] DropTable([string]$TableName) {
+class TextDataReader : System.Data.IDataReader {
+    [int] get_Depth() {
+        return 0
     }
 }
