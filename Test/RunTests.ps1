@@ -20,8 +20,6 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot\ManifestLocalDBTest"
         ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
         PrepareScript = "$testFolder\PrepareTarget.sql";
         TransformScript = "$testFolder\Transform.sql";
-        SchemaName="dbo";
-        TableName = "MyTable";
         AutoIndex = $true;
         Overwrite = $true;
     }

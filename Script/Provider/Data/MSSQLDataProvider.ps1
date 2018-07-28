@@ -1,18 +1,61 @@
 # Represents the abstract base class for the DataProvider interface, and includes some functionality common to all providers
 class MSSQLDataProvider : DataProvider {
+    [int] $Timeout
+    [string] $TempTableName
 
     MSSQLDataProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
+        $this.Timeout = $this.GetConfigSetting("Timeout", 3600)
     }
 
     [hashtable] Prepare() {
-        return $this.ExecWriteback("PrepareScript")
+        return $this.ExecQuery("PrepareScript", $true)
     }
 
-    [object] Extract() {
-        return $null;
+    [System.Data.Common.DbDataReader] Extract() {
+        $sql = $this.CompileScript("ExtractScript")
+        $h = $this.Configuration
+        
+        if ($sql -eq $null) {
+            throw "No ExtractScript set on target."
+        }
+
+        # Execute Query
+        $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
+        $this.Connection.Open()        
+        $cmd = $this.Connection.CreateCommand()
+        $cmd.CommandText = $sql
+        $cmd.CommandTimeout = $this.Timeout
+        return $cmd.ExecuteReader()
     }
 
-    [hashtable] Load([object] $DataReader) {
+    [hashtable] Load([System.Data.Common.DbDataReader] $DataReader) {
+        if ($this.TableName -eq $null) {
+            throw "TableName is a required field."
+        }
+
+        # If AutoCreate is set, create the target table using the schema of the incoming data stream. However,
+        # always create that table with a unique identifier to avoid any name collisions (will swap out with final
+        # table later on).
+        $loadIntoTableName = $this.TableName
+        if ($this.GetConfigSetting("AutoCreate", $true) -eq $true) {
+            $this.TempTableName = $this.GetUniqueID($this.TableName, 128)
+            $loadIntoTableName = $this.TempTableName
+            $schemaTable = $DataReader.GetSchemaTable()
+            $createTableSQL = $this.ScriptCreateTable($this.TempTableName, $schemaTable)
+            $this.ExecQuery($createTableSQL, $true)
+        }
+        
+        # Use SqlBulkCopy to import the data
+        $blk = New-Object Data.SqlClient.SqlBulkCopy($this.ConnectionString)
+        $blk.DestinationTableName = $loadIntoTableName
+        $blk.BulkCopyTimeout = $this.Timeout
+        $blk.BatchSize = $this.GetConfigSetting("BatchSize", 10000)
+        $blk.WriteToServer($DataReader)
+
+        # Rename temp table to final table
+        if ($this.TempTableName) {
+            $this.RenameTable($this.TempTableName, $this.TableName, $this.GetConfigSetting("Overwrite", $true))
+        }
         return $null;
     }
     
@@ -20,7 +63,7 @@ class MSSQLDataProvider : DataProvider {
         return $this.Configuration;     # todo
     }
 
-    [hashtable] ExecWriteback([string] $ScriptName) {
+    [hashtable] ExecQuery([string] $ScriptName, [bool] $SupportWriteback) {
         $sql = $this.CompileScript($ScriptName)
         $h = $this.Configuration
         if ($sql -ne $null) {
@@ -30,19 +73,22 @@ class MSSQLDataProvider : DataProvider {
                 $this.Connection.Open()
                 $cmd = $this.Connection.CreateCommand()
                 $cmd.CommandText = $sql
-                $cmd.CommandTimeout = $this.GetConfigSetting("Timeout", 3 * 3600)
-                $reader = $cmd.ExecuteReader()
+                $cmd.CommandTimeout = $this.Timeout
+                $r = $cmd.ExecuteReader()
 
-                # Copy results into hashtable (only single row supported)
-                $b = $reader.Read()
-                for ($i=0;$i -lt $reader.FieldCount; $i++) {
-                    $col = $reader.GetName($i)
-                    if ($h.ContainsKey($col)) {
-                        $h."$col" = $reader[$col]
+                if ($SupportWriteback) {
+                    # Copy results into hashtable (only single row supported)
+                    $b = $r.Read()
+                    for ($i=0;$i -lt $r.FieldCount; $i++) {
+                        $col = $r.GetName($i)
+                        if ($h.ContainsKey($col)) {
+                            $h."$col" = $r[$col]
+                        }
                     }
                 }
             }
             finally {
+                # If a connection is established, close connection now.
                 if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
                     $this.Connection.Close()
                 }
@@ -50,26 +96,8 @@ class MSSQLDataProvider : DataProvider {
         }
         return $h
     }
-}
 
-<#
-class MSSQLDataProvider : DataProvider {
-    MSSQLDataProvider ([String] $ConnectionString) : base($ConnectionString) {
-        $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
-        $this.Connection.Open()
-    }
-    
-    [object] GetQuerySchema([string]$Query) {
-        $cmd = $this.CreateCommand("SET FMTONLY ON; $Query")
-        $reader = $cmd.ExecuteReader()
-        c
-        $reader.Close()
-        $cmd.CommandText = "SET FMTONLY OFF"
-        $cmd.ExecuteNonQuery()
-        return $schemaTable
-    }
-
-    [string] ScriptCreateTable([string]$TableName, [object]$SchemaTable) {
+     [string] ScriptCreateTable([string]$TableName, [object]$SchemaTable) {
         $colScript = ""
         foreach ($col in $SchemaTable) {
             # Extract key variables from the Table Schema
@@ -108,29 +136,54 @@ class MSSQLDataProvider : DataProvider {
 
         # Remove last comma and return final script
         $colScript = $colScript.Remove($colScript.Length - 2, 2)
-        $s = $this.GetSchemaName($TableName)
-        $t = $this.GetTableName($TableName)
+        $s = $this.GetTablePart($TableName, 0)
+        $t = $this.GetTablePart($TableName, 1)
         return "CREATE TABLE [$s].[$t]($colScript)"
     }
 
-    [string] GetSchemaName([string]$TableName) {
-        $parts = $TableName.Split('.').Replace('[', '').Replace(']', '')
-        return $parts[0]
+    [string] GetTablePart([string] $TableName, [int] $Token) {
+        $parts = $TableName.Split('.')
+        if ($parts.Length -le 1) {
+            throw "TableName must be in the format Schema.Table"
+        }
+        return $parts[$Token].Replace('[', '').Replace(']', '')
     }
 
-    [string] GetTableName([string]$TableName) {
-        $parts = $TableName.Split('.').Replace('[', '').Replace(']', '')
-        return $parts[1]
+    [void] CreateAutoIndex([string]$TableName) {
+        try {
+            $s = $this.GetTablePart($this.TableName, 0)
+            $t = $this.GetTablePart($this.TableName, 1)
+            $i = $s + '_' + $t.Substring(0, $t.Length - 32)
+            $this.ExecNonQuery("CREATE CLUSTERED COLUMNSTORE INDEX [CCIX_$i] ON $TableName WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)")
+        }
+        catch {
+            # If the error is due to a column that cannot participate in a CCIX, then 
+            # create the next best kind of index
+            # TODO: DECIDE ON ANOTHER INDEX TYPE, EITHER NONCLUSTERED CCIX WITH THE INVALID COLS REMOVED, OR ???
+        }
     }
 
-    [void] BulkCopyData([System.Data.Common.DbDataReader]$DataReader, [string]$TableName) {
-        $blk = New-Object Data.SqlClient.SqlBulkCopy($this.ConnectionString)
-        $blk.DestinationTableName = $TableName
-        $blk.BulkCopyTimeout = $this.Timeout
-        $blk.BatchSize = 10000
-        $blk.WriteToServer($DataReader)
-    }
+    [void] RenameTable([string] $OldTableName, [string] $NewTableName, [bool] $Overwrite) {
+        $t = $this.GetTablePart($NewTableName, 1)
 
+        # If overwrite is enabled, drop target table first.
+        if ($Overwrite) {
+            $this.ExecQuery("
+                SET XACT_ABORT ON
+                BEGIN TRAN
+                IF (OBJECT_ID('$NewTableName') IS NOT NULL)
+                    DROP TABLE $NewTableName
+                EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'
+                COMMIT TRAN
+                ", $false)
+        }
+        else {
+            $this.ExecQuery("EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'", $false)
+        }
+    }    
+}
+
+<#
     [void] RenameTable([string]$OldTableName, [string]$NewTableName, [switch]$Overwrite) {
         $t = $this.GetTableName($NewTableName)
 
@@ -148,20 +201,6 @@ class MSSQLDataProvider : DataProvider {
         }
         else {
             $this.ExecNonQuery("EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'")
-        }
-    }
-
-    [void] CreateAutoIndex([string]$TableName) {
-        try {
-            $s = $this.GetSchemaName($TableName)
-            $t = $this.GetTableName($TableName)
-            $i = $s + '_' + $t.Substring(0, $t.Length - 32)
-            $this.ExecNonQuery("CREATE CLUSTERED COLUMNSTORE INDEX [CCIX_$i] ON $TableName WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)")
-        }
-        catch {
-            # If the error is due to a column that cannot participate in a CCIX, then 
-            # create the next best kind of index
-            # TODO: DECIDE ON ANOTHER INDEX TYPE, EITHER NONCLUSTERED CCIX WITH THE INVALID COLS REMOVED, OR ???
         }
     }
 
