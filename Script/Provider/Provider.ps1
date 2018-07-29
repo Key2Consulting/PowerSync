@@ -74,7 +74,7 @@ class Provider {
         }   
 
         # If MaxLength is passed in, limit the GUID to MaxLength characters
-        If ($MaxLength -and $r.Length > $MaxLength){
+        if ($MaxLength -gt 0 -and $r.Length -gt $MaxLength){
             $r = $r.Substring(0, $MaxLength)
         }
 
