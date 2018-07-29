@@ -11,7 +11,8 @@ class MSSQLDataProvider : DataProvider {
         return $this.ExecQuery("PrepareScript", $true)
     }
 
-    [System.Data.IDataReader] Extract() {
+    [object[]] Extract() {
+        throw "TODO: CREATE NEW SCHEMAINFO"
         # Attempt to load the Extract Script
         $sql = $this.CompileScript("ExtractScript")
         if ($sql -eq $null) {
@@ -28,7 +29,7 @@ class MSSQLDataProvider : DataProvider {
         return $cmd.ExecuteReader()
     }
 
-    [hashtable] Load([System.Data.IDataReader] $DataReader) {
+    [hashtable] Load([System.Data.IDataReader] $DataReader, [System.Collections.ArrayList] $SchemaInfo) {
         if ($this.TableName -eq $null) {
             throw "TableName is a required field."
         }
@@ -41,7 +42,7 @@ class MSSQLDataProvider : DataProvider {
             $this.TempTableName = $this.GetUniqueID($this.TableName, 128)
             $loadIntoTableName = $this.TempTableName
             $schemaTable = $DataReader.GetSchemaTable()
-            $createTableSQL = $this.ScriptCreateTable($this.TempTableName, $schemaTable)
+            $createTableSQL = $this.ScriptCreateTable($this.TempTableName, $SchemaInfo)
             $this.ExecQuery($createTableSQL, $true)
         }
         
@@ -104,25 +105,25 @@ class MSSQLDataProvider : DataProvider {
         }
     }
 
-     [string] ScriptCreateTable([string]$TableName, [object]$SchemaTable) {
+     [string] ScriptCreateTable([string]$TableName, [System.Collections.ArrayList] $SchemaInfo) {
         $colScript = ""
-        foreach ($col in $SchemaTable) {
+        foreach ($col in $SchemaInfo) {
             # Extract key variables from the Table Schema
-            $name = $col[0]
-            $size = $col[2]
-            $precision = $col[3]
-            $scale = $col[4]
-            $isKey = $col[6]
-            $isNullable = $col[13]
-            $isIdentity = $col[14]
-            $type = $col[24]
+            $name = $col.Name
+            $size = $col.Size
+            $precision = $col.Precision
+            $scale = $col.Scale
+            $isKey = $col.IsKey
+            $isNullable = $col.IsNullable
+            $isIdentity = $col.IsIdentity
+            $type = $col.DataType
 
             # Append column to create script
             $colScript += "`r`n [$name] [$type]"
 
             # Some data types require special processing...
             if ($type -eq 'VARCHAR' -or $type -eq 'NVARCHAR' -or $type -eq 'CHAR') {
-                if ($size -eq 2147483647) {
+                if ($size -eq -1) {
                     $colScript += '(MAX)'
                 }
                 else {

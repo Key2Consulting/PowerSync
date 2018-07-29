@@ -1,9 +1,19 @@
-class TextDataProvider : DataProvider {
+class TextDataProvider : DataProvider, System.Data.IDataReader {
     [string] $FilePath
-    [bool] $Header
     [string] $Format
+    [bool] $Header
+    [bool] $Quoted
+    [string] $RowDelim = '`r`n'
+    [string] $ColDelim = ','
+    [string] $QuoteDelim = '"'
+    [System.IO.StreamReader] $FileReader
+    [System.Collections.ArrayList] $ReadBuffer
 
     TextDataProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
+        $this.FilePath = $this.ConnectionStringParts["filepath"]
+        $this.Format = $this.ConnectionStringParts["format"]
+        $this.Header = $this.ConnectionStringParts["header"]
+        $this.Quoted = $this.ConnectionStringParts["quoted"]
     }
 
     [hashtable] Prepare() {
@@ -11,13 +21,37 @@ class TextDataProvider : DataProvider {
         return $null;
     }
 
-    [System.Data.IDataReader] Extract() {
-        $r = New-Object TextDataReader
-        #$provider = New-Object TextDataProvider($Namespace, $Configuration)
-        return $r
+    [object[]] Extract() {
+        # Open target file, and extract schema information. Note that we only support
+        # text data types since the tex files don't come with data type information.
+        $this.FileReader = New-Object System.IO.StreamReader $this.FilePath
+
+        $this.Read()
+        $colIndex = 1
+        $this.SchemaInfo = New-Object System.Collections.ArrayList
+        foreach ($c in $this.ReadBuffer) {
+            $s = New-Object SchemaInformation
+            if ($this.Header) {
+                $s.Name = $c
+            }
+            else {
+                $s.Name = $colIndex++
+            }
+            $s.Size = -1
+            $s.DataType = "VARCHAR"
+            $s.IsNullable = $true
+            $this.SchemaInfo.Add($s)
+        }
+
+        # If header isn't first line, must reset read back to beginning
+        if ($this.Header -ne $true) {
+            $this.FileReader.Position = 0
+            $this.FileReader.DiscardBufferedData()
+        }
+        return [System.Data.IDataReader]$this, $this.SchemaInfo
     }
 
-    [hashtable] Load([System.Data.IDataReader] $DataReader) {
+    [hashtable] Load([System.Data.IDataReader] $DataReader, [System.Collections.ArrayList] $SchemaInfo) {
         throw "Not Implemented"
     }
     
@@ -29,57 +63,50 @@ class TextDataProvider : DataProvider {
     [void] Close() {
     }
 
-    [object] GetQuerySchema() {
-        # adapted from https://blog.netnerds.net/2015/01/powershell-high-performance-techniques-for-importing-csv-to-sql-server/
 
-        #$reader = New-Object System.IO.StreamReader($this.FilePath)
-        $schemaList = New-Object System.Collections.ArrayList
-        if ($this.Header) {
-            $columns = (Get-Content $this.FilePath -First 1).Split(',')
-            foreach ($col in $columns) {
-                $item = @{
-                    "name" = $col;
-                    "size" = -1;
-                    "precision" = 0;
-                    "scale" = 0;
-                    "isNullable" = $true;
-                    "type" = "NVARCHAR";
-                }
-                $schemaList.Add($item);
-            }            
-        }
-        else {
-            throw "Not Implemented:  TextProvider no header option"
-        }
-
-        return $schemaList
-    }
-}
-
-class TextDataReader : System.Data.IDataReader {
-    [int] $ReadCount
+    ###############################################################
+    # System.Data.IDataReader Interface Implementation
+    ###############################################################
 
     # The following interface elements are invoked by SqlBulkCopy
     #
-    [System.Data.DataTable] GetSchemaTable() {
-        return $null
+    [int] get_FieldCount() {
+        return $this.SchemaInfo.Count
     }
 
     [bool] Read() {
-        return $this.ReadCount++ -lt 100
-    }    
-
-    [int] get_FieldCount() {
-        $this.ReadCount = 0
-        return 1
+        $l = $this.FileReader.ReadLine()        # how can row delimeter be applied?
+        if ($l -eq $null -or $l.Length -eq 0) {
+            $this.FileReader.Close()
+            return $false
+        }
+        $this.ReadBuffer = New-Object System.Collections.ArrayList
+        
+        # from https://stackoverflow.com/questions/18144431/regex-to-split-a-csv        
+        $regex = '(?:^|,)(?=[^"]|(")?)"?((?(1)[^"]*|[^,"]*))"?(?=,|$)'
+        $matches = [regex]::Matches($l, $regex, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Multiline)        
+        
+        foreach ($match in $matches) {
+            [string]$s = $match.Value.ToString()
+            if ($s.StartsWith($this.ColDelim)) {
+                $s = $s.Substring($this.ColDelim.Length, $s.Length - $this.ColDelim.Length)
+            }
+            $this.ReadBuffer.Add($s)
+        }
+        
+        return $true
     }
 
     [object] GetValue([int] $I) {
-        return "foo"
+        return $this.ReadBuffer[$I]
     }
 
     # Ignore the following interface elements until they're needed.
     #
+
+    [System.Data.DataTable] GetSchemaTable() {
+        return $null
+    }
 
     [int] get_Depth() {
         throw "TextDataProvider Interface not Implemented"
@@ -96,9 +123,7 @@ class TextDataReader : System.Data.IDataReader {
         return 0
     }
 
-    [void] Close() {
-        throw "TextDataProvider Interface not Implemented"
-    }
+    # ALREADY IMPLEMENTED BY Provider [void] Close() { throw "TextDataProvider Interface not Implemented" }
 
     [bool] NextResult() {
         throw "TextDataProvider Interface not Implemented"

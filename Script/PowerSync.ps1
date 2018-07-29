@@ -41,45 +41,19 @@ Set-StrictMode -Version 2
 . "$PSScriptRoot\Provider\Data\TextDataProvider.ps1"
 
 # A data factory to create the correct Provider implementation based on inspecting the ConnectionString and Type
-function New-Provider([string] $Type, [hashtable] $Configuration, [string] $Namespace = '') {
+function New-Provider([hashtable] $Configuration, [string] $Namespace = '') {
     # The provider instance
     $provider = $null
     
-    # Parse connection string
+    # Extract PSProvider variables from connection string
     $sb = New-Object System.Data.Common.DbConnectionStringBuilder
     $sb.set_ConnectionString($Configuration."${Namespace}ConnectionString")
-    
-    # LogProvider
-    if ($Type -eq "Log") {
-        if ($sb.ContainsKey('Server') -eq $true) {
-            $provider = New-Object MSSQLLogProvider($Namespace, $Configuration)
-        }
-        elseif ($sb.'Provider' -eq "PSText") {
-            $provider = New-Object TextLogProvider($Namespace, $Configuration)
-        }
-    }
-    # ManifestProvider
-    elseif ($Type -eq "Manifest") {
-        if ($sb.ContainsKey('Server') -eq $true) {
-            $provider = New-Object MSSQLManifestProvider($Namespace, $Configuration)
-        }
-        elseif ($sb.ContainsKey('Provider') -and $sb.'Provider' -eq "PSText") {
-            $provider = New-Object TextManifestProvider($Namespace, $Configuration)
-        }
-        else {
-            $provider = New-Object NoManifestProvider($Namespace, $Configuration)
-        }
-    }
-    # DataProvider
-    elseif ($Type -eq "Data") {
-        if ($sb.ContainsKey('Server') -eq $true) {
-            $provider = New-Object MSSQLDataProvider($Namespace, $Configuration)
-        }
-        elseif ($sb.ContainsKey('Provider') -and $sb.'Provider' -eq "PSText") {
-            $provider = New-Object TextDataProvider($Namespace, $Configuration)
-        }
-    }
+    $type = $sb.'PSProvider'
 
+    # Create and return the specific provider type
+    $null = $sb.Remove("PSProvider")        # must remove PSProvider since it's unsupported by many database connection strings
+    $Configuration."${Namespace}ConnectionString" = $sb.ConnectionString
+    $provider = (New-Object -TypeName "$type" -ArgumentList $Namespace, $Configuration)
     if ($provider -eq $null) {
         throw "No Provider available for connection string"
     }
@@ -90,7 +64,7 @@ function New-Provider([string] $Type, [hashtable] $Configuration, [string] $Name
 # Process Manifest
 try {
     # Create Log Provider
-    $pLog = New-Provider "Log" $Log
+    $pLog = New-Provider $Log
     $pLog.BeginLog()
 
     $pLog.WriteInformation("PowerSync Started")
@@ -100,9 +74,9 @@ try {
     # and that the configuration for the source/target was set on the command line. We'll still 
     # need manifest provider so that downstream code works, it just won't be connected to anything.
     if ($Manifest -eq $null) {
-        $Manifest = @{ConnectionString = ""}
+        $Manifest = @{ConnectionString = "PSProvider=NoManifestProvider"}
     }
-    $pManifest = New-Provider "Manifest" $Manifest
+    $pManifest = New-Provider $Manifest
     $manifestContent = $pManifest.ReadManifest()
     
     foreach ($item in $manifestContent) {
@@ -116,8 +90,8 @@ try {
             $targetConfig = $pManifest.OverrideManifest("Target", $Target, "", $item)
             
             # Create connections to source and destination for the current manifest item
-            $pSource = New-Provider "Data" $sourceConfig 'Source'
-            $pTarget = New-Provider "Data" $targetConfig 'Target'
+            $pSource = New-Provider $sourceConfig 'Source'
+            $pTarget = New-Provider $targetConfig 'Target'
 
             # Prepare Source
             $writeback = $pSource.Prepare()
@@ -128,8 +102,10 @@ try {
             $pManifest.WriteManifestItem($writeback)
 
             # Extract and Load (writeback not supported)
-            $reader = $pSource.Extract()
-            $pTarget.Load($reader)
+            $extract = $pSource.Extract()
+            [System.Data.IDataReader] $reader = $extract[0]
+            [System.Collections.ArrayList] $schemaInfo = $extract[1]
+            $pTarget.Load($reader, $schemaInfo)
 
             # Transform Target
             $writeback = $pTarget.Transform()

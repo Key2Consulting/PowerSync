@@ -15,21 +15,21 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot"
 
 . $PSScriptRoot\..\Script\PowerSync `
     -Log @{
-        ConnectionString = "Provider=PSText;Data Source=$testFolder\Log.csv;Header=True;Format=CSV"
+        ConnectionString = "PSProvider=TextLogProvider;FilePath=$testFolder\Log.csv;Header=True;Format=CSV"
     } `
     -Source @{
-        ConnectionString = "Provider=PSText;Data Source=$dataFolder\SampleIn.csv;Header=True;Format=CSV";
+        ConnectionString = "PSProvider=TextDataProvider;FilePath=$dataFolder\Sample2.csv;Header=True;Format=CSV;Quoted=True";
         PrepareScript = "$testFolder\Package\PrepareSource.sql";
         ExtractScript = "$testFolder\Package\Extract.sql";
         Timeout = 3600;
     } `
     -Target @{
-        ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
+        ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
         PrepareScript = "$testFolder\Package\PrepareTarget.sql";
         TransformScript = "$testFolder\Package\Transform.sql";
         TableName = "dbo.ManifestLocalDBTest1"
         AutoIndex = $true;
-        AutoCreate = $false;
+        AutoCreate = $true;
         Overwrite = $true;
         BatchSize = 10000;
     }
