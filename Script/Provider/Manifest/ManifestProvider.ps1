@@ -1,10 +1,17 @@
-# Represents the abstract base class for the ManifestProvider interface
+<#
+.COPYRIGHT
+Copyright (c) Key2 Consulting, LLC. All rights reserved. Licensed under the MIT license.
+See LICENSE in the project root for license information.
+.DESCRIPTION
+Represents the abstract base class for the ManifestProvider interface.
+#>
 class ManifestProvider : Provider {
     [System.Collections.ArrayList] $Manifest
 
     ManifestProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
     }
 
+    # Reads the entirety of a manifest and prepares it for processing.
     [System.Collections.ArrayList] ReadManifest() {
         # If we haven't loaded the manifest, do it now
         $runtimeID = 1
@@ -18,6 +25,7 @@ class ManifestProvider : Provider {
         return $this.Manifest
     }
 
+    # Writes changed configuration back to a manifest.
     [void] WriteManifestItem([hashtable]$ManifestItem) {
         if ($ManifestItem) {
             # Find the manifest item from our internal list
@@ -38,12 +46,12 @@ class ManifestProvider : Provider {
         }
     }
 
-    # Implemented by derived classes to fetch the entire manifest from storage
+    # Implemented by derived classes to fetch the entire manifest from storage. Not intended to be called directly.
     [System.Collections.ArrayList] FetchManifest() {
         throw "Not Implemented"
     }
 
-    # Implemented by derived classes to commit a manifest entry to storage
+    # Implemented by derived classes to commit a manifest entry to storage. Not intended to be called directly.
     [void] CommitManifestItem([hashtable]$ManifestItem) {
         throw "Not Implemented"
     }
@@ -62,18 +70,6 @@ class ManifestProvider : Provider {
             $nsKey = $BaseNamespace + $key
             if ($h.ContainsKey($nsKey) -eq $false) {
                 $h."$nsKey" = $Base."$key"
-            }
-        }
-        return $h
-    }
-    
-    [hashtable] SubtractManifest([hashtable]$Base, [hashtable]$Subtract, [string] $Prefix) {
-        # Start with the base values then remove
-        $h = $Base
-        foreach ($key in $Subtract.Keys) {
-            $cleanKey = $key.Replace($Prefix, "")
-            if ($Base.ContainsKey($cleanKey) -eq $true) {
-                $Base.Remove($cleanKey)
             }
         }
         return $h

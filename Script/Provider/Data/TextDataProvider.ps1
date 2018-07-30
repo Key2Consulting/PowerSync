@@ -40,7 +40,7 @@ class TextDataProvider : DataProvider, System.Data.IDataReader {
 
         # Read the first line to extract column information. Even if no header is set, we
         # still need to know how many columns there are.
-        $l = $this.FileReader.ReadLine()                
+        $l = $this.FileReader.ReadLine()
         $matches = [regex]::Matches($l, $this.Regex, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Multiline)                
         $this.ReadBuffer = (1..$matches.Count)      # preallocate once and only once for performance
         $this.SchemaInfo = New-Object System.Collections.ArrayList
@@ -99,6 +99,9 @@ class TextDataProvider : DataProvider, System.Data.IDataReader {
     }
 
     [bool] Read() {
+        # NOTE: The overhead of calling a method in PowerShell has a significant impact on performance since this method is called for every
+        # extracted record (almost double). Another option is to port this into a separate assembly, or use Add-Type to compile .NET code.
+        
         $l = $this.FileReader.ReadLine()        # how can row delimeter be applied?
         if ($l -eq $null) {
             $this.FileReader.Close()

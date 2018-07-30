@@ -3,15 +3,71 @@
 Copyright (c) Key2 Consulting, LLC. All rights reserved. Licensed under the MIT license.
 See LICENSE in the project root for license information.
 .DESCRIPTION
-Executes an extraction query against a source, and copies the results into a new table on the destination. This command only supports full extractions, 
-but it will publish in a transactionally consistent manner (i.e. does not drop then recreate, but rather stages and swaps).
+The main entry point for the PowerSync command line. PowerSync can handle basic data integration scenarios using an ELT strategy (Extract, 
+Load, THEN Transform). The following data integration features are supported:
+ - Copy a table or the results of a query into a new target database table.
+ - Support a variety of sources and targets. For instance, can copy from CSV files to MySQL, or SQL to SQLDW.
+ - Full or incremental extractions.
+ - Supports logging, to a variety of targets (i.e. files, database tables).
+ - Processing is data driven, so can add/remove data feeds with ease.
+ - Highly customizable by client. PowerSync handles the heavy lifting, but leaves case specific requirements to its users.
+ - Publish in a transactionally consistent manner (i.e. does not drop then recreate, but rather stages and swaps).
+
+The key concepts in PowerSync are:
+ - Manifest: Identifies all data feeds to process. Feeds include a source and target. Manifests can also be written back to, for instance to save last run date.
+ - Source: The location where data is being extracted.
+ - Target: The destination where data is being loaded and transformed.
+ - Log: PowerSync includes a logging framework, which can be integrated into other logging frameworks.
+ - Provider Model: The primary components driving PowerSync are based on a provider model, which can be extended with new storage platforms. Each provider 
+   defines the common interface all providers must support.
+ - Provider Configuration: The set of configurations defined and used by the different provider components (i.e. Source, Target, Manifest, Log), and can be set via command line, manifest, or both.
+ - Package Configuration: The collection of customizations (scripts, manifests, etc) created and managed by client code.
+
+Manifests are the workhorse of the process. Manifests identify each and every data feed, as well as provider configurations allowing each feed to be 
+customized. The provider configuration passed into the command-line is overlayed with configuration retrieved from the manifest (must include namespace 
+i.e. SourceTableName instead of just TableName). PowerSync also supports writebacks to the manifest itself. This is useful for tracking runtime 
+information like the last incremental extraction value (for incremental loads), the last run date/time, or count of extracted records. Operations are also 
+logged to a file.
+
+Evens execute in the following order:
+ 1) Prepare (Source and Target)
+ 2) Extract (Source)
+ 3) Load (Target)
+ 4) Transform (Target)
+
+Client provided scripts are used in each event to support customization. Each script is defined in separate .SQL files and (optionally) 
+passed into PowerSync. PowerSync attempts to pass every field from the provider configuration into each script using SQMCMD :setvar syntax, and also applies 
+SQLCMD variables that only exist in the script so that the script has no SQLCMD syntax prior to execution.
+
 .EXAMPLE
-TODO
+. PowerSync `
+    -Manifest @{
+        ConnectionString = "PSProvider=TextManifestProvider;Data Source=C:\Temp\Package\Manifest.csv;Header=True;Format=CSV"
+    } `
+    -Log @{
+        ConnectionString = "PSProvider=TextLogProvider;Data Source=C:\Temp\Log.csv;Header=True;Format=CSV"
+    } `
+    -Source @{
+        ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=C:\Temp\PowerSyncTestDB.mdf;";
+        PrepareScript = "C:\Temp\Package\PrepareSource.sql";
+        ExtractScript = "C:\Temp\Package\Extract.sql";
+        Timeout = 3600;
+    } `
+    -Target @{
+        ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=C:\Temp\PowerSyncTestDB.mdf;";
+        PrepareScript = "C:\Temp\Package\PrepareTarget.sql";
+        TransformScript = "C:\Temp\Package\Transform.sql";
+        AutoIndex = $true;
+        AutoCreate = $true;
+        Overwrite = $true;
+        BatchSize = 10000;
+    }
+
 .NOTES
 https://github.com/Key2Consulting/PowerSync/
 #>
 
-# Command Parameters
+# Command-line Parameters
 param
 (
     [Parameter(HelpMessage = "Manifest configuration information.", Mandatory = $false)]
@@ -40,7 +96,7 @@ Set-StrictMode -Version 2
 . "$PSScriptRoot\Provider\Data\MSSQLDataProvider.ps1"
 . "$PSScriptRoot\Provider\Data\TextDataProvider.ps1"
 
-# A data factory to create the correct Provider implementation based on inspecting the ConnectionString and Type
+# A data factory to create the correct Provider implementation based on the ConnectionString
 function New-Provider([hashtable] $Configuration, [string] $Namespace = '') {
     # The provider instance
     $provider = $null
@@ -61,7 +117,8 @@ function New-Provider([hashtable] $Configuration, [string] $Namespace = '') {
     return $provider
 }
 
-# Process Manifest
+# Process Manifest (primary execution loop)
+#
 try {
     # Create Log Provider
     $pLog = New-Provider $Log
@@ -135,5 +192,5 @@ catch {
     $pLog.WriteException($_.exception, $true)
 }
 
-$pLog.WriteInformation("PowerSync-Manifest Completed in $($stopWatch.Elapsed.TotalSeconds)")
+$pLog.WriteInformation("PowerSync-Manifest Completed in $($stopWatch.Elapsed.TotalSeconds) seconds.")
 $pLog.EndLog()
