@@ -4,17 +4,27 @@ class TextDataProvider : DataProvider, System.Data.IDataReader {
     [bool] $Header
     [bool] $Quoted
     [string] $RowDelim = '`r`n'
-    [string] $ColDelim = ','
+    [string] $ColDelim
     [string] $QuoteDelim = '"'
     [System.IO.StreamReader] $FileReader
     [string[]] $ReadBuffer
+    [string] $Regex
     [string] $CSVRegex = '(?:^|,)(?=[^"]|(")?)"?((?(1)[^"]*|[^,"]*))"?(?=,|$)'      # from https://stackoverflow.com/questions/18144431/regex-to-split-a-csv
+    [string] $TabRegex = '(?:^|\t)(?=[^"]|(")?)"?((?(1)[^"]*|[^\t"]*))"?(?=\t|$)'
 
     TextDataProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
         $this.FilePath = $this.ConnectionStringParts["filepath"]
         $this.Format = $this.ConnectionStringParts["format"]
         $this.Header = $this.ConnectionStringParts["header"]
         $this.Quoted = $this.ConnectionStringParts["quoted"]
+        if ($this.Format -eq "CSV") {
+            $this.Regex = $this.CSVRegex
+            $this.ColDelim = ','
+        }
+        else {      # assume tab
+            $this.Regex = $this.TabRegex
+            $this.ColDelim = '`t'
+        }
     }
 
     [hashtable] Prepare() {
@@ -31,9 +41,9 @@ class TextDataProvider : DataProvider, System.Data.IDataReader {
         # Read the first line to extract column information. Even if no header is set, we
         # still need to know how many columns there are.
         $l = $this.FileReader.ReadLine()                
-        $matches = [regex]::Matches($l, $this.CSVRegex, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Multiline)                
+        $matches = [regex]::Matches($l, $this.Regex, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Multiline)                
         $this.ReadBuffer = (1..$matches.Count)      # preallocate once and only once for performance
-        $this.SchemaInfo = New-Object System.Collections.ArrayList        
+        $this.SchemaInfo = New-Object System.Collections.ArrayList
         for ($i = 0; $i -lt $matches.Count; $i++) {
             $this.ReadBuffer[$i] = $matches[$i].Value
             if ($this.ReadBuffer[$i][0] -eq $this.ColDelim) {
@@ -96,7 +106,7 @@ class TextDataProvider : DataProvider, System.Data.IDataReader {
         }
         
         # Use REGEX to parse out the CSV fields. Will handle quotes.
-        $matches = [regex]::Matches($l, $this.CSVRegex, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Multiline)
+        $matches = [regex]::Matches($l, $this.Regex, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Multiline)
         for ($i = 0; $i -lt $matches.Count; $i++) {
             $this.ReadBuffer[$i] = $matches[$i].Value
             if ($this.ReadBuffer[$i][0] -eq $this.ColDelim) {

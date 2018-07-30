@@ -12,7 +12,6 @@ class MSSQLDataProvider : DataProvider {
     }
 
     [object[]] Extract() {
-        throw "TODO: CREATE NEW SCHEMAINFO"
         # Attempt to load the Extract Script
         $sql = $this.CompileScript("ExtractScript")
         if ($sql -eq $null) {
@@ -26,7 +25,28 @@ class MSSQLDataProvider : DataProvider {
         $cmd = $this.Connection.CreateCommand()
         $cmd.CommandText = $sql
         $cmd.CommandTimeout = $this.Timeout
-        return $cmd.ExecuteReader()
+        $r = $cmd.ExecuteReader()
+
+        # Create the SchemaInfo list using the reader's SchemaTable
+        $this.SchemaInfo = New-Object System.Collections.ArrayList
+        [System.Data.DataTable] $st = $r.GetSchemaTable()
+        foreach ($col in $st) {
+            # Create an entry in our schema info array for callers and later use
+            $s = New-Object SchemaInformation
+            $s.Name = $col[0]
+            $s.Size = $col[2]
+            $s.DataType = $col[24]
+            $s.IsNullable = $col[13]
+            $s.Precision = $col[3]
+            $s.Scale = $col[4]
+            # If size is MAX, convert to -1 to indicate unlimited (PowerSync convention)
+            if ($s.Size -eq 2147483647) {
+                $s.Size = -1
+            }
+            $this.SchemaInfo.Add($s)
+        }        
+
+        return $r, $this.SchemaInfo
     }
 
     [hashtable] Load([System.Data.IDataReader] $DataReader, [System.Collections.ArrayList] $SchemaInfo) {
@@ -190,32 +210,3 @@ class MSSQLDataProvider : DataProvider {
         }
     }    
 }
-
-<#
-    [void] RenameTable([string]$OldTableName, [string]$NewTableName, [switch]$Overwrite) {
-        $t = $this.GetTableName($NewTableName)
-
-        # If overwrite is enabled, drop target table first.
-        if ($Overwrite) {
-            $this.ExecNonQuery(`
-                    "
-                SET XACT_ABORT ON
-                BEGIN TRAN
-                IF (OBJECT_ID('$NewTableName') IS NOT NULL)
-                    DROP TABLE $NewTableName
-                EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'
-                COMMIT TRAN
-                ")
-        }
-        else {
-            $this.ExecNonQuery("EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'")
-        }
-    }
-
-    [void] DropTable([string]$TableName) {
-        $this.ExecNonQuery(`
-                "IF (OBJECT_ID('$TableName') IS NOT NULL)
-            DROP TABLE $TableName")
-    }
-}
-#>

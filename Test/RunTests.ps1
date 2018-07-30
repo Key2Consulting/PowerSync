@@ -12,13 +12,13 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot"
 ######################################################
 
 # Test manifest file extraction from CSV to SQL
-
+#
 . $PSScriptRoot\..\Script\PowerSync `
     -Log @{
         ConnectionString = "PSProvider=TextLogProvider;FilePath=$testFolder\Log.csv;Header=True;Format=CSV"
     } `
     -Source @{
-        ConnectionString = "PSProvider=TextDataProvider;FilePath=$dataFolder\Sample2.csv;Header=True;Format=CSV;Quoted=True";
+        ConnectionString = "PSProvider=TextDataProvider;FilePath=$dataFolder\Sample1.csv;Header=True;Format=CSV;Quoted=True";
         PrepareScript = "$testFolder\Package\PrepareSource.sql";
         ExtractScript = "$testFolder\Package\Extract.sql";
         Timeout = 3600;
@@ -27,7 +27,7 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot"
         ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
         PrepareScript = "$testFolder\Package\PrepareTarget.sql";
         TransformScript = "$testFolder\Package\Transform.sql";
-        TableName = "dbo.ManifestLocalDBTest1"
+        TableName = "dbo.CSVToSSQLTest1"
         AutoIndex = $true;
         AutoCreate = $true;
         Overwrite = $true;
@@ -35,22 +35,22 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot"
     }
 
 # Test manifest file extraction from SQL to SQL
-<#
+#
 . $PSScriptRoot\..\Script\PowerSync `
     -Manifest @{
-        ConnectionString = "Provider=PSText;Data Source=$testFolder\Package\Manifest.csv;Header=True;Format=CSV"
+        ConnectionString = "PSProvider=TextManifestProvider;Data Source=$testFolder\Package\Manifest.csv;Header=True;Format=CSV"
     } `
     -Log @{
-        ConnectionString = "Provider=PSText;Data Source=$testFolder\Log.csv;Header=True;Format=CSV"
+        ConnectionString = "PSProvider=TextLogProvider;Data Source=$testFolder\Log.csv;Header=True;Format=CSV"
     } `
     -Source @{
-        ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
+        ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
         PrepareScript = "$testFolder\Package\PrepareSource.sql";
         ExtractScript = "$testFolder\Package\Extract.sql";
         Timeout = 3600;
     } `
     -Target @{
-        ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
+        ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
         PrepareScript = "$testFolder\Package\PrepareTarget.sql";
         TransformScript = "$testFolder\Package\Transform.sql";
         AutoIndex = $true;
@@ -58,7 +58,7 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot"
         Overwrite = $true;
         BatchSize = 10000;
     }
-#>
+
 <#
 FUTURE TESTS: 
  - AutoCreate false
