@@ -28,6 +28,7 @@ class TextManifestProvider : ManifestProvider {
     }
 
     [void] CommitManifestItem([hashtable]$ManifestItem) {
+        [System.Collections.ArrayList] $newList = $null
         try {
             # We're not smart enough to write a single line item to the manifest, and instead rewrite 
             # the entire file. This could be optimized, which would also enable the possibility of concurrency.
@@ -38,11 +39,23 @@ class TextManifestProvider : ManifestProvider {
                 $o = [PSCustomObject] $i
                 $newList.Add($o)
             }
-            
-            $newList | Export-Csv -Path $this.Path -NoTypeInformation -Force
+            $newList | Export-Csv -Path $this.Path -Force
         }
         catch {
-            $this.HandleException($_.exception)
+            # Oddly, the export sometimes fails, presumably because the file is still being written
+            # to from the last save.  When this occurs, we'll wait a second, and try again.
+            if ($newList) {
+                try {
+                    Start-Sleep 1
+                    $newList | Export-Csv -Path $this.Path -Force
+                }
+                catch {
+                    $this.HandleException($_.exception)
+                }
+            }
+            else {
+                $this.HandleException($_.exception)
+            }
         }
     }
 }
