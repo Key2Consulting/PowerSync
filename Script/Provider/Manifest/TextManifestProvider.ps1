@@ -9,29 +9,53 @@ class TextManifestProvider : ManifestProvider {
     }
 
     [System.Collections.ArrayList] FetchManifest() {
-        $csvManifest = Import-Csv $this.Path
-        # Comes out as an array list of pscustomobjects.  Need to convert to arraylist of hashtables.
-        $this.Manifest = New-Object System.Collections.ArrayList
-        foreach ($i in $csvManifest) {
-            $h = [ordered] @{}
-            $i.psobject.properties | Foreach { $h[$_.Name] = $_.Value }
-            $this.Manifest.Add($h)
+        try {
+            $csvManifest = Import-Csv $this.Path
+            # Comes out as an array list of pscustomobjects.  Need to convert to arraylist of hashtables.
+            $this.Manifest = New-Object System.Collections.ArrayList
+            foreach ($i in $csvManifest) {
+                $h = [ordered] @{}
+                $i.psobject.properties | Foreach { $h[$_.Name] = $_.Value }
+                $this.Manifest.Add($h)
+            }
+            
+            return $this.Manifest
         }
-        
-        return $this.Manifest
+        catch {
+            $this.HandleException($_.exception)
+            return $null
+        }
     }
 
     [void] CommitManifestItem([hashtable]$ManifestItem) {
-        # We're not smart enough to write a single line item to the manifest, and instead rewrite 
-        # the entire file. This could be optimized, which would also enable the possibility of concurrency.
-        #
-        # Convert array list of hashtable objects back to pscustomobjects
-        $newList = New-Object System.Collections.ArrayList
-        foreach ($i in $this.Manifest) {
-            $o = [PSCustomObject] $i
-            $newList.Add($o)
+        [System.Collections.ArrayList] $newList = $null
+        try {
+            # We're not smart enough to write a single line item to the manifest, and instead rewrite 
+            # the entire file. This could be optimized, which would also enable the possibility of concurrency.
+            #
+            # Convert array list of hashtable objects back to pscustomobjects
+            $newList = New-Object System.Collections.ArrayList
+            foreach ($i in $this.Manifest) {
+                $o = [PSCustomObject] $i
+                $newList.Add($o)
+            }
+            $newList | Export-Csv -Path $this.Path -Force
         }
-        
-        $newList | Export-Csv -Path $this.Path -NoTypeInformation
+        catch {
+            # Oddly, the export sometimes fails, presumably because the file is still being written
+            # to from the last save.  When this occurs, we'll wait a second, and try again.
+            if ($newList) {
+                try {
+                    Start-Sleep 1
+                    $newList | Export-Csv -Path $this.Path -Force
+                }
+                catch {
+                    $this.HandleException($_.exception)
+                }
+            }
+            else {
+                $this.HandleException($_.exception)
+            }
+        }
     }
 }

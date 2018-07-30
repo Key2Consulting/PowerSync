@@ -1,5 +1,5 @@
 :setvar SourceTableName "sys.objects"
-:setvar MaxRows "100"
+:setvar SourceMaxRows "100"
 
-SELECT TOP $(MaxRows) * 
+SELECT TOP $(SourceMaxRows) * 
 FROM $(SourceTableName)
