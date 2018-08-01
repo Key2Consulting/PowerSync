@@ -40,7 +40,7 @@ class Provider {
 
         # This regular expression is used to identify :setvar commands in the TSQL script, and uses capturing 
         # groups to separate the variable name from the value.
-        $regex = ':setvar\s*([A-Za-z0-9]*)\s*"?([A-Za-z0-9 .]*)"?'
+        $regex = ':setvar\s*([A-Za-z0-9]*)\s*"?([A-Za-z0-9_\[\] .]*)"?'
         # Find the next match, remove the :setvar line from the script, but also replace
         # any reference to it with the actual value. This eliminates any SQLCMD syntax from
         # the script prior to execution.
