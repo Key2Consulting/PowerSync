@@ -4,7 +4,7 @@ class MSSQLLogProvider {
         $this.Configuration = $Configuration
     }
 
-    [void] WriteLog([datetime] $MessageDate, [string] $MessageType, [string] $Message, [string] $VariableName, [object] $VariableValue) {
+     [void] WriteLog([string] $LogID, [string] $ParentLogID, [datetime] $MessageDate, [string] $MessageType, [string] $Message, [string] $VariableName, [object] $VariableValue) {
         #throw "Not Implemented"
     }
     

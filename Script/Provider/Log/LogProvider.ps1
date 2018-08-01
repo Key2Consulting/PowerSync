@@ -34,6 +34,17 @@ class LogProvider : Provider {
     [string] GetLogID() {
         return $this.CallStack[$this.CallStack.Count - 1].ToString()
     }
+     
+    # Identifies the current scope.
+    [string] GetParentLogID([string] $LogID) {
+    #TODO: Get Parent from variable
+        if ($this.CallStack.Count -gt 1) {
+            return $this.CallStack[$this.CallStack.Count - 2].ToString()
+        }
+        else {
+            return $null
+        }
+    }
 
     # Writes verbose information to the log.
     [void] WriteInformation([string] $Message) {
@@ -64,11 +75,15 @@ class LogProvider : Provider {
             Write-Host "${MessageType}: $Message"
         }
         # Call derived class specific implementation of log saving
-        $this.WriteLog((Get-Date), $MessageType, $Message, $VariableName, $VariableValue)
+
+        $LogID = $this.GetLogID()
+        $ParentLogID = $this.GetParentLogID($LogID)
+        
+        $this.WriteLog($LogID, $ParentLogID, (Get-Date), $MessageType, $Message, $VariableName, $VariableValue)
     }
     
     # Saves the log entry (this method must be overridden in derived classes).
-    [void] WriteLog([datetime] $MessageDate, [string] $MessageType, [string] $Message, [string] $VariableName, [object] $VariableValue) {
+    [void] WriteLog([string] $LogID, [string] $ParentLogID, [datetime] $MessageDate, [string] $MessageType, [string] $Message, [string] $VariableName, [object] $VariableValue) {
         throw "Not Implemented"
     }
 
