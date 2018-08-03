@@ -96,6 +96,9 @@ Set-StrictMode -Version 2
 . "$PSScriptRoot\Provider\Data\MSSQLDataProvider.ps1"
 . "$PSScriptRoot\Provider\Data\TextDataProvider.ps1"
 
+
+[string]$Test = $PSScriptRoot
+
 # A data factory to create the correct Provider implementation based on the ConnectionString
 function New-Provider([hashtable] $Configuration, [string] $Namespace = '') {
     # The provider instance
@@ -121,7 +124,7 @@ function New-Provider([hashtable] $Configuration, [string] $Namespace = '') {
 #
 try {
     # Create Log Provider
-    $pLog = New-Provider $Log
+    $global:pLog = New-Provider $Log
     $pLog.BeginLog()
 
     $pLog.WriteInformation("PowerSync Started")

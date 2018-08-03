@@ -106,6 +106,7 @@ class MSSQLDataProvider : DataProvider {
     }
 
     [hashtable] Transform() {
+        # Try Catch with $global:pLog 
         return $this.ExecQuery("TransformScript", $true, $null)
     }
 
