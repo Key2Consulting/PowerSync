@@ -14,12 +14,11 @@ class ManifestProvider : Provider {
     # Reads the entirety of a manifest and prepares it for processing.
     [System.Collections.ArrayList] ReadManifest() {
         # If we haven't loaded the manifest, do it now
-        $runtimeID = 1
         if ($this.Manifest -eq $null) {
             $this.Manifest = $this.FetchManifest()
             # Add a runtime key column so we can correlate it during updates
             foreach ($item in $this.Manifest) {
-                $item.RuntimeID = $runtimeID++
+                $item.RuntimeID = $this.GetUniqueID()
             }
         }
         return $this.Manifest
