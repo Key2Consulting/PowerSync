@@ -5,6 +5,7 @@
 	CREATE TABLE [Log].[Execution](
 		[LogExecutionID] [int] IDENTITY(1,1) NOT NULL,
 		[LogID] [varchar](50) NULL,
+		[ParentLogID] [varchar](50) NULL,
 		[ScriptName] [varchar](50) NULL,
 		[StartDateTime] [smalldatetime] NULL,
 		[EndDateTime] [smalldatetime] NULL,
@@ -17,6 +18,8 @@
 	GO
 
 
+
+
 IF (OBJECT_ID('[Log].[ExecutionDetails]') IS NULL)
 
 	CREATE TABLE [Log].[ExecutionDetails](
@@ -26,10 +29,13 @@ IF (OBJECT_ID('[Log].[ExecutionDetails]') IS NULL)
 		[MessageType] [varchar](50) NULL,
 		[MessageText] [varchar](8000) NULL,
 		[Severity] [int] NULL,
-	CONSTRAINT [PK_Log_ExecutionDetails] PRIMARY KEY CLUSTERED ([ExecutionDetailsID] ASC
-		)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	 CONSTRAINT [PK_Log_ExecutionDetails] PRIMARY KEY CLUSTERED 
+	(
+		[ExecutionDetailsID] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
 	GO
+
 
 
  IF (OBJECT_ID('[dbo].[Manifest]') IS NULL)
