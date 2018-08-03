@@ -5,15 +5,21 @@ class MSSQLDataProvider : DataProvider {
 
     MSSQLDataProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
         $this.Timeout = $this.GetConfigSetting("Timeout", 3600)
+        $this.SetDefaultScript("AutoCreateScript", "MSSQLAutoCreate.sql")
+        $this.SetDefaultScript("AutoSwapScript", "MSSQLAutoSwap.sql")
+        $this.SetDefaultScript("AutoIndexScript", "MSSQLAutoIndex.sql")
+        # Always remove any name enclosures (i.e. brackets), making the logic in script templates easier to process.
+        $this.Schema = $this.Schema.Replace("[", "").Replace("]", "")
+        $this.Table = $this.Table.Replace("[", "").Replace("]", "")
     }
 
     [hashtable] Prepare() {
-        return $this.ExecQuery("PrepareScript", $true)
+        return $this.ExecQuery("PrepareScript", $true, $null)
     }
 
     [object[]] Extract() {
         # Attempt to load the Extract Script
-        $sql = $this.CompileScript("ExtractScript")
+        $sql = $this.CompileScript("ExtractScript", $this.Configuration)
         if ($sql -eq $null) {
             throw "No ExtractScript set."
         }
@@ -50,43 +56,76 @@ class MSSQLDataProvider : DataProvider {
     }
 
     [hashtable] Load([System.Data.IDataReader] $DataReader, [System.Collections.ArrayList] $SchemaInfo) {
-        if ($this.TableName -eq $null) {
-            throw "TableName is a required field."
+        if ($this.Schema -eq $null -or $this.Table -eq $null) {
+            throw "Provider configuration missing Schema and/or Table."
         }
 
-        # If AutoCreate is set, create the target table using the schema of the incoming data stream. However,
-        # always create that table with a unique identifier to avoid any name collisions (will swap out with final
-        # table later on).
-        $loadIntoTableName = $this.TableName
+        # If AutoCreate is set, execute the create script
+        $loadTableFQName = ""
+        $additionalConfig = $null
         if ($this.GetConfigSetting("AutoCreate", $true) -eq $true) {
-            $this.TempTableName = $this.GetUniqueID($this.TableName, 128)
-            $loadIntoTableName = $this.TempTableName
-            $schemaTable = $DataReader.GetSchemaTable()
-            $createTableSQL = $this.ScriptCreateTable($this.TempTableName, $SchemaInfo)
-            $this.ExecQuery($createTableSQL, $true)
+            # Convert the SchemaInfo array into SQL statement in the INSERT VALUES format i.e. ('Field', Field), ('Field', Field).
+            # Passing an array to a script is tricky, so we do this so it's easy to create a table for processing.
+            $s = ""
+            foreach ($i in $SchemaInfo) {
+                $s += "('$($i.Name)', $($i.Size), $($i.Precision), $($i.Scale), $([int]$i.IsKey), $([int]$i.IsNullable), $([int]$i.IsIdentity), '$($i.DataType)'),"
+            }
+            $s = $s.Substring(0, $s.Length - 1)
+            # Create additional configuration parameters for execution of AutoCreateScript.
+            $additionalConfig = @{
+                "$($this.Namespace)SchemaInfo" = $s
+                "$($this.Namespace)LoadTable" = "$($this.Table)$($this.Configuration.RuntimeID)"
+            }
+            $this.ExecQuery("AutoCreateScript", $false, $additionalConfig)
+            # We now must load into the load table
+            $loadTableFQName = "[$($this.Schema)].[$($this.Table)$($this.Configuration.RuntimeID)]"
+        }
+        else {
+            # Otherwise, load into the pre-created table defined in the manifest
+            $loadTableFQName = "[$($this.Schema)].[$($this.Table)]"
         }
         
         # Use SqlBulkCopy to import the data
         $blk = New-Object Data.SqlClient.SqlBulkCopy($this.ConnectionString)
-        $blk.DestinationTableName = $loadIntoTableName
+        $blk.DestinationTableName = $loadTableFQName
         $blk.BulkCopyTimeout = $this.Timeout
         $blk.BatchSize = $this.GetConfigSetting("BatchSize", 10000)
         $blk.WriteToServer($DataReader)
 
-        # Rename temp table to final table
-        if ($this.TempTableName) {
-            $this.RenameTable($this.TempTableName, $this.TableName, $this.GetConfigSetting("Overwrite", $true))
+        # If AutoIndex is set, execute AutoIndex script
+        if ($this.GetConfigSetting("AutoIndex", $true) -eq $true) {
+            $this.ExecQuery("AutoIndexScript", $false, $additionalConfig)
         }
+
+        # If AutoCreate is set, we must swap the "temp" load table as the final one.
+        if ($this.GetConfigSetting("AutoCreate", $true) -eq $true) {
+            $this.ExecQuery("AutoSwapScript", $false, $additionalConfig)
+        }
+
         return $null;
     }
-    
+
     [hashtable] Transform() {
-        return $this.ExecQuery("TransformScript", $true)
+        return $this.ExecQuery("TransformScript", $true, $null)
     }
 
-    [hashtable] ExecQuery([string] $ScriptName, [bool] $SupportWriteback) {
-        $sql = $this.CompileScript($ScriptName)
-        $h = $this.Configuration
+    [void] Close() {
+        # If a connection is established, close connection now.
+        if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
+            $this.Connection.Close()
+        }
+    }
+
+    [hashtable] ExecQuery([string] $ScriptName, [bool] $SupportWriteback, [hashtable] $AdditionalConfiguration) {
+        # If caller has additional configuration to apply on top of provider configuration
+        if ($AdditionalConfiguration) {
+            $h = $this.Configuration + $AdditionalConfiguration
+        }
+        else {
+            $h = $this.Configuration
+        }
+        # Compile and Execute the script
+        $sql = $this.CompileScript($ScriptName, $h)
         if ($sql -ne $null) {
             try {
                 # Execute Query
@@ -117,96 +156,4 @@ class MSSQLDataProvider : DataProvider {
         }
         return $h
     }
-
-    [void] Close() {
-        # If a connection is established, close connection now.
-        if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
-            $this.Connection.Close()
-        }
-    }
-
-     [string] ScriptCreateTable([string]$TableName, [System.Collections.ArrayList] $SchemaInfo) {
-        $colScript = ""
-        foreach ($col in $SchemaInfo) {
-            # Extract key variables from the Table Schema
-            $name = $col.Name
-            $size = $col.Size
-            $precision = $col.Precision
-            $scale = $col.Scale
-            $isKey = $col.IsKey
-            $isNullable = $col.IsNullable
-            $isIdentity = $col.IsIdentity
-            $type = $col.DataType
-
-            # Append column to create script
-            $colScript += "`r`n [$name] [$type]"
-
-            # Some data types require special processing...
-            if ($type -eq 'VARCHAR' -or $type -eq 'NVARCHAR' -or $type -eq 'CHAR') {
-                if ($size -eq -1) {
-                    $colScript += '(MAX)'
-                }
-                else {
-                    $colScript += "($size)"
-                }
-            }
-            elseif ($type -eq 'DECIMAL') {
-                $colScript += "($precision, $scale)"
-            }
-            if ($isNullable) {
-                $colScript += ' NULL'
-            }
-            else {
-                $colScript += ' NOT NULL'
-            }
-            $colScript += ", "
-        }
-
-        # Remove last comma and return final script
-        $colScript = $colScript.Remove($colScript.Length - 2, 2)
-        $s = $this.GetTablePart($TableName, 0)
-        $t = $this.GetTablePart($TableName, 1)
-        return "CREATE TABLE [$s].[$t]($colScript)"
-    }
-
-    [string] GetTablePart([string] $TableName, [int] $Token) {
-        $parts = $TableName.Split('.')
-        if ($parts.Length -le 1) {
-            throw "TableName must be in the format Schema.Table"
-        }
-        return $parts[$Token].Replace('[', '').Replace(']', '')
-    }
-
-    [void] CreateAutoIndex([string]$TableName) {
-        try {
-            $s = $this.GetTablePart($this.TableName, 0)
-            $t = $this.GetTablePart($this.TableName, 1)
-            $i = $s + '_' + $t.Substring(0, $t.Length - 32)
-            $this.ExecNonQuery("CREATE CLUSTERED COLUMNSTORE INDEX [CCIX_$i] ON $TableName WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)")
-        }
-        catch {
-            # If the error is due to a column that cannot participate in a CCIX, then 
-            # create the next best kind of index
-            # TODO: DECIDE ON ANOTHER INDEX TYPE, EITHER NONCLUSTERED CCIX WITH THE INVALID COLS REMOVED, OR ???
-        }
-    }
-
-    [void] RenameTable([string] $OldTableName, [string] $NewTableName, [bool] $Overwrite) {
-        $t = $this.GetTablePart($NewTableName, 1)
-
-        # If overwrite is enabled, drop target table first.
-        if ($Overwrite) {
-            $this.ExecQuery("
-                SET XACT_ABORT ON
-                BEGIN TRAN
-                IF (OBJECT_ID('$NewTableName') IS NOT NULL)
-                    DROP TABLE $NewTableName
-                EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'
-                COMMIT TRAN
-                ", $false)
-        }
-        else {
-            $this.ExecQuery("EXECUTE sp_rename N'$OldTableName', N'$t', 'OBJECT'", $false)
-        }
-    }    
 }

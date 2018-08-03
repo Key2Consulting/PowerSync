@@ -1,5 +1,5 @@
 #TYPE System.Management.Automation.PSCustomObject
-"SourceTableName","TargetTableName","PublishTableName","ProcessType","IncrementalField","LastIncrementalValue","LastRunDateTime","RuntimeID"
-"sys.objects","Load.SQLToSQLTest1","dbo.SQLToSQLTest1","Full","create_date","","7/29/2018 9:35:52 PM","1"
-"sys.objects","Load.SQLToSQLTest2","dbo.SQLToSQLTest2","Incremental","modify_date","","7/29/2018 9:35:53 PM","2"
-"sys.columns","Load.SQLToSQLTest3","dbo.SQLToSQLTest3","Incremental","object_id","","7/29/2018 9:35:53 PM","3"
+"SourceSchema","SourceTable","TargetSchema","TargetTable","PublishSchema","ProcessType","IncrementalField","LastIncrementalValue","LastRunDateTime","RuntimeID"
+"","sys.objects","Load","SQLToSQLTest1","dbo","Full","create_date","","8/3/2018 11:20:27 AM","d5288f65110c4f46b3b6181695abaa89"
+"","sys.objects","Load","SQLToSQLTest2","dbo","Incremental","modify_date","","8/3/2018 11:20:27 AM","7c473e25afd047ceb9f0da54d7a45b7d"
+"","sys.columns","Load","SQLToSQLTest3","dbo","Incremental","object_id","","8/3/2018 11:20:27 AM","22f39a8330424909bb692cbcbd551fbc"
