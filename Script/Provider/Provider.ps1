@@ -27,10 +27,13 @@ class Provider {
     # Loads a TSQL script from disk, applies any SQLCMD variables passed in, and returns the compiled script. The final script should have no
     # reference to SQLCMD syntax, meaning :setvars that aren't set by the configuration should still get replaced/substituted.
     [string] CompileScript([string]$ScriptName) {
+        return $this.CompileScript($ScriptName, $null)
+    }
+
+    [string] CompileScript([string]$ScriptName, [hashtable] $Vars) {
         # The script variable could either be a file path or an actual script, so attempt
         # to load the script from disk first to figure it out.
         $scriptPath = $this.GetConfigSetting($ScriptName, $null)
-        $vars = $this.Configuration
         try {
             $script = [IO.File]::ReadAllText($scriptPath)
         }
@@ -40,7 +43,8 @@ class Provider {
 
         # This regular expression is used to identify :setvar commands in the TSQL script, and uses capturing 
         # groups to separate the variable name from the value.
-        $regex = ':setvar\s*([A-Za-z0-9]*)\s*"?([A-Za-z0-9 .]*)"?'
+        # Use non-PS quote for debugging REGEx:  :setvar\s*([A-Za-z0-9]*)\s*"?([A-Za-z0-9_\[\](',) .]*)"?.*\r?\n?
+        $regex = ':setvar\s*([A-Za-z0-9]*)\s*"?([A-Za-z0-9_\[\]('',) .]*)"?.*\r?\n?'
         # Find the next match, remove the :setvar line from the script, but also replace
         # any reference to it with the actual value. This eliminates any SQLCMD syntax from
         # the script prior to execution.
@@ -50,8 +54,11 @@ class Provider {
                 $script = $script.Remove($match.Index, $match.Length)
                 $name = $match.Groups[1].Value
                 $value = $match.Groups[2].Value
-                if ($vars.ContainsKey($name) -eq $true) {
-                    $value = $vars."$name"
+                if ($Vars.ContainsKey($name) -eq $true) {
+                    $value = $Vars."$name"
+                    if ($value -is [bool]) {        # bools get converted to strings in PS, but numerics (0 or 1) are native to database systems
+                        $value = [int]$value
+                    }
                 }
                 $script = $script.Replace('$(' + $name + ')', $value)
             }
@@ -60,6 +67,15 @@ class Provider {
         #     throw "Script $scriptPath was specified, but does not contain any TSQL logic."
         # }
         return $script
+    }
+
+    # Sets the default script for cases where clients do not supply one. Typically, default
+    # scripts are platform specific and defined within the concrete provider.
+    [void] SetDefaultScript([string] $ScriptName, [string] $DefaultScript) {
+        if ($this.Configuration.ContainsKey($ScriptName) -eq $false) {
+            $path = Resolve-Path -Path "$PSScriptRoot\..\DefaultScript\$DefaultScript"
+            $this.Configuration.Add("$($this.Namespace)$ScriptName", $path)
+        }
     }
 
     # Returns a configuration property, or a default value if doesn't exist.
@@ -74,12 +90,16 @@ class Provider {
     }
 
     # Returns a unique identifier using a GUID
+    [string] GetUniqueID() {
+        return $this.GetUniqueID("", 100)
+    }
+    
     [string] GetUniqueID([string] $BaseToken, [int]$MaxLength) {
         $guid = (New-Guid).ToString().Replace("-", "")
     
         # If BaseToken is passed in, add the GUID to the end of the BaseToken
         if ($BaseToken) {
-            $r = $BaseToken + "_" + $guid 
+            $r = $BaseToken + "_" + $guid
         }
         else {
             $r = $guid
