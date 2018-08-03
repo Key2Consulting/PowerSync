@@ -28,8 +28,10 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot"
     -Target @{
         ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
         PrepareScript = "$testFolder\Package\PrepareTarget.sql";
+        PreLoadScript = "$testFolder\Package\MSSQLCreateTable.sql";
         TransformScript = "$testFolder\Package\Transform.sql";
-        TableName = "dbo.CSVToSSQLTest1"
+        Schema = "Load"
+        Table = "CSVToSSQLTest1"
         AutoIndex = $true;
         AutoCreate = $true;
         Overwrite = $true;
@@ -97,7 +99,7 @@ $testFolder = Resolve-Path -Path "$PSScriptRoot"
         ConnectionString = "PSProvider=TextManifestProvider;Data Source=$testFolder\Package\Manifest.csv;Header=True;Format=CSV"
     } `
     -Log @{
-        ConnectionString = "PSProvider=TextLogProvider;Data Source=$testFolder\Log.csv;Header=True;Format=CSV"
+        ConnectionString = "PSProvider=TextLogProvider;FilePath=$testFolder\Log.csv;Header=True;Format=CSV"
     } `
     -Source @{
         ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
