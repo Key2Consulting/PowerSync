@@ -127,7 +127,7 @@ class MSSQLDataProvider : DataProvider {
         }
         # Compile and Execute the script
         $sql = $this.CompileScript($ScriptName, $h)
-        if ($sql -ne $null) {
+        if ($sql -ne "") {
             try {
                 # Execute Query
                 $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)

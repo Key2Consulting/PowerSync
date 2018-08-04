@@ -34,11 +34,14 @@ class Provider {
         # The script variable could either be a file path or an actual script, so attempt
         # to load the script from disk first to figure it out.
         $scriptPath = $this.GetConfigSetting($ScriptName, $null)
+        if ($scriptPath -eq $null) {
+            return ""
+        }
         try {
             $script = [IO.File]::ReadAllText($scriptPath)
         }
         catch {
-            $script = $ScriptName       # must be an actual script
+            $script = $scriptPath       # must be an actual script
         }
 
         # This regular expression is used to identify :setvar commands in the TSQL script, and uses capturing 

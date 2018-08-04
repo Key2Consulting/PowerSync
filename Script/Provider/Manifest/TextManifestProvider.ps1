@@ -37,9 +37,10 @@ class TextManifestProvider : ManifestProvider {
             $newList = New-Object System.Collections.ArrayList
             foreach ($i in $this.Manifest) {
                 $o = [PSCustomObject] $i
+                $o.PSObject.Properties.Remove('RuntimeID')
                 $newList.Add($o)
             }
-            $newList | Export-Csv -Path $this.Path -Force
+            $newList | Export-Csv -Path $this.Path -Force -NoTypeInformation
         }
         catch {
             # Oddly, the export sometimes fails, presumably because the file is still being written
@@ -47,7 +48,7 @@ class TextManifestProvider : ManifestProvider {
             if ($newList) {
                 try {
                     Start-Sleep 1
-                    $newList | Export-Csv -Path $this.Path -Force
+                    $newList | Export-Csv -Path $this.Path -Force -NoTypeInformation
                 }
                 catch {
                     $this.HandleException($_.exception)
