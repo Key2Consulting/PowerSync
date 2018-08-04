@@ -18,8 +18,9 @@ Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Objects.sql" -ServerInstan
 # Run Tests
 ######################################################
 
-.\Test\TestCSVToSQL\TestCSVToSQL.ps1
-.\Test\TestSQLToSQL\TestSQLToSQL.ps1
+#.\Test\TestCSVToSQL\TestCSVToSQL.ps1
+#.\Test\TestSQLToSQL\TestSQLToSQL.ps1
+.\Test\TestRepository\TestRepository.ps1
 
 
 <#

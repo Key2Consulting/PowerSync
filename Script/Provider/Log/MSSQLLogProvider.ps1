@@ -3,7 +3,7 @@ class MSSQLLogProvider : LogProvider {
     
     # Object Constructor 
     MSSQLLogProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
-          $this.Timeout = $this.GetConfigSetting("Timeout", 3600)
+          $this.Timeout = $this.GetConfigSetting("Timeout", 60)
     }
 
     [void] WriteLog([string] $LogID, [string] $ParentLogID, [datetime] $MessageDate, [string] $MessageType, [string] $Message, [string] $VariableName, [object] $VariableValue) {
@@ -17,10 +17,7 @@ class MSSQLLogProvider : LogProvider {
             ParentLogID = $ParentLogID
         }
         
-        #
-        $h = $this.Configuration + $event 
-
-        $this.ExecQuery("LogScript",$false, $h)
+        $null = $this.RunScript("LogScript",$false, $event)
     }
     
     [void] ArchiveLog([int] $ExpirationInDays) {
@@ -29,37 +26,28 @@ class MSSQLLogProvider : LogProvider {
 
     #COMMENTS
 
-    [hashtable] ExecQuery([string] $ScriptName, [bool] $SupportWriteback, [hashtable] $AdditionalConfiguration) {
-        $sql = $this.CompileScript($ScriptName, $AdditionalConfiguration)
-        $h = $this.Configuration
-        if ($sql -ne $null) {
-            try {
-                # Execute Query
-                $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
-                $this.Connection.Open()
-                $cmd = $this.Connection.CreateCommand()
-                $cmd.CommandText = $sql
-                $cmd.CommandTimeout = $this.Timeout
-                $r = $cmd.ExecuteReader()
-
-                if ($SupportWriteback) {
-                    # Copy results into hashtable (only single row supported)
-                    $b = $r.Read()
-                    for ($i=0;$i -lt $r.FieldCount; $i++) {
-                        $col = $r.GetName($i)
-                        if ($h.ContainsKey($col)) {
-                            $h."$col" = $r[$col]
-                        }
-                    }
-                }
-            }
-            finally {
-                # If a connection is established, close connection now.
-                if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
-                    $this.Connection.Close()
-                }
-            }
+    # Executes a compiled script against the configured data source
+    [object] ExecScript([string] $CompiledScript) {
+        try {
+            # Execute Query
+            $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
+            $this.Connection.Open()
+            $cmd = $this.Connection.CreateCommand()
+            $cmd.CommandText = $CompiledScript
+            $cmd.CommandTimeout = $this.Timeout
+            $r = $cmd.ExecuteReader()
+            return $r
         }
-        return $h
+        catch {
+            $this.HandleException($_.exception)
+        }
+        return $null
+    }
+
+    # Clean up any open connections
+    [void] Close() {
+        if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
+            $this.Connection.Close()
+        }
     }
 }

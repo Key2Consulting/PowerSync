@@ -1,10 +1,12 @@
+# TODO: ADD TAB DELIMITED TEST
+
 # 100 rows
 . $PSScriptRoot\..\..\Script\PowerSync `
     -Log @{
         ConnectionString = "PSProvider=TextLogProvider;FilePath=$logFilePath;Header=True;Format=CSV"
     } `
     -Source @{
-        ConnectionString = "PSProvider=TextDataProvider;FilePath=$rootPath\TestCSVToSQL\Sample100.csv;Header=True;Format=CSV;Quoted=True";
+        ConnectionString = "PSProvider=TextDataProvider;FilePath=$rootPath\TestCSVToSQL\Sample100.csv;Header=False;Format=CSV;Quoted=True";
     } `
     -Target @{
         ConnectionString = "PSProvider=MSSQLDataProvider;Server=$sqlServerInstance;Integrated Security=true;Database=$testDBPath;";
@@ -44,4 +46,4 @@
         Table = "TestCSVToSQL10000"
         AutoCreate = $false;
         BatchSize = 50000;
-    }    
+    }

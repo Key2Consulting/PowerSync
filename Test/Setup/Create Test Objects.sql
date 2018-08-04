@@ -38,24 +38,6 @@ CREATE TABLE [Log].[ExecutionDetails](
 ) ON [PRIMARY]
 GO
 
-------------------------------------------------------------------
--- CREATE MANIFEST STRUCTURES
-------------------------------------------------------------------
-CREATE TABLE [dbo].[Manifest](
-	[ManifestID] [int] IDENTITY(1,1) NOT NULL,
-	[SourceTableName] [varchar](50) NULL,
-	[LoadTableName] [varchar](50) NULL,
-	[PublishTableName] [varchar](50) NULL,
-	[ProcessType] [varchar](50) NULL,
-	[IncrementalField] [varchar](50) NULL,
-	[MaxIncrementalValue] [varchar](50) NULL,
-	[LastRunDateTime] [smalldatetime] NULL,
-	CONSTRAINT [PK_Manifest] PRIMARY KEY CLUSTERED 
-(
-	[ManifestID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
 
 ------------------------------------------------------------------
 -- TEST SCENARIO OBJECTS
@@ -71,3 +53,21 @@ CREATE TABLE [dbo].[TestCSVToSQL10000](
 	[IsBackOrdered] [bit] NULL,
 	[Description] [varchar](8000) NULL
 )
+GO
+CREATE TABLE [dbo].[Manifest](
+	[ManifestID] [int] IDENTITY(1,1) NOT NULL,
+	[SourceSchema] [varchar](50) NULL,
+	[SourceTable] [varchar](128) NULL,
+	[TargetSchema] [varchar](50) NULL,
+	[TargetTable] [varchar](128) NULL,
+	[ProcessType] [char](1) NULL,
+	[IncrementalField] [varchar](50) NULL,
+	[LastIncrementalDateTime] [datetime] NULL,
+	[MaxIncrementalDateTime] [datetime] NULL,
+	[LastRunDateTime] [smalldatetime] NULL,
+	CONSTRAINT [PK_Manifest] PRIMARY KEY CLUSTERED
+(
+	[ManifestID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO

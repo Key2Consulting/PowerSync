@@ -144,7 +144,7 @@ try {
             $pLog.BeginLog()
             $stopWatchStep = [System.Diagnostics.Stopwatch]::StartNew()
             
-            # Caller sets  default configuration on the command line, but the manifest can
+            # Caller sets default configuration on the command line, but the manifest can
             # override those settings.
             $sourceConfig = $pManifest.OverrideManifest("Source", $Source, "", $item)
             $targetConfig = $pManifest.OverrideManifest("Target", $Target, "", $item)
@@ -187,13 +187,25 @@ try {
             $pLog.WriteException($_.exception, $false)
         }
         finally {
-            $pSource.Close()
-            $pTarget.Close()
+            if ($pSource) {
+                $pSource.Close()
+            }
+            if ($pTarget) {
+                $pTarget.Close()
+            }
         }
     }
 }
 catch {
     $pLog.WriteException($_.exception, $true)
+}
+finally {
+    if ($pManifest) {
+        $pManifest.Close()
+    }
+    if ($pLog) {
+        $pLog.Close()
+    }
 }
 
 $pLog.WriteInformation("PowerSync-Manifest Completed in $($stopWatch.Elapsed.TotalSeconds) seconds.")

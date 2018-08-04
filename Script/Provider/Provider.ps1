@@ -24,6 +24,54 @@ class Provider {
         $this.ConnectionStringParts = $sb
     }
 
+    [object] RunScript([string] $ScriptName, [bool] $SupportWriteback, [hashtable] $AdditionalConfiguration) {
+        # If caller has additional configuration to apply on top of provider configuration
+        if ($AdditionalConfiguration) {
+            $h = $this.Configuration + $AdditionalConfiguration
+        }
+        else {
+            $h = $this.Configuration
+        }
+        
+        # Compile and execute the script
+        $compiledScript = $this.CompileScript($ScriptName, $h)
+        if ($compiledScript -ne "") {
+            $r = $this.ExecScript($compiledScript)
+            # If writeback is supported, enumerate the response and apply it to the current configuration.
+            if ($SupportWriteback) {
+                #$writeback = [ordered] @{}
+                if ($r -is [System.Data.IDataReader]) {
+                    # Copy results into hashtable (only single row supported)
+                    $null = $r.Read()
+                    for ($i=0;$i -lt $r.FieldCount; $i++) {
+                        $col = $r.GetName($i)
+                        if ($this.Configuration.ContainsKey($col)) {
+                            $this.Configuration."$col" = $r[$col]
+                        }
+                    }
+                }
+                else {
+                    throw "Unsupported writeback response type."    # we can easily support a few other universal types i.e. hashtables
+                }
+                return $this.Configuration
+            }
+            else {
+                return $r
+            }
+        }
+
+        return $null
+    }
+
+    # Implemented by derived classes to execute a compiled script against the configured data source. Not intended to be called directly.
+    [object] ExecScript([string] $CompiledScript) {
+        throw "Not Implemented"
+    }
+
+    # Implemented by derived classes to cleanup after execution. Not intended to be called directly.
+    [void] Close() {
+    }
+    
     # Loads a TSQL script from disk, applies any SQLCMD variables passed in, and returns the compiled script. The final script should have no
     # reference to SQLCMD syntax, meaning :setvars that aren't set by the configuration should still get replaced/substituted.
     [string] CompileScript([string]$ScriptName) {
