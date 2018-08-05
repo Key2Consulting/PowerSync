@@ -29,7 +29,7 @@ class MSSQLManifestProvider : ManifestProvider {
     # Writes a single manifest item back to SQL Server
     [void] CommitManifestItem([hashtable]$ManifestItem) {
         try {
-            $null = $this.RunScript("WriteManifest", $false, $ManifestItem)
+            $null = $this.RunScript("WriteManifestScript", $false, $ManifestItem)
         }
         catch {
             $this.HandleException($_.exception)

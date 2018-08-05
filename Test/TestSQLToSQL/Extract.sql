@@ -4,4 +4,4 @@
 :setvar MaxRows "100"
 
 SELECT TOP $(MaxRows) *
-FROM [$(SourceSchema)].[$(SourceTable)]
+FROM $(SourceSchema).$(SourceTable)

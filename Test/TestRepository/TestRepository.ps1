@@ -26,6 +26,7 @@
     -Manifest @{
         ConnectionString = "PSProvider=MSSQLManifestProvider;Server=$sqlServerInstance;Integrated Security=true;Database=$testDBPath;";
         ReadManifestScript = "$rootPath\TestRepository\ReadManifest.sql"
+        WriteManifestScript = "$rootPath\TestRepository\WriteManifest.sql"
     } `
     -Source @{
         ConnectionString = "PSProvider=MSSQLDataProvider;Server=$sqlServerInstance;Integrated Security=true;Database=$testDBPath;";
@@ -35,4 +36,4 @@
         ConnectionString = "PSProvider=MSSQLDataProvider;Server=$sqlServerInstance;Integrated Security=true;Database=$testDBPath;";
         PrepareScript = "$rootPath\TestRepository\PrepareTarget.sql"
         TransformScript = "$rootPath\TestRepository\Transform.sql"
-    }    
+    }

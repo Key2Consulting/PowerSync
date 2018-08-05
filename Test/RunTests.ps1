@@ -18,8 +18,8 @@ Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Objects.sql" -ServerInstan
 # Run Tests
 ######################################################
 
-#.\Test\TestCSVToSQL\TestCSVToSQL.ps1
-#.\Test\TestSQLToSQL\TestSQLToSQL.ps1
+.\Test\TestCSVToSQL\TestCSVToSQL.ps1
+.\Test\TestSQLToSQL\TestSQLToSQL.ps1
 .\Test\TestRepository\TestRepository.ps1
 
 
@@ -28,4 +28,6 @@ FUTURE TESTS:
  - AutoCreate false
  - Test no overwrite
  - File to file, change format
+ - MultiSource Manifest Repository
+    - Consider creating a PowerSync Data Integration Framework using Azure SQL as a manifest repository (separate project?)
 #>

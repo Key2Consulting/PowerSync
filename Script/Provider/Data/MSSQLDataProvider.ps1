@@ -9,9 +9,6 @@ class MSSQLDataProvider : DataProvider {
         $this.SetDefaultScript("AutoSwapScript", "MSSQLAutoSwap.sql")
         $this.SetDefaultScript("AutoIndexScript", "MSSQLAutoIndex.sql")
         $this.SetDefaultScript("ExtractScript", "MSSQLExtract.sql")
-        # Always remove any name enclosures (i.e. brackets), making the logic in script templates easier to process.
-        $this.Schema = $this.Schema.Replace("[", "").Replace("]", "")
-        $this.Table = $this.Table.Replace("[", "").Replace("]", "")
     }
 
     [hashtable] Prepare() {
@@ -58,8 +55,8 @@ class MSSQLDataProvider : DataProvider {
             throw "Provider configuration missing Schema and/or Table."
         }
 
-        # If AutoCreate is set, execute the create script
-        $loadTableFQName = ""
+        # If AutoCreate is set, execute the create script.
+        $loadTableName = ""
         $additionalConfig = $null
         if ($this.GetConfigSetting("AutoCreate", $true) -eq $true) {
             # Convert the SchemaInfo array into SQL statement in the INSERT VALUES format i.e. ('Field', Field), ('Field', Field).
@@ -69,23 +66,26 @@ class MSSQLDataProvider : DataProvider {
                 $s += "('$($i.Name)', $($i.Size), $($i.Precision), $($i.Scale), $([int]$i.IsKey), $([int]$i.IsNullable), $([int]$i.IsIdentity), '$($i.DataType)'),"
             }
             $s = $s.Substring(0, $s.Length - 1)
+            
+            # The new table will have the RuntimeID appended to make it unique, and provide a correlation ID.
+            $loadTableName = $this.ConcatTableName($this.Table, $this.Configuration.RuntimeID)
+
+            # If the table name was enclosed in brackets, reapply the brackets
             # Create additional configuration parameters for execution of AutoCreateScript.
             $additionalConfig = @{
                 "$($this.Namespace)SchemaInfo" = $s
-                "$($this.Namespace)LoadTable" = "$($this.Table)$($this.Configuration.RuntimeID)"
+                "$($this.Namespace)LoadTable" = $loadTableName
             }
             $null = $this.RunScript("AutoCreateScript", $false, $additionalConfig)
-            # We now must load into the load table
-            $loadTableFQName = "[$($this.Schema)].[$($this.Table)$($this.Configuration.RuntimeID)]"
         }
         else {
             # Otherwise, load into the pre-created table defined in the manifest
-            $loadTableFQName = "[$($this.Schema)].[$($this.Table)]"
+            $loadTableName = $this.Table
         }
         
         # Use SqlBulkCopy to import the data
         $blk = New-Object Data.SqlClient.SqlBulkCopy($this.ConnectionString)
-        $blk.DestinationTableName = $loadTableFQName
+        $blk.DestinationTableName = "$($this.Schema).$loadTableName"
         $blk.BulkCopyTimeout = $this.Timeout
         $blk.BatchSize = $this.GetConfigSetting("BatchSize", 10000)
         $blk.WriteToServer($DataReader)
@@ -112,6 +112,17 @@ class MSSQLDataProvider : DataProvider {
     [void] Close() {
         if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
             $this.Connection.Close()
+        }
+    }
+
+    #
+    [string] ConcatTableName([string] $TableName, [string] $Text) {
+        if ($TableName.StartsWith("[")) {
+            $unenclosedName = $TableName.Substring(1, $TableName.Length - 2)
+            return "[$unenclosedName$Text]"
+        }
+        else {
+            return "$TableName$Text"
         }
     }
 

@@ -39,21 +39,20 @@ class Provider {
             $r = $this.ExecScript($compiledScript)
             # If writeback is supported, enumerate the response and apply it to the current configuration.
             if ($SupportWriteback) {
-                #$writeback = [ordered] @{}
+                $writeback = [ordered] @{}
                 if ($r -is [System.Data.IDataReader]) {
                     # Copy results into hashtable (only single row supported)
                     $null = $r.Read()
                     for ($i=0;$i -lt $r.FieldCount; $i++) {
                         $col = $r.GetName($i)
-                        if ($this.Configuration.ContainsKey($col)) {
-                            $this.Configuration."$col" = $r[$col]
-                        }
+                        $writeback."$col" = $r[$col]
                     }
+                    $writeback.'RuntimeID' = $this.Configuration.RuntimeID
                 }
                 else {
                     throw "Unsupported writeback response type."    # we can easily support a few other universal types i.e. hashtables
                 }
-                return $this.Configuration
+                return $writeback
             }
             else {
                 return $r
@@ -123,7 +122,7 @@ class Provider {
     # Sets the default script for cases where clients do not supply one. Typically, default
     # scripts are platform specific and defined within the concrete provider.
     [void] SetDefaultScript([string] $ScriptName, [string] $DefaultScript) {
-        if ($this.Configuration.ContainsKey($ScriptName) -eq $false) {
+        if ($this.Configuration.ContainsKey("$($this.Namespace)$ScriptName") -eq $false) {
             $path = Resolve-Path -Path "$PSScriptRoot\..\DefaultScript\$DefaultScript"
             $this.Configuration.Add("$($this.Namespace)$ScriptName", $path)
         }
