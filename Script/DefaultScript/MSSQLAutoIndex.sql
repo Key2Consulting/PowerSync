@@ -39,5 +39,6 @@ END
 ELSE
 -- Otherwise, leave as heap
 BEGIN
-	PRINT 'Automatic index not possible due to incompatible data types.'
+	PRINT 'Automatic index not possible due to incompatible data types.';
+	THROW 51000, 'Automatic index not possible due to incompatible data types.', 1;
 END

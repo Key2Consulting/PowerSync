@@ -17,11 +17,11 @@ Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Objects.sql" -ServerInstan
 ######################################################
 # Run Tests
 ######################################################
-
+Import-Module "$(Resolve-Path -Path "..\PowerSync\Script\PowerSync.psm1")"
 .\Test\TestCSVToSQL\TestCSVToSQL.ps1
 .\Test\TestSQLToSQL\TestSQLToSQL.ps1
 .\Test\TestRepository\TestRepository.ps1
-
+.\Test\TestShortcutCLI\TestShortcutCLI.ps1
 
 <#
 FUTURE TESTS: 

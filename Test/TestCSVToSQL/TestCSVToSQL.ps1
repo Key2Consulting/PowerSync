@@ -1,7 +1,7 @@
 # TODO: ADD TAB DELIMITED TEST
 
 # 100 rows
-. $PSScriptRoot\..\..\Script\PowerSync `
+PowerSync `
     -Log @{
         ConnectionString = "PSProvider=TextLogProvider;FilePath=$logFilePath;Header=True;Format=CSV"
     } `
@@ -17,7 +17,7 @@
     }
 
 # 1,000 rows
-. $PSScriptRoot\..\..\Script\PowerSync `
+PowerSync `
     -Log @{
         ConnectionString = "PSProvider=TextLogProvider;FilePath=$logFilePath;Header=True;Format=CSV"
     } `
@@ -33,7 +33,7 @@
     }    
 
 # 10,000 rows
-. $PSScriptRoot\..\..\Script\PowerSync `
+PowerSync `
     -Log @{
         ConnectionString = "PSProvider=TextLogProvider;FilePath=$logFilePath;Header=True;Format=CSV"
     } `
