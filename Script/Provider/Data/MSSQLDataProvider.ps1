@@ -8,21 +8,16 @@ class MSSQLDataProvider : DataProvider {
         $this.SetDefaultScript("AutoCreateScript", "MSSQLAutoCreate.sql")
         $this.SetDefaultScript("AutoSwapScript", "MSSQLAutoSwap.sql")
         $this.SetDefaultScript("AutoIndexScript", "MSSQLAutoIndex.sql")
-        # Always remove any name enclosures (i.e. brackets), making the logic in script templates easier to process.
-        $this.Schema = $this.Schema.Replace("[", "").Replace("]", "")
-        $this.Table = $this.Table.Replace("[", "").Replace("]", "")
+        $this.SetDefaultScript("ExtractScript", "MSSQLExtract.sql")
     }
 
     [hashtable] Prepare() {
-        return $this.ExecQuery("PrepareScript", $true, $null)
+        return $this.RunScript("PrepareScript", $true, $null)
     }
 
     [object[]] Extract() {
         # Attempt to load the Extract Script
         $sql = $this.CompileScript("ExtractScript", $this.Configuration)
-        if ($sql -eq $null) {
-            throw "No ExtractScript set."
-        }
 
         # Execute the Extraction and return the results to the caller.  Note that the connection
         # remains open at this point, until the provider's Close method is called.
@@ -60,8 +55,8 @@ class MSSQLDataProvider : DataProvider {
             throw "Provider configuration missing Schema and/or Table."
         }
 
-        # If AutoCreate is set, execute the create script
-        $loadTableFQName = ""
+        # If AutoCreate is set, execute the create script.
+        $loadTableName = ""
         $additionalConfig = $null
         if ($this.GetConfigSetting("AutoCreate", $true) -eq $true) {
             # Convert the SchemaInfo array into SQL statement in the INSERT VALUES format i.e. ('Field', Field), ('Field', Field).
@@ -71,35 +66,38 @@ class MSSQLDataProvider : DataProvider {
                 $s += "('$($i.Name)', $($i.Size), $($i.Precision), $($i.Scale), $([int]$i.IsKey), $([int]$i.IsNullable), $([int]$i.IsIdentity), '$($i.DataType)'),"
             }
             $s = $s.Substring(0, $s.Length - 1)
+            
+            # The new table will have the RuntimeID appended to make it unique, and provide a correlation ID.
+            $loadTableName = $this.ConcatTableName($this.Table, $this.Configuration.RuntimeID)
+
+            # If the table name was enclosed in brackets, reapply the brackets
             # Create additional configuration parameters for execution of AutoCreateScript.
             $additionalConfig = @{
                 "$($this.Namespace)SchemaInfo" = $s
-                "$($this.Namespace)LoadTable" = "$($this.Table)$($this.Configuration.RuntimeID)"
+                "$($this.Namespace)LoadTable" = $loadTableName
             }
-            $this.ExecQuery("AutoCreateScript", $false, $additionalConfig)
-            # We now must load into the load table
-            $loadTableFQName = "[$($this.Schema)].[$($this.Table)$($this.Configuration.RuntimeID)]"
+            $null = $this.RunScript("AutoCreateScript", $false, $additionalConfig)
         }
         else {
             # Otherwise, load into the pre-created table defined in the manifest
-            $loadTableFQName = "[$($this.Schema)].[$($this.Table)]"
+            $loadTableName = $this.Table
         }
         
         # Use SqlBulkCopy to import the data
         $blk = New-Object Data.SqlClient.SqlBulkCopy($this.ConnectionString)
-        $blk.DestinationTableName = $loadTableFQName
+        $blk.DestinationTableName = "$($this.Schema).$loadTableName"
         $blk.BulkCopyTimeout = $this.Timeout
         $blk.BatchSize = $this.GetConfigSetting("BatchSize", 10000)
         $blk.WriteToServer($DataReader)
 
         # If AutoIndex is set, execute AutoIndex script
         if ($this.GetConfigSetting("AutoIndex", $true) -eq $true) {
-            $this.ExecQuery("AutoIndexScript", $false, $additionalConfig)
+            $null = $this.RunScript("AutoIndexScript", $false, $additionalConfig)
         }
 
         # If AutoCreate is set, we must swap the "temp" load table as the final one.
         if ($this.GetConfigSetting("AutoCreate", $true) -eq $true) {
-            $this.ExecQuery("AutoSwapScript", $false, $additionalConfig)
+            $null = $this.RunScript("AutoSwapScript", $false, $additionalConfig)
         }
 
         return $null;
@@ -107,54 +105,42 @@ class MSSQLDataProvider : DataProvider {
 
     [hashtable] Transform() {
         # Try Catch with $global:pLog 
-        return $this.ExecQuery("TransformScript", $true, $null)
+        return $this.RunScript("TransformScript", $true, $null)
     }
 
+    # Clean up any open connections
     [void] Close() {
-        # If a connection is established, close connection now.
         if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
             $this.Connection.Close()
         }
     }
 
-    [hashtable] ExecQuery([string] $ScriptName, [bool] $SupportWriteback, [hashtable] $AdditionalConfiguration) {
-        # If caller has additional configuration to apply on top of provider configuration
-        if ($AdditionalConfiguration) {
-            $h = $this.Configuration + $AdditionalConfiguration
+    #
+    [string] ConcatTableName([string] $TableName, [string] $Text) {
+        if ($TableName.StartsWith("[")) {
+            $unenclosedName = $TableName.Substring(1, $TableName.Length - 2)
+            return "[$unenclosedName$Text]"
         }
         else {
-            $h = $this.Configuration
+            return "$TableName$Text"
         }
-        # Compile and Execute the script
-        $sql = $this.CompileScript($ScriptName, $h)
-        if ($sql -ne $null) {
-            try {
-                # Execute Query
-                $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
-                $this.Connection.Open()
-                $cmd = $this.Connection.CreateCommand()
-                $cmd.CommandText = $sql
-                $cmd.CommandTimeout = $this.Timeout
-                $r = $cmd.ExecuteReader()
+    }
 
-                if ($SupportWriteback) {
-                    # Copy results into hashtable (only single row supported)
-                    $b = $r.Read()
-                    for ($i=0;$i -lt $r.FieldCount; $i++) {
-                        $col = $r.GetName($i)
-                        if ($h.ContainsKey($col)) {
-                            $h."$col" = $r[$col]
-                        }
-                    }
-                }
-            }
-            finally {
-                # If a connection is established, close connection now.
-                if ($this.Connection -ne $null -and $this.Connection.State -eq "Open") {
-                    $this.Connection.Close()
-                }
-            }
+    # Executes a compiled script against the configured data source
+    [object] ExecScript([string] $CompiledScript) {
+        try {
+            # Execute Query
+            $this.Connection = New-Object System.Data.SqlClient.SQLConnection($this.ConnectionString)
+            $this.Connection.Open()
+            $cmd = $this.Connection.CreateCommand()
+            $cmd.CommandText = $CompiledScript
+            $cmd.CommandTimeout = $this.Timeout
+            $r = $cmd.ExecuteReader()
+            return $r
         }
-        return $h
+        catch {
+            $this.HandleException($_.exception)
+        }
+        return $null
     }
 }

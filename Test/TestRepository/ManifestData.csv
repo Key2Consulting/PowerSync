@@ -1,0 +1,3 @@
+﻿SourceSchema,SourceTable,TargetSchema,TargetTable,ProcessType,IncrementalField
+sys,objects,dbo,TestRepository1,F,
+[dbo],[TestCSVToSQL10000],dbo,TestRepository2,I,

@@ -33,6 +33,6 @@ BEGIN
 	) q
 
 	-- Remove any brackets from target table name
-	SET @SQL = 'CREATE TABLE [$(TargetSchema)].[$(TargetLoadTable)]( ' + @SQL + ')'
+	SET @SQL = 'CREATE TABLE $(TargetSchema).$(TargetLoadTable)( ' + @SQL + ')'
 	EXEC sp_executesql @SQL
 END
