@@ -1,5 +1,5 @@
 # Use PowerSync to initial test by importing our manifest data
-. $PSScriptRoot\..\..\Script\PowerSync `
+PowerSync `
     -Log @{
         ConnectionString = "PSProvider=TextLogProvider;FilePath=$logFilePath;Header=True;Format=CSV"
     } `
@@ -18,7 +18,7 @@
     }
 
 # Process the initial load
-. $PSScriptRoot\..\..\Script\PowerSync `
+PowerSync `
     -Log @{
         ConnectionString = "PSProvider=MSSQLLogProvider;Server=$sqlServerInstance;Integrated Security=true;Database=$testDBPath;";
         LogScript = "$rootPath\TestRepository\Log.sql";

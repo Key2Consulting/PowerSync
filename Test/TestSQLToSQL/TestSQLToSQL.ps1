@@ -1,4 +1,4 @@
-. $PSScriptRoot\..\..\Script\PowerSync `
+PowerSync `
     -Manifest @{
         ConnectionString = "PSProvider=TextManifestProvider;Data Source=$rootPath\TestSQLToSQL\Manifest.csv;Header=True;Format=CSV"
     } `
