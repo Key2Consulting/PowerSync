@@ -44,6 +44,10 @@ class MSSQLDataProvider : DataProvider {
             if ($s.Size -eq 2147483647) {
                 $s.Size = -1
             }
+            # Detect if special type Geography
+            if ($s.DataType.Contains("geography")) {
+                $s.DataType = "geography"
+            }
             $this.SchemaInfo.Add($s)
         }        
 
