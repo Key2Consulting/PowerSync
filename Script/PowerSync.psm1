@@ -345,11 +345,11 @@ function PowerSync-MSSQL2MSSQL {
 
     PowerSync `
         -Source @{
-            ConnectionString = "PSProvider=MSSQLDataProvider;Server=$SourceServer;Integrated Security=true;Database=$SourceDatabase;";
+            ConnectionString = "PSProvider=MSSQLDataProvider;Server=$SourceServer;Integrated Security=true;Database=$SourceDatabase;Type System Version=SQL Server 2012";
             ExtractScript = $ExtractQuery
         } `
         -Target @{
-            ConnectionString = "PSProvider=MSSQLDataProvider;Server=$TargetServer;Integrated Security=true;Database=$TargetDatabase;";
+            ConnectionString = "PSProvider=MSSQLDataProvider;Server=$TargetServer;Integrated Security=true;Database=$TargetDatabase;Type System Version=SQL Server 2012";
             Schema = $schema
             Table = $table
             AutoCreate = $autoCreate
