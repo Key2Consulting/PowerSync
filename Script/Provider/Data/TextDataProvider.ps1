@@ -15,8 +15,8 @@ class TextDataProvider : DataProvider, System.Data.IDataReader {
     TextDataProvider ([string] $Namespace, [hashtable] $Configuration) : base($Namespace, $Configuration) {
         $this.FilePath = $this.ConnectionStringParts["filepath"]
         $this.Format = $this.ConnectionStringParts["format"]
-        $this.Header = $this.ConnectionStringParts["header"]
-        $this.Quoted = $this.ConnectionStringParts["quoted"]
+        $this.Header = [System.Convert]::ToBoolean($this.ConnectionStringParts["header"])
+        $this.Quoted = [System.Convert]::ToBoolean($this.ConnectionStringParts["quoted"])
         if ($this.Format -eq "CSV") {
             $this.Regex = $this.CSVRegex
             $this.ColDelim = ','
@@ -64,7 +64,7 @@ class TextDataProvider : DataProvider, System.Data.IDataReader {
         }
 
         # If header isn't first line, must reset read back to beginning
-        if ($this.Header -ne $true) {
+        if ($this.Header -ne $true -and $this.Header) {
             $this.FileReader.Position = 0
             $this.FileReader.DiscardBufferedData()
         }

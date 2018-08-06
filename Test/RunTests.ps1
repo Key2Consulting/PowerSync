@@ -1,98 +1,33 @@
 ######################################################
+# Test Configuration
+######################################################
+$rootPath = Resolve-Path -Path "$PSScriptRoot"
+$sqlServerInstance = "(LocalDb)\MSSQLLocalDB"
+$testDBPath = "$rootPath\PowerSyncTestDB.MDF"
+$logFilePath = "$rootPath\Log.csv"
+
+######################################################
 # Initialize Tests
 ######################################################
 $ErrorActionPreference = "Stop"
-$dataFolder = Resolve-Path -Path "$PSScriptRoot\Data"
-$testFolder = Resolve-Path -Path "$PSScriptRoot"
-
-# TODO: RESET DATABASE
+Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Database.sql" -ServerInstance $sqlServerInstance -Variable "TestDB=$testDBPath"
+Remove-Item -Path "$testDBPath" -Force -ErrorAction SilentlyContinue
+Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Objects.sql" -ServerInstance $sqlServerInstance -Variable "TestDB=$testDBPath"
 
 ######################################################
 # Run Tests
 ######################################################
-
-# Test manifest file extraction from CSV to SQL
-#
-. $PSScriptRoot\..\Script\PowerSync `
-    -Log @{
-        ConnectionString = "PSProvider=TextLogProvider;FilePath=$testFolder\Log.csv;Header=True;Format=CSV"
-    } `
-    -Source @{
-        ConnectionString = "PSProvider=TextDataProvider;FilePath=$dataFolder\Sample1.csv;Header=True;Format=CSV;Quoted=True";
-        PrepareScript = "$testFolder\Package\PrepareSource.sql";
-        ExtractScript = "$testFolder\Package\Extract.sql";
-        Timeout = 3600;
-    } `
-    -Target @{
-        ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
-        PrepareScript = "$testFolder\Package\PrepareTarget.sql";
-        TransformScript = "$testFolder\Package\Transform.sql";
-        TableName = "dbo.CSVToSSQLTest1"
-        AutoIndex = $true;
-        AutoCreate = $true;
-        Overwrite = $true;
-        BatchSize = 10000;
-    }
-
-# Test manifest file extraction from SQL to SQL
-#
-. $PSScriptRoot\..\Script\PowerSync `
-    -Manifest @{
-        ConnectionString = "PSProvider=TextManifestProvider;Data Source=$testFolder\Package\Manifest.csv;Header=True;Format=CSV"
-    } `
-    -Log @{
-        ConnectionString = "PSProvider=TextLogProvider;Data Source=$testFolder\Log.csv;Header=True;Format=CSV"
-    } `
-    -Source @{
-        ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
-        PrepareScript = "$testFolder\Package\PrepareSource.sql";
-        ExtractScript = "$testFolder\Package\Extract.sql";
-        Timeout = 3600;
-    } `
-    -Target @{
-        ConnectionString = "PSProvider=MSSQLDataProvider;Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
-        PrepareScript = "$testFolder\Package\PrepareTarget.sql";
-        TransformScript = "$testFolder\Package\Transform.sql";
-        AutoIndex = $true;
-        AutoCreate = $true;
-        Overwrite = $true;
-        BatchSize = 10000;
-    }
+Import-Module "$(Resolve-Path -Path "..\PowerSync\Script\PowerSync.psm1")"
+.\Test\TestCSVToSQL\TestCSVToSQL.ps1
+.\Test\TestSQLToSQL\TestSQLToSQL.ps1
+.\Test\TestRepository\TestRepository.ps1
+.\Test\TestShortcutCLI\TestShortcutCLI.ps1
 
 <#
 FUTURE TESTS: 
  - AutoCreate false
  - Test no overwrite
  - File to file, change format
+ - MultiSource Manifest Repository
+    - Consider creating a PowerSync Data Integration Framework using Azure SQL as a manifest repository (separate project?)
 #>
-
-<#
-$dataFolder = Resolve-Path -Path "$PSScriptRoot\Data"
-$testFolder = Resolve-Path -Path "$PSScriptRoot\ManifestLocalDBTest"
-
-. $PSScriptRoot\..\Script\PowerSync `
-    -Manifest @{
-        ConnectionString = "Provider=PSText;Data Source=$testFolder\Manifest.csv;Header=True;Format=CSV"
-    } `
-    -Log @{
-        ConnectionString = "Provider=PSText;Data Source=$dataFolder\Log.csv;Header=True;Format=CSV"
-    } `
-    -Source @{
-        # ConnectionString = "Provider=PSText;Data Source=$dataFolder\SampleIn.csv;Header=True;Format=CSV";
-        ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
-        PrepareScript = "$testFolder\PrepareSource.sql";
-        ExtractScript = "$testFolder\Extract.sql";
-        Timeout = 3600;
-    } `
-    -Target @{
-        #ConnectionString = "Provider=PSText;Data Source=$dataFolder\SampleOut.csv;Header=True;Format=TAB";
-        ConnectionString = "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;AttachDbFileName=$dataFolder\PowerSyncTestDB.mdf;";
-        PrepareScript = "$testFolder\PrepareTarget.sql";
-        TransformScript = "$testFolder\Transform.sql";
-        AutoIndex = $true;
-        AutoCreate = $true;
-        Overwrite = $true;
-        BatchSize = 10000;
-    }
-#>
-#. "$PSScriptRoot\SingleCopyLocalDBTest\Test-SingleCopyLocalDBTest.ps1"

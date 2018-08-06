@@ -14,12 +14,11 @@ class ManifestProvider : Provider {
     # Reads the entirety of a manifest and prepares it for processing.
     [System.Collections.ArrayList] ReadManifest() {
         # If we haven't loaded the manifest, do it now
-        $runtimeID = 1
         if ($this.Manifest -eq $null) {
             $this.Manifest = $this.FetchManifest()
             # Add a runtime key column so we can correlate it during updates
             foreach ($item in $this.Manifest) {
-                $item.RuntimeID = $runtimeID++
+                $item.RuntimeID = $this.GetUniqueID()
             }
         }
         return $this.Manifest
@@ -66,10 +65,12 @@ class ManifestProvider : Provider {
             $h."$nsKey" = $Override."$nsKey"
         }
         # Apply base where not already applied
-        foreach ($key in $Base.Keys) {
-            $nsKey = $BaseNamespace + $key
-            if ($h.ContainsKey($nsKey) -eq $false) {
-                $h."$nsKey" = $Base."$key"
+        if ($Base) {        # it's possible no command line configuration was specified and is driven purely by manifest
+            foreach ($key in $Base.Keys) {
+                $nsKey = $BaseNamespace + $key
+                if ($h.ContainsKey($nsKey) -eq $false) {
+                    $h."$nsKey" = $Base."$key"
+                }
             }
         }
         return $h
