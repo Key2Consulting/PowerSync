@@ -5,7 +5,7 @@
 
 BEGIN TRANSACTION
 BEGIN TRY
-	IF OBJECT_ID('$(TargetSchema).$(TargetTable)') IS NOT NULL AND '$(TargetOverwrite)' = 'TRUE'
+	IF OBJECT_ID('$(TargetSchema).$(TargetTable)') IS NOT NULL AND '$(TargetOverwrite)' = '1'
 		DROP TABLE $(TargetSchema).$(TargetTable)
 	EXEC sp_rename '$(TargetSchema).$(TargetLoadTable)', '$(TargetTable)'
 END TRY
