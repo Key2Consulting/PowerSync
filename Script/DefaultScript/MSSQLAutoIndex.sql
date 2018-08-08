@@ -3,14 +3,14 @@
 :setvar TargetLoadTable "CSVToSSQLTest12ABCDEFG12345"
 
 -- Detect if the table has any columns that can or cannot participate in a columnstore index
-DECLARE @ColumnList VARCHAR(8000)
+DECLARE @ColumnList VARCHAR(MAX)
 SELECT @ColumnList = COALESCE(@ColumnList + ',', '') + '[' + [Name] + ']'
 FROM sys.columns
 WHERE
 	object_id = OBJECT_ID('$(TargetSchema).$(TargetLoadTable)')
 SELECT @ColumnList
 
-DECLARE @EligibleColumnList VARCHAR(8000)
+DECLARE @EligibleColumnList VARCHAR(MAX)
 SELECT @EligibleColumnList = COALESCE(@EligibleColumnList + ',', '') + '[' + [Name] + ']'
 FROM sys.columns
 WHERE

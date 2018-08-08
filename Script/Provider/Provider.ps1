@@ -106,8 +106,12 @@ class Provider {
                 $value = $match.Groups[2].Value
                 if ($Vars.ContainsKey($name) -eq $true) {
                     $value = $Vars."$name"
-                    if ($value -is [bool]) {        # bools get converted to strings in PS, but numerics (0 or 1) are native to database systems
-                        $value = [int]$value
+                    # Manually convert bools to numeric (0 or 1) since they are native to database systems.
+                    if ($value -is [bool] -and $value) {
+                        $value = 1
+                    }
+                    elseif ($value -is [bool] -and $value -eq $false) {
+                        $value = 0
                     }
                 }
                 $script = $script.Replace('$(' + $name + ')', $value)

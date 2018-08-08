@@ -262,17 +262,21 @@ function PowerSync-Text2MSSQL {
     )
     
     # PowerSync options per command-line
-    $header = $true
+    [bool] $header = $true
     if ($NoHeader) {
         $header = $false
     }
-    $autoCreate = $true
+    [bool] $autoCreate = $true
     if ($NoAutoCreate) {
         $autoCreate = $false
     }
-    $autoIndex = $true
+    [bool] $autoIndex = $true
     if ($NoAutoIndex) {
         $autoIndex = $false
+    }
+    [bool] $overwrite = $true
+    if ($Overwrite) {
+        $overwrite = $true
     }
 
     # Extract schema and table names from fully qualified name
@@ -289,7 +293,7 @@ function PowerSync-Text2MSSQL {
             Table = $table
             AutoCreate = $autoCreate
             AutoIndex = $autoIndex
-            Overwrite = $Overwrite
+            Overwrite = $overwrite
         }
 }
 
@@ -330,13 +334,17 @@ function PowerSync-MSSQL2MSSQL {
     )
     
     # PowerSync options per command-line
-    $autoCreate = $true
+    [bool] $autoCreate = $true
     if ($NoAutoCreate) {
         $autoCreate = $false
     }
-    $autoIndex = $true
+    [bool] $autoIndex = $true
     if ($NoAutoIndex) {
         $autoIndex = $false
+    }
+    [bool] $overwrite = $true
+    if ($Overwrite) {
+        $overwrite = $true
     }
 
     # Extract schema and table names from fully qualified name
@@ -345,16 +353,16 @@ function PowerSync-MSSQL2MSSQL {
 
     PowerSync `
         -Source @{
-            ConnectionString = "PSProvider=MSSQLDataProvider;Server=$SourceServer;Integrated Security=true;Database=$SourceDatabase;";
+            ConnectionString = "PSProvider=MSSQLDataProvider;Server=$SourceServer;Integrated Security=true;Database=$SourceDatabase;Type System Version=SQL Server 2012";
             ExtractScript = $ExtractQuery
         } `
         -Target @{
-            ConnectionString = "PSProvider=MSSQLDataProvider;Server=$TargetServer;Integrated Security=true;Database=$TargetDatabase;";
+            ConnectionString = "PSProvider=MSSQLDataProvider;Server=$TargetServer;Integrated Security=true;Database=$TargetDatabase;Type System Version=SQL Server 2012";
             Schema = $schema
             Table = $table
             AutoCreate = $autoCreate
             AutoIndex = $autoIndex
-            Overwrite = $Overwrite
+            Overwrite = $overwrite
         }
 }
 

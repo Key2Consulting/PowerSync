@@ -1,4 +1,4 @@
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted
+#Set-ExecutionPolicy -ExecutionPolicy Unrestricted
 Remove-Item -Path "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\PowerSync\" -Force -Confirm:$false -Recurse -ErrorAction SilentlyContinue
 Copy-Item -Path ".\Script\" -Destination "$env:USERPROFILE\Documents\WindowsPowerShell\Modules\PowerSync\" -Force -Recurse
 

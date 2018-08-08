@@ -11,7 +11,7 @@ BEGIN
 	INSERT INTO @SchemaInfo([Name], [Size], [Precision], [Scale], [IsKey], [IsNullable], [IsIdentity], [DataType])
 	VALUES $(TargetSchemaInfo)
 
-	DECLARE @SQL NVARCHAR(4000)
+	DECLARE @SQL NVARCHAR(MAX)
 	
 	SELECT @SQL = COALESCE(@SQL + CHAR(13) + CHAR(10), '') + [Line]
 	FROM
