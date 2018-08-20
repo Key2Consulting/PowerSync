@@ -11,7 +11,11 @@ function Start-PSYActivity {
 
     try {
         # Log activity start
-        $log = $Ctx.System.Repository.StartActivity($null, $Name, $env:COMPUTERNAME, $MyInvocation.PSCommandPath, $ScriptBlock.Ast.ToString(), 'Started')
+        if ($Ctx.System.ActivityStack.Count -gt 0) {
+            $aParentLog = $Ctx.System.ActivityStack[$Ctx.System.ActivityStack.Count - 1]
+        }
+        $aLog = $Ctx.System.Repository.StartActivity($aParentLog, $Name, $env:COMPUTERNAME, $MyInvocation.PSCommandPath, $ScriptBlock.Ast.ToString(), 'Started')
+        $Ctx.System.ActivityStack.Add($aLog)
 
         # $ScriptBlock = [ScriptBlock]::Create('param($Ctx)' + $ScriptBlock.ToString())
         Invoke-Command -ScriptBlock $ScriptBlock -NoNewScope -ArgumentList $Args
@@ -19,7 +23,8 @@ function Start-PSYActivity {
         #Wait-Job $job
 
         # Log activity end
-        $Ctx.System.Repository.EndActivity($log.ID)
+        $Ctx.System.Repository.EndActivity($aLog.ID, "Completed")
+        $Ctx.System.ActivityStack.Remove($aLog)
     }
     catch {
         throw "Error starting activity $Name. $($_.Exception.Message)"

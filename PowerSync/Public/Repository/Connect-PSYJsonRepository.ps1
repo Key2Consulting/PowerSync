@@ -1,5 +1,3 @@
-using module '..\..\Private\Repository\JsonRepository.ps1'
-
 function Connect-PSYJsonRepository {
     param
     (

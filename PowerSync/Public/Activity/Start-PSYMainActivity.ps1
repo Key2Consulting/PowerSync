@@ -1,5 +1,3 @@
-using module '..\..\Private\Repository\Repository.ps1'
-
 function Start-PSYMainActivity {
     param
     (
@@ -13,8 +11,8 @@ function Start-PSYMainActivity {
 
     [hashtable] $global:Ctx = @{
         System = @{
-            Repository = $null
-            ActivityStack = New-Object System.Collections.ArrayList
+            Repository = $null                                          # reference to the connected repository
+            ActivityStack = New-Object System.Collections.ArrayList     # all activity logs in stack formation
         }
         State = @{}
     }
@@ -23,6 +21,7 @@ function Start-PSYMainActivity {
     try {
         # Try to connect
         $Ctx.System.Repository = Invoke-Command $ConnectScriptBlock
+        $Ctx.System.Repository.Initialize()
     }
     catch {
         throw "Unable to connect to PowerSync repository with the ConnectionScriptBlock provided. $($_.Exception.Message)"
@@ -38,7 +37,7 @@ function Start-PSYMainActivity {
 
     # The main activity is really just another activity, with connect capability (above).
     try {
-        Start-PSYActivity -ScriptBlock $ScriptBlock
+        Start-PSYActivity -Name 'Main Activity' -ScriptBlock $ScriptBlock
     }
     catch {
         throw "Unable to start main activity. $($_.Exception.Message)"

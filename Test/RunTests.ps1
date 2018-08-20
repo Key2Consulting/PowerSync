@@ -1,3 +1,5 @@
+Remove-Item 'Log.json' -ErrorAction SilentlyContinue
+Remove-Item 'Configuration.json' -ErrorAction SilentlyContinue
 Import-Module "$(Resolve-Path -Path ".\PowerSync")"
 
 Start-PSYMainActivity -ConnectScriptBlock {
@@ -5,26 +7,12 @@ Start-PSYMainActivity -ConnectScriptBlock {
     Connect-PSYJsonRepository
 } -ScriptBlock {
 
-<#     Use-PSYState 'MyControlState' 'defaultvalue' -Overwrite
-    $Ctx.State.MyControlState = "Foo"
-    Start-PSYActivity -ScriptBlock {
-        $Ctx.State.MyControlState = "hello"
-        Write-Host $Ctx.State.MyControlState
-    }
-    Write-Host $Ctx.State.MyControlState #>
-
     $s = Use-PSYState 'MyControlState' @{Step = 'zero'} -Overwrite
     $s.Step = "one"
-    $abc = 123
     Start-PSYActivity -ScriptBlock {
-        Write-Host $Ctx.State.MyControlState.Step
-        $Ctx.State.MyControlState.Step = "two"
         Start-PSYActivity -ScriptBlock {
-            Write-Host $Ctx.State.MyControlState.Step
-            $Ctx.State.MyControlState.Step = "three"
         }
     }
-    Write-Host $Ctx.State.MyControlState.Step
 }
 
 

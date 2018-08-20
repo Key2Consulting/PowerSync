@@ -1,0 +1,79 @@
+{
+    "VariableLog":  [
+
+                    ],
+    "ActivityLog":  [
+                        {
+                            "Name":  "Main Activity",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYMainActivity.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n\r\n    $s = Use-PSYState \u0027MyControlState\u0027 @{Step = \u0027zero\u0027} -Overwrite\r\n    $s.Step = \"one\"\r\n    Start-PSYActivity -ScriptBlock {\r\n        Start-PSYActivity -ScriptBlock {\r\n        }\r\n    }\r\n}",
+                            "ID":  "eec0d1da-0a56-48a6-bff9-4dd2ced458cb",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534737803608)\/",
+                            "EndDateTime":  "\/Date(1534737803706)\/"
+                        },
+                        {
+                            "Name":  "",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n        Start-PSYActivity -ScriptBlock {\r\n        }\r\n    }",
+                            "ID":  "94d0364f-59cc-43cc-9a64-27ae1b1c0e53",
+                            "ParentID":  "eec0d1da-0a56-48a6-bff9-4dd2ced458cb",
+                            "StartDateTime":  "\/Date(1534737803656)\/",
+                            "EndDateTime":  "\/Date(1534737803700)\/"
+                        },
+                        {
+                            "Name":  "",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n        }",
+                            "ID":  "c02817bb-e94d-482e-93b2-a42a2c4f70ab",
+                            "ParentID":  "94d0364f-59cc-43cc-9a64-27ae1b1c0e53",
+                            "StartDateTime":  "\/Date(1534737803670)\/",
+                            "EndDateTime":  "\/Date(1534737803690)\/"
+                        },
+                        {
+                            "Name":  "",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n        }",
+                            "ID":  "c02817bb-e94d-482e-93b2-a42a2c4f70ab",
+                            "ParentID":  "94d0364f-59cc-43cc-9a64-27ae1b1c0e53",
+                            "StartDateTime":  "\/Date(1534737803670)\/",
+                            "EndDateTime":  "\/Date(1534737803690)\/"
+                        },
+                        {
+                            "Name":  "",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n        Start-PSYActivity -ScriptBlock {\r\n        }\r\n    }",
+                            "ID":  "94d0364f-59cc-43cc-9a64-27ae1b1c0e53",
+                            "ParentID":  "eec0d1da-0a56-48a6-bff9-4dd2ced458cb",
+                            "StartDateTime":  "\/Date(1534737803656)\/",
+                            "EndDateTime":  "\/Date(1534737803700)\/"
+                        },
+                        {
+                            "Name":  "Main Activity",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYMainActivity.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n\r\n    $s = Use-PSYState \u0027MyControlState\u0027 @{Step = \u0027zero\u0027} -Overwrite\r\n    $s.Step = \"one\"\r\n    Start-PSYActivity -ScriptBlock {\r\n        Start-PSYActivity -ScriptBlock {\r\n        }\r\n    }\r\n}",
+                            "ID":  "eec0d1da-0a56-48a6-bff9-4dd2ced458cb",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534737803608)\/",
+                            "EndDateTime":  "\/Date(1534737803706)\/"
+                        }
+                    ],
+    "InformationLog":  [
+
+                       ],
+    "ExceptionLog":  [
+
+                     ]
+}
