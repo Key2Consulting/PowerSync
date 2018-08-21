@@ -6,15 +6,24 @@ Start-PSYMainActivity -ConnectScriptBlock {
     #Connect-PSYOleDbRepository -ConnectionString "Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;Database=SqlServerKit"
     Connect-PSYJsonRepository
 } -ScriptBlock {
+    Write-PSYInformationLog 'Main script is executing'
 
-    $s = Use-PSYState 'MyControlState' @{Step = 'zero'} -Overwrite
-    $s.Step = "one"
-    Start-PSYActivity -ScriptBlock {
-        Start-PSYActivity -ScriptBlock {
+    #$s = Use-PSYState -Name 'Control' -Default @{TestCSVToSQL1000 = $false} -Type 'MyCustomState'
+    #$s = Register-PSYState -Name 'Control' -Type Discrete -Default @{TestCSVToSQL1000 = $false}
+    $s = Register-PSYState -Name 'Control' -Type Discrete -Default "Hello World"
+    Set-PSYState 'Control' "foo"
+
+    Start-PSYActivity -Name 'Nested A' -ScriptBlock {
+        Write-PSYInformationLog 'Nested script A is executing'
+        $s = "hello"
+        $s = Get-PSYState 'Control'
+        Start-PSYActivity -Name 'Nested B' -ScriptBlock {
+            Write-PSYInformationLog 'Nested script B is executing'
         }
     }
-}
 
+    #Unregister-PSYState 'Control'
+}
 
 <#
 ######################################################

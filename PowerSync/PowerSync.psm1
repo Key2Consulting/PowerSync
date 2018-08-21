@@ -2,6 +2,7 @@
 # in random dependency errors.
 . "$PSScriptRoot\Private\Common\Model.ps1"
 . "$PSScriptRoot\Private\Repository\Repository.ps1"
+. "$PSScriptRoot\Private\Repository\FileRepository.ps1"
 . "$PSScriptRoot\Private\Repository\JsonRepository.ps1"
 . "$PSScriptRoot\Private\Common\Core.ps1"
 

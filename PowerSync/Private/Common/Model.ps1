@@ -1,3 +1,20 @@
+enum StateType {
+    None = 0
+    DiscreteState = 1
+    CollectionState = 2
+    CustomState = 3
+}
+
+class State {
+    [object] $ID
+    [string] $Name
+    [StateType] $Type
+    [object] $Value
+    [DateTime] $CreatedDateTime
+    [DateTime] $ModifiedDateTime
+    [DateTime] $ReadDateTime
+}
+
 class ActivityLog {
     [object] $ID
     [object] $ParentID

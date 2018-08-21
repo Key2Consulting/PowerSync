@@ -10,12 +10,15 @@ function Start-PSYActivity {
     )
 
     try {
+        # Validation
+        Confirm-PSYInitialized($Ctx)
+        
         # Log activity start
         if ($Ctx.System.ActivityStack.Count -gt 0) {
             $aParentLog = $Ctx.System.ActivityStack[$Ctx.System.ActivityStack.Count - 1]
         }
         $aLog = $Ctx.System.Repository.StartActivity($aParentLog, $Name, $env:COMPUTERNAME, $MyInvocation.PSCommandPath, $ScriptBlock.Ast.ToString(), 'Started')
-        $Ctx.System.ActivityStack.Add($aLog)
+        $null = $Ctx.System.ActivityStack.Add($aLog)
 
         # $ScriptBlock = [ScriptBlock]::Create('param($Ctx)' + $ScriptBlock.ToString())
         Invoke-Command -ScriptBlock $ScriptBlock -NoNewScope -ArgumentList $Args
@@ -23,7 +26,7 @@ function Start-PSYActivity {
         #Wait-Job $job
 
         # Log activity end
-        $Ctx.System.Repository.EndActivity($aLog.ID, "Completed")
+        $Ctx.System.Repository.EndActivity($aLog, "Completed")
         $Ctx.System.ActivityStack.Remove($aLog)
     }
     catch {

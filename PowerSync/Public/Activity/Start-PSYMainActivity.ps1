@@ -21,7 +21,6 @@ function Start-PSYMainActivity {
     try {
         # Try to connect
         $Ctx.System.Repository = Invoke-Command $ConnectScriptBlock
-        $Ctx.System.Repository.Initialize()
     }
     catch {
         throw "Unable to connect to PowerSync repository with the ConnectionScriptBlock provided. $($_.Exception.Message)"

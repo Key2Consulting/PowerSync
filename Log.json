@@ -1,77 +1,103 @@
 {
     "VariableLog":  [
-
+                        {
+                            "ID":  "e94df176-ff3d-49c5-9115-134d1f99cea1",
+                            "ActivityID":  "ded99a4e-352c-48e9-a826-425ec636a887",
+                            "VariableName":  "",
+                            "VariableValue":  "foo",
+                            "CreatedDateTime":  "\/Date(1534801507848)\/"
+                        }
                     ],
     "ActivityLog":  [
                         {
                             "Name":  "Main Activity",
                             "Server":  "DHARDAN-WS",
                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYMainActivity.ps1",
-                            "Status":  "Completed",
-                            "ScriptAst":  "{\r\n\r\n    $s = Use-PSYState \u0027MyControlState\u0027 @{Step = \u0027zero\u0027} -Overwrite\r\n    $s.Step = \"one\"\r\n    Start-PSYActivity -ScriptBlock {\r\n        Start-PSYActivity -ScriptBlock {\r\n        }\r\n    }\r\n}",
-                            "ID":  "eec0d1da-0a56-48a6-bff9-4dd2ced458cb",
+                            "Status":  "Started",
+                            "ScriptAst":  "{\r\n    Write-PSYInformationLog \u0027Main script is executing\u0027\r\n\r\n    #$s = Use-PSYState -Name \u0027Control\u0027 -Default @{TestCSVToSQL1000 = $false} -Type \u0027MyCustomState\u0027\r\n    #$s = Register-PSYState -Name \u0027Control\u0027 -Type Discrete -Default @{TestCSVToSQL1000 = $false}\r\n    $s = Register-PSYState -Name \u0027Control\u0027 -Type Discrete -Default \"Hello World\"\r\n    Set-PSYState \u0027Control\u0027 \"foo\"\r\n\r\n    Start-PSYActivity -Name \u0027Nested A\u0027 -ScriptBlock {\r\n        Write-PSYInformationLog \u0027Nested script A is executing\u0027\r\n        $s = \"hello\"\r\n        $s = Get-PSYState \u0027Control\u0027\r\n        Start-PSYActivity -Name \u0027Nested B\u0027 -ScriptBlock {\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }\r\n    }\r\n\r\n    #Unregister-PSYState \u0027Control\u0027\r\n}",
+                            "ID":  "ded99a4e-352c-48e9-a826-425ec636a887",
                             "ParentID":  null,
-                            "StartDateTime":  "\/Date(1534737803608)\/",
-                            "EndDateTime":  "\/Date(1534737803706)\/"
+                            "StartDateTime":  "\/Date(1534801507605)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
                         },
                         {
-                            "Name":  "",
+                            "Name":  "Nested A",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Status":  "Started",
+                            "ScriptAst":  "{\r\n        Write-PSYInformationLog \u0027Nested script A is executing\u0027\r\n        $s = \"hello\"\r\n        $s = Get-PSYState \u0027Control\u0027\r\n        Start-PSYActivity -Name \u0027Nested B\u0027 -ScriptBlock {\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }\r\n    }",
+                            "ID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
+                            "ParentID":  "ded99a4e-352c-48e9-a826-425ec636a887",
+                            "StartDateTime":  "\/Date(1534801507926)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Nested B",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Status":  "Started",
+                            "ScriptAst":  "{\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }",
+                            "ID":  "4f70f979-2c85-49d4-91c0-b7125145cb8b",
+                            "ParentID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
+                            "StartDateTime":  "\/Date(1534801507985)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Nested B",
                             "Server":  "DHARDAN-WS",
                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
                             "Status":  "Completed",
-                            "ScriptAst":  "{\r\n        Start-PSYActivity -ScriptBlock {\r\n        }\r\n    }",
-                            "ID":  "94d0364f-59cc-43cc-9a64-27ae1b1c0e53",
-                            "ParentID":  "eec0d1da-0a56-48a6-bff9-4dd2ced458cb",
-                            "StartDateTime":  "\/Date(1534737803656)\/",
-                            "EndDateTime":  "\/Date(1534737803700)\/"
+                            "ScriptAst":  "{\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }",
+                            "ID":  "4f70f979-2c85-49d4-91c0-b7125145cb8b",
+                            "ParentID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
+                            "StartDateTime":  "\/Date(1534801507985)\/",
+                            "EndDateTime":  "\/Date(1534801508036)\/"
                         },
                         {
-                            "Name":  "",
+                            "Name":  "Nested A",
                             "Server":  "DHARDAN-WS",
                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
                             "Status":  "Completed",
-                            "ScriptAst":  "{\r\n        }",
-                            "ID":  "c02817bb-e94d-482e-93b2-a42a2c4f70ab",
-                            "ParentID":  "94d0364f-59cc-43cc-9a64-27ae1b1c0e53",
-                            "StartDateTime":  "\/Date(1534737803670)\/",
-                            "EndDateTime":  "\/Date(1534737803690)\/"
-                        },
-                        {
-                            "Name":  "",
-                            "Server":  "DHARDAN-WS",
-                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
-                            "Status":  "Completed",
-                            "ScriptAst":  "{\r\n        }",
-                            "ID":  "c02817bb-e94d-482e-93b2-a42a2c4f70ab",
-                            "ParentID":  "94d0364f-59cc-43cc-9a64-27ae1b1c0e53",
-                            "StartDateTime":  "\/Date(1534737803670)\/",
-                            "EndDateTime":  "\/Date(1534737803690)\/"
-                        },
-                        {
-                            "Name":  "",
-                            "Server":  "DHARDAN-WS",
-                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
-                            "Status":  "Completed",
-                            "ScriptAst":  "{\r\n        Start-PSYActivity -ScriptBlock {\r\n        }\r\n    }",
-                            "ID":  "94d0364f-59cc-43cc-9a64-27ae1b1c0e53",
-                            "ParentID":  "eec0d1da-0a56-48a6-bff9-4dd2ced458cb",
-                            "StartDateTime":  "\/Date(1534737803656)\/",
-                            "EndDateTime":  "\/Date(1534737803700)\/"
+                            "ScriptAst":  "{\r\n        Write-PSYInformationLog \u0027Nested script A is executing\u0027\r\n        $s = \"hello\"\r\n        $s = Get-PSYState \u0027Control\u0027\r\n        Start-PSYActivity -Name \u0027Nested B\u0027 -ScriptBlock {\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }\r\n    }",
+                            "ID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
+                            "ParentID":  "ded99a4e-352c-48e9-a826-425ec636a887",
+                            "StartDateTime":  "\/Date(1534801507926)\/",
+                            "EndDateTime":  "\/Date(1534801508055)\/"
                         },
                         {
                             "Name":  "Main Activity",
                             "Server":  "DHARDAN-WS",
                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYMainActivity.ps1",
                             "Status":  "Completed",
-                            "ScriptAst":  "{\r\n\r\n    $s = Use-PSYState \u0027MyControlState\u0027 @{Step = \u0027zero\u0027} -Overwrite\r\n    $s.Step = \"one\"\r\n    Start-PSYActivity -ScriptBlock {\r\n        Start-PSYActivity -ScriptBlock {\r\n        }\r\n    }\r\n}",
-                            "ID":  "eec0d1da-0a56-48a6-bff9-4dd2ced458cb",
+                            "ScriptAst":  "{\r\n    Write-PSYInformationLog \u0027Main script is executing\u0027\r\n\r\n    #$s = Use-PSYState -Name \u0027Control\u0027 -Default @{TestCSVToSQL1000 = $false} -Type \u0027MyCustomState\u0027\r\n    #$s = Register-PSYState -Name \u0027Control\u0027 -Type Discrete -Default @{TestCSVToSQL1000 = $false}\r\n    $s = Register-PSYState -Name \u0027Control\u0027 -Type Discrete -Default \"Hello World\"\r\n    Set-PSYState \u0027Control\u0027 \"foo\"\r\n\r\n    Start-PSYActivity -Name \u0027Nested A\u0027 -ScriptBlock {\r\n        Write-PSYInformationLog \u0027Nested script A is executing\u0027\r\n        $s = \"hello\"\r\n        $s = Get-PSYState \u0027Control\u0027\r\n        Start-PSYActivity -Name \u0027Nested B\u0027 -ScriptBlock {\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }\r\n    }\r\n\r\n    #Unregister-PSYState \u0027Control\u0027\r\n}",
+                            "ID":  "ded99a4e-352c-48e9-a826-425ec636a887",
                             "ParentID":  null,
-                            "StartDateTime":  "\/Date(1534737803608)\/",
-                            "EndDateTime":  "\/Date(1534737803706)\/"
+                            "StartDateTime":  "\/Date(1534801507605)\/",
+                            "EndDateTime":  "\/Date(1534801508068)\/"
                         }
                     ],
     "InformationLog":  [
-
+                           {
+                               "ID":  "8cf5cdaa-2561-4fae-b81e-30ae5c41c274",
+                               "ActivityID":  "ded99a4e-352c-48e9-a826-425ec636a887",
+                               "Category":  "",
+                               "Message":  "Main script is executing",
+                               "CreatedDateTime":  "\/Date(1534801507703)\/"
+                           },
+                           {
+                               "ID":  "ada626ee-850d-420e-8f2d-2283c5dce4f6",
+                               "ActivityID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
+                               "Category":  "",
+                               "Message":  "Nested script A is executing",
+                               "CreatedDateTime":  "\/Date(1534801507956)\/"
+                           },
+                           {
+                               "ID":  "855910d6-8482-4874-a5a8-8e8d422dbc66",
+                               "ActivityID":  "4f70f979-2c85-49d4-91c0-b7125145cb8b",
+                               "Category":  "",
+                               "Message":  "Nested script B is executing",
+                               "CreatedDateTime":  "\/Date(1534801508004)\/"
+                           }
                        ],
     "ExceptionLog":  [
 

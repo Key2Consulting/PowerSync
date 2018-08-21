@@ -9,16 +9,18 @@ Start-PSYMainActivity -ConnectScriptBlock {
     Get-PSYConnection -Name "Target"
 
     Start-PSYActivity -ScriptBlock {
-        $c = Use-PSYState 'MyControl'       # defaults to single
-        $c = Use-PSYState 'MyControl' -List
-        $c = Use-PSYState 'MyControl' -List 'MyCustomState'
+        $s = Get-PSYState 'MyControl' 'defaultvalue'
+
+        $c = Get-PSYState 'MyControl'       # defaults to single
+        $c = Get-PSYState 'MyControl' -List
+        $c = Get-PSYState 'MyControl' -List 'MyCustomState'
         $c['Step'] = 1
         
         Export-PSYSqlDatFiles -FilePathMin "\\sourcefiles\\$($ConsolidateFiles.LastLoadedDate)\\*.dat" -FilePathMax "\\sourcefiles\\$($ConsolidateFiles.NextLoadedDate)\\*.dat" `
             | Import-PSYTextFiles -Format "CSV" Header $true ObjectListQuery "\\targetfiles\\$(Get-Date)\\*.csv" -MaxRowsPerFile 1000000
     }
     
-    Start-PSYParallelActivity -ScriptBlock [ {
+    Start-PSYParallelActivity -ScriptBlock [{
         Export-PSYOleDb -ExtractScript "SELECT * FROM dbo.Foo1" -Timeout = 3600 `
             | Import-PSYSqlServer -Schema "Load" -Table "Foo1" -AutoCreate $true
     }, {
@@ -28,12 +30,15 @@ Start-PSYMainActivity -ConnectScriptBlock {
 
     Start-PSYActivity -Name "Sync Data From Server A to B" -ScriptBlock {
         
-        Use-PSYState 'Feed' $m
+        Get-PSYState 'Feed' $m
         Start-PSYForEachActivity -ForEach 'FeedItem' -In 'Feed' -ScriptBlock {
         }
 
         Start-PSYForEachActivity -Enumerate $m -ScriptBlock {
             param ($that)
+            $that.Field = 123
+            Checkpoint-PSYState
+            Checkpoint-PSYState $that
         }
 
 

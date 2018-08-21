@@ -1,4 +1,4 @@
-class JsonRepository : Repository {
+class JsonRepository : FileRepository {
     [string] $LogPath
     [string] $ConfigurationPath
 
@@ -7,44 +7,41 @@ class JsonRepository : Repository {
         $this.ConfigurationPath = $ConfigurationPath
     }
 
-    [void] Initialize() {
+    [void] LoadRepository() {
         # Attempt to initialize from the existing log and configuration files. If it fails, it will be recreated on save.
         try {
-            if ([System.IO.File]::Exists($this.LogPath)) {           
+            if ([System.IO.File]::Exists($this.LogPath)) {
                 $log = Get-Content -Path $this.LogPath | ConvertFrom-Json
                 $this.ActivityLog = $log.ActivityLog
                 $this.ExceptionLog = $log.ExceptionLog
                 $this.InformationLog = $log.InformationLog
                 $this.VariableLog = $log.VariableLog
             }
+            if ([System.IO.File]::Exists($this.ConfigurationPath)) {
+                $config = Get-Content -Path $this.ConfigurationPath | ConvertFrom-Json
+                $this.State = $config.State
+                $this.Connection = $config.Connection
+                $this.Registry = $config.Registry
+            }
         }
         catch {
         }
     }
 
-    [void] Save([object] $O) {
 
-        # Save this item based on its type
-        if ($O -is [ActivityLog]) {
-            $this.ActivityLog.Add($o)
-        }
-        elseif ($O -is [ExceptionLog]) {
-            $this.ExceptionLog.Add($o)
-        }
-        elseif ($O -is [InformationLog]) {
-            $this.InformationLog.Add($o)
-        }
-        elseif ($O -is [VariableLog]) {
-            $this.VariableLog.Add($o)
-        }
-
+    [void] SaveRepository() {
         # Since you can't really update just part of a JSON file, we rewrite the entire thing.
-        $log = @{
+        @{
             ActivityLog = $this.ActivityLog
             ExceptionLog = $this.ExceptionLog
             InformationLog = $this.InformationLog
             VariableLog = $this.VariableLog
-        }
-        ConvertTo-Json $log | Set-Content -Path $this.LogPath
-    }
+        } | ConvertTo-Json | Set-Content -Path $this.LogPath
+
+        @{
+            State = $this.State
+            Connection = $this.Connection
+            Registry = $this.Registry
+        } | ConvertTo-Json | Set-Content -Path $this.ConfigurationPath
+    }  
 }
