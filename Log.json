@@ -1,102 +1,801 @@
 {
     "VariableLog":  [
                         {
-                            "ID":  "e94df176-ff3d-49c5-9115-134d1f99cea1",
-                            "ActivityID":  "ded99a4e-352c-48e9-a826-425ec636a887",
+                            "ID":  "37d2cdaf-86d5-4220-9ae9-f6a825ddd220",
+                            "ActivityID":  null,
                             "VariableName":  "",
-                            "VariableValue":  "foo",
-                            "CreatedDateTime":  "\/Date(1534801507848)\/"
+                            "VariableValue":  "Initial value",
+                            "CreatedDateTime":  "\/Date(1534882964929)\/"
+                        },
+                        {
+                            "ID":  "0f9f479b-c572-44df-ba56-c31434b4a4a3",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "Concurrent update 1",
+                            "CreatedDateTime":  "\/Date(1534882965920)\/"
+                        },
+                        {
+                            "ID":  "ba079c42-1d96-415b-8410-b2dba8611922",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "Concurrent update 2",
+                            "CreatedDateTime":  "\/Date(1534882966014)\/"
+                        },
+                        {
+                            "ID":  "9c1d55e0-25cb-4bcb-bae5-ff775e97ae6b",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "Concurrent update 3",
+                            "CreatedDateTime":  "\/Date(1534882966471)\/"
+                        },
+                        {
+                            "ID":  "7a822c51-562c-46f1-b1ff-d57dfa5bf84f",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "0",
+                            "CreatedDateTime":  "\/Date(1534882967682)\/"
+                        },
+                        {
+                            "ID":  "1c0da0b1-fec1-407e-9048-c3e36f1d9f3e",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "1",
+                            "CreatedDateTime":  "\/Date(1534882968225)\/"
+                        },
+                        {
+                            "ID":  "29744709-09ec-4470-bd2d-581c9c76003c",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "1",
+                            "CreatedDateTime":  "\/Date(1534882968263)\/"
+                        },
+                        {
+                            "ID":  "bd0bb1d5-2cb5-4daf-80ef-b81e8aff6750",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "2",
+                            "CreatedDateTime":  "\/Date(1534882968387)\/"
+                        },
+                        {
+                            "ID":  "b1fa3a4a-3295-4ff7-95a7-8cfd0a1b54c9",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "2",
+                            "CreatedDateTime":  "\/Date(1534882968403)\/"
+                        },
+                        {
+                            "ID":  "03c94537-bd03-4440-8546-49481faaac2c",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "3",
+                            "CreatedDateTime":  "\/Date(1534882968572)\/"
+                        },
+                        {
+                            "ID":  "4af5844d-9899-461b-ab63-fc999c3b454c",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "3",
+                            "CreatedDateTime":  "\/Date(1534882968590)\/"
+                        },
+                        {
+                            "ID":  "186b2948-6faa-451c-bf3d-12b6075008bc",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "4",
+                            "CreatedDateTime":  "\/Date(1534882968888)\/"
+                        },
+                        {
+                            "ID":  "ffca333f-a9f1-4253-962b-446d67f508d8",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "4",
+                            "CreatedDateTime":  "\/Date(1534882968906)\/"
+                        },
+                        {
+                            "ID":  "e4057d60-362a-422a-adfc-c9027c379789",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "5",
+                            "CreatedDateTime":  "\/Date(1534882969094)\/"
+                        },
+                        {
+                            "ID":  "091e249a-d38d-4905-8152-b123db8edd7b",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "5",
+                            "CreatedDateTime":  "\/Date(1534882969119)\/"
+                        },
+                        {
+                            "ID":  "7e888612-43e3-4118-9523-d2e09c07274d",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "0",
+                            "CreatedDateTime":  "\/Date(1534882969580)\/"
+                        },
+                        {
+                            "ID":  "b8e2b1bc-9011-40b0-973e-4d150877f735",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "1",
+                            "CreatedDateTime":  "\/Date(1534882970224)\/"
+                        },
+                        {
+                            "ID":  "721ed944-18a0-4f50-b6e9-659f2f75c94f",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "2",
+                            "CreatedDateTime":  "\/Date(1534882970481)\/"
+                        },
+                        {
+                            "ID":  "8024f4e1-9723-4c7e-b102-5db1aabb99ab",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "3",
+                            "CreatedDateTime":  "\/Date(1534882970570)\/"
+                        },
+                        {
+                            "ID":  "05726248-f21a-4e98-a4fe-176e5fbe884f",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "4",
+                            "CreatedDateTime":  "\/Date(1534882970711)\/"
+                        },
+                        {
+                            "ID":  "364c63fd-cde7-49cc-8c82-3c4b78fdb074",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "5",
+                            "CreatedDateTime":  "\/Date(1534882970847)\/"
+                        },
+                        {
+                            "ID":  "aa6e1785-007f-4fe2-b5a7-4f36a00d837a",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "6",
+                            "CreatedDateTime":  "\/Date(1534882970970)\/"
+                        },
+                        {
+                            "ID":  "c7026c3d-3566-4523-836e-d3d59b19ba6c",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "7",
+                            "CreatedDateTime":  "\/Date(1534882971113)\/"
+                        },
+                        {
+                            "ID":  "7aff3969-8c07-433d-a576-4d1547042e28",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "8",
+                            "CreatedDateTime":  "\/Date(1534882971240)\/"
+                        },
+                        {
+                            "ID":  "3186a3ea-c604-4a36-abb2-2cc6980515f0",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "9",
+                            "CreatedDateTime":  "\/Date(1534882971437)\/"
+                        },
+                        {
+                            "ID":  "676ed975-9bfd-4394-a99d-b2570654b6ed",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "10",
+                            "CreatedDateTime":  "\/Date(1534882971541)\/"
+                        },
+                        {
+                            "ID":  "61a792b5-4d63-478a-bb7b-5c243c263990",
+                            "ActivityID":  null,
+                            "VariableName":  "",
+                            "VariableValue":  "",
+                            "CreatedDateTime":  "\/Date(1534882972361)\/"
                         }
                     ],
     "ActivityLog":  [
                         {
-                            "Name":  "Main Activity",
+                            "Name":  "TestConcurrency",
                             "Server":  "DHARDAN-WS",
                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYMainActivity.ps1",
                             "Status":  "Started",
-                            "ScriptAst":  "{\r\n    Write-PSYInformationLog \u0027Main script is executing\u0027\r\n\r\n    #$s = Use-PSYState -Name \u0027Control\u0027 -Default @{TestCSVToSQL1000 = $false} -Type \u0027MyCustomState\u0027\r\n    #$s = Register-PSYState -Name \u0027Control\u0027 -Type Discrete -Default @{TestCSVToSQL1000 = $false}\r\n    $s = Register-PSYState -Name \u0027Control\u0027 -Type Discrete -Default \"Hello World\"\r\n    Set-PSYState \u0027Control\u0027 \"foo\"\r\n\r\n    Start-PSYActivity -Name \u0027Nested A\u0027 -ScriptBlock {\r\n        Write-PSYInformationLog \u0027Nested script A is executing\u0027\r\n        $s = \"hello\"\r\n        $s = Get-PSYState \u0027Control\u0027\r\n        Start-PSYActivity -Name \u0027Nested B\u0027 -ScriptBlock {\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }\r\n    }\r\n\r\n    #Unregister-PSYState \u0027Control\u0027\r\n}",
-                            "ID":  "ded99a4e-352c-48e9-a826-425ec636a887",
+                            "ScriptAst":  "{\r\n    \r\n    Set-PSYState \u0027TestVariable\u0027 \"Initial value\"\r\n\r\n    Start-PSYParallelActivity -Name \u0027Test Parallel Race Execution\u0027 -ScriptBlock ({\r\n        Write-PSYInformationLog \u0027Parallel nested script 1 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 1\"\r\n        Start-Sleep -Milliseconds 1000\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    }, {\r\n        Write-PSYInformationLog \u0027Parallel nested script 2 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 2\"\r\n        Start-Sleep -Milliseconds 500\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    }, {\r\n        Write-PSYInformationLog \u0027Parallel nested script 3 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 3\"\r\n        Start-Sleep -Milliseconds 0\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    })\r\n\r\n    Set-PSYState \u0027TestVariable\u0027 0\r\n    Start-PSYForEachActivity -Name \u0027Test ForEach Incorrect Concurrency Execution\u0027 -Enumerate (1..10) -ScriptBlock {\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    }\r\n    if ((Get-PSYState \u0027TestVariable\u0027) -eq 10) {\r\n        throw \"TestConcurrency failed\"      # the code above isn\u0027t synchronized, so TestVariable should never equal 10\r\n    }\r\n\r\n    Set-PSYState \u0027TestVariable\u0027 0\r\n    Start-PSYForEachActivity -Name \u0027Test ForEach Correct Concurrency Execution\u0027 -Enumerate (1..10) -ScriptBlock {\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    }\r\n    if ((Get-PSYState \u0027TestVariable\u0027) -ne 10) {\r\n        throw \"TestConcurrency failed\"      # the code above isn\u0027t thread synchronized, so TestVariable should never equal 10\r\n    }\r\n\r\n    Remove-PSYState \u0027TestVariable\u0027\r\n}",
+                            "ID":  "0203d3a4-1d4e-41c0-b14e-a0c95ba0140d",
                             "ParentID":  null,
-                            "StartDateTime":  "\/Date(1534801507605)\/",
+                            "StartDateTime":  "\/Date(1534882964839)\/",
                             "EndDateTime":  "\/Date(-62135578800000)\/"
                         },
                         {
-                            "Name":  "Nested A",
+                            "Name":  "Test Parallel Race Execution",
                             "Server":  "DHARDAN-WS",
-                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYParallelActivity.ps1",
                             "Status":  "Started",
-                            "ScriptAst":  "{\r\n        Write-PSYInformationLog \u0027Nested script A is executing\u0027\r\n        $s = \"hello\"\r\n        $s = Get-PSYState \u0027Control\u0027\r\n        Start-PSYActivity -Name \u0027Nested B\u0027 -ScriptBlock {\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }\r\n    }",
-                            "ID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
-                            "ParentID":  "ded99a4e-352c-48e9-a826-425ec636a887",
-                            "StartDateTime":  "\/Date(1534801507926)\/",
-                            "EndDateTime":  "\/Date(-62135578800000)\/"
-                        },
-                        {
-                            "Name":  "Nested B",
-                            "Server":  "DHARDAN-WS",
-                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
-                            "Status":  "Started",
-                            "ScriptAst":  "{\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }",
-                            "ID":  "4f70f979-2c85-49d4-91c0-b7125145cb8b",
-                            "ParentID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
-                            "StartDateTime":  "\/Date(1534801507985)\/",
-                            "EndDateTime":  "\/Date(-62135578800000)\/"
-                        },
-                        {
-                            "Name":  "Nested B",
-                            "Server":  "DHARDAN-WS",
-                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
-                            "Status":  "Completed",
-                            "ScriptAst":  "{\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }",
-                            "ID":  "4f70f979-2c85-49d4-91c0-b7125145cb8b",
-                            "ParentID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
-                            "StartDateTime":  "\/Date(1534801507985)\/",
-                            "EndDateTime":  "\/Date(1534801508036)\/"
-                        },
-                        {
-                            "Name":  "Nested A",
-                            "Server":  "DHARDAN-WS",
-                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
-                            "Status":  "Completed",
-                            "ScriptAst":  "{\r\n        Write-PSYInformationLog \u0027Nested script A is executing\u0027\r\n        $s = \"hello\"\r\n        $s = Get-PSYState \u0027Control\u0027\r\n        Start-PSYActivity -Name \u0027Nested B\u0027 -ScriptBlock {\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }\r\n    }",
-                            "ID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
-                            "ParentID":  "ded99a4e-352c-48e9-a826-425ec636a887",
-                            "StartDateTime":  "\/Date(1534801507926)\/",
-                            "EndDateTime":  "\/Date(1534801508055)\/"
-                        },
-                        {
-                            "Name":  "Main Activity",
-                            "Server":  "DHARDAN-WS",
-                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYMainActivity.ps1",
-                            "Status":  "Completed",
-                            "ScriptAst":  "{\r\n    Write-PSYInformationLog \u0027Main script is executing\u0027\r\n\r\n    #$s = Use-PSYState -Name \u0027Control\u0027 -Default @{TestCSVToSQL1000 = $false} -Type \u0027MyCustomState\u0027\r\n    #$s = Register-PSYState -Name \u0027Control\u0027 -Type Discrete -Default @{TestCSVToSQL1000 = $false}\r\n    $s = Register-PSYState -Name \u0027Control\u0027 -Type Discrete -Default \"Hello World\"\r\n    Set-PSYState \u0027Control\u0027 \"foo\"\r\n\r\n    Start-PSYActivity -Name \u0027Nested A\u0027 -ScriptBlock {\r\n        Write-PSYInformationLog \u0027Nested script A is executing\u0027\r\n        $s = \"hello\"\r\n        $s = Get-PSYState \u0027Control\u0027\r\n        Start-PSYActivity -Name \u0027Nested B\u0027 -ScriptBlock {\r\n            Write-PSYInformationLog \u0027Nested script B is executing\u0027\r\n        }\r\n    }\r\n\r\n    #Unregister-PSYState \u0027Control\u0027\r\n}",
-                            "ID":  "ded99a4e-352c-48e9-a826-425ec636a887",
+                            "ScriptAst":  "{\r\n        Write-PSYInformationLog \u0027Parallel nested script 1 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 1\"\r\n        Start-Sleep -Milliseconds 1000\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    }",
+                            "ID":  "d28e14b0-8488-4a10-a503-6476d8505780",
                             "ParentID":  null,
-                            "StartDateTime":  "\/Date(1534801507605)\/",
-                            "EndDateTime":  "\/Date(1534801508068)\/"
+                            "StartDateTime":  "\/Date(1534882965086)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test Parallel Race Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Write-PSYInformationLog \u0027Parallel nested script 1 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 1\"\r\n        Start-Sleep -Milliseconds 1000\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    ",
+                            "ID":  "b987e757-c9a5-4c7f-aae1-172bd6318320",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882965700)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test Parallel Race Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Write-PSYInformationLog \u0027Parallel nested script 2 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 2\"\r\n        Start-Sleep -Milliseconds 500\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    ",
+                            "ID":  "883faf71-2b99-429b-bad6-5466f24c9339",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882965948)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test Parallel Race Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Write-PSYInformationLog \u0027Parallel nested script 3 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 3\"\r\n        Start-Sleep -Milliseconds 0\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    ",
+                            "ID":  "1367d70c-fd65-4391-9a36-afc70ef7ef79",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882966215)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test Parallel Race Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Write-PSYInformationLog \u0027Parallel nested script 3 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 3\"\r\n        Start-Sleep -Milliseconds 0\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    ",
+                            "ID":  "1367d70c-fd65-4391-9a36-afc70ef7ef79",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882966215)\/",
+                            "EndDateTime":  "\/Date(1534882966831)\/"
+                        },
+                        {
+                            "Name":  "Test Parallel Race Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Write-PSYInformationLog \u0027Parallel nested script 2 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 2\"\r\n        Start-Sleep -Milliseconds 500\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    ",
+                            "ID":  "883faf71-2b99-429b-bad6-5466f24c9339",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882965948)\/",
+                            "EndDateTime":  "\/Date(1534882966854)\/"
+                        },
+                        {
+                            "Name":  "Test Parallel Race Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Write-PSYInformationLog \u0027Parallel nested script 1 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 1\"\r\n        Start-Sleep -Milliseconds 1000\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    ",
+                            "ID":  "b987e757-c9a5-4c7f-aae1-172bd6318320",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882965700)\/",
+                            "EndDateTime":  "\/Date(1534882967118)\/"
+                        },
+                        {
+                            "Name":  "Test Parallel Race Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYParallelActivity.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n        Write-PSYInformationLog \u0027Parallel nested script 1 is executing\u0027\r\n        Set-PSYState \u0027TestVariable\u0027 \"Concurrent update 1\"\r\n        Start-Sleep -Milliseconds 1000\r\n        if ((Get-PSYState \u0027TestVariable\u0027) -ne \u0027Concurrent update 3\u0027) { throw \"TestConcurrency failed.\"}\r\n    }",
+                            "ID":  "d28e14b0-8488-4a10-a503-6476d8505780",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882965086)\/",
+                            "EndDateTime":  "\/Date(1534882967650)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYForEachActivity.ps1",
+                            "Status":  "Started",
+                            "ScriptAst":  "{\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    }",
+                            "ID":  "7bb04de3-c0c3-4454-9ab9-7737e37fa71e",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882967725)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "8ca810b2-2335-42ab-84f5-8e1f969a1f22",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968069)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "1ea2780b-1fbf-4f4e-9e66-760cb7c44a18",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968210)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "8ca810b2-2335-42ab-84f5-8e1f969a1f22",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968069)\/",
+                            "EndDateTime":  "\/Date(1534882968282)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "1ea2780b-1fbf-4f4e-9e66-760cb7c44a18",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968210)\/",
+                            "EndDateTime":  "\/Date(1534882968318)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "727fe649-7a21-4070-aa3d-43ca2e8a67c8",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968338)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "8b079ecf-b891-47c5-ad11-8ea0f16fafb7",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968353)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "727fe649-7a21-4070-aa3d-43ca2e8a67c8",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968338)\/",
+                            "EndDateTime":  "\/Date(1534882968465)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "8b079ecf-b891-47c5-ad11-8ea0f16fafb7",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968353)\/",
+                            "EndDateTime":  "\/Date(1534882968481)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "0fd0034d-77cb-4d9d-92d4-bf2a100007e3",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968496)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "3a4d00c8-69c0-442a-9236-87b04b204e39",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968519)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "0fd0034d-77cb-4d9d-92d4-bf2a100007e3",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968496)\/",
+                            "EndDateTime":  "\/Date(1534882968647)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "3a4d00c8-69c0-442a-9236-87b04b204e39",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968519)\/",
+                            "EndDateTime":  "\/Date(1534882968662)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "91fe9ca2-41e8-4048-bac5-2c425abbd01b",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968812)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "56ce2296-1cec-4af9-b5b9-e21b551c2789",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968846)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "91fe9ca2-41e8-4048-bac5-2c425abbd01b",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968812)\/",
+                            "EndDateTime":  "\/Date(1534882968993)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "56ce2296-1cec-4af9-b5b9-e21b551c2789",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882968846)\/",
+                            "EndDateTime":  "\/Date(1534882969010)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "948ed8c6-ccc9-4451-b9a8-57d07c154ff2",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882969041)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "d4d53db1-f5e0-4250-a01b-3112f5027fad",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882969060)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "948ed8c6-ccc9-4451-b9a8-57d07c154ff2",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882969041)\/",
+                            "EndDateTime":  "\/Date(1534882969215)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    ",
+                            "ID":  "d4d53db1-f5e0-4250-a01b-3112f5027fad",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882969060)\/",
+                            "EndDateTime":  "\/Date(1534882969235)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYForEachActivity.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n        Set-PSYState \u0027TestVariable\u0027 ((Get-PSYState \u0027TestVariable\u0027) + 1)     # will not work as expected\r\n    }",
+                            "ID":  "7bb04de3-c0c3-4454-9ab9-7737e37fa71e",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882967725)\/",
+                            "EndDateTime":  "\/Date(1534882969533)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYForEachActivity.ps1",
+                            "Status":  "Started",
+                            "ScriptAst":  "{\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    }",
+                            "ID":  "04fa87c8-3c2a-4b77-9635-c493a856fc44",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882969637)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "faad5b3a-0fdc-4f71-a555-19b196fdf99d",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970002)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "d78b2c81-d72f-4613-a3c2-c5fa36d34637",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970192)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "faad5b3a-0fdc-4f71-a555-19b196fdf99d",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970002)\/",
+                            "EndDateTime":  "\/Date(1534882970438)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "7e1d631d-51c9-48fc-a2b5-42c828ef03d8",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970458)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "d78b2c81-d72f-4613-a3c2-c5fa36d34637",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970192)\/",
+                            "EndDateTime":  "\/Date(1534882970553)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "7e1d631d-51c9-48fc-a2b5-42c828ef03d8",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970458)\/",
+                            "EndDateTime":  "\/Date(1534882970626)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "44bc42ed-4a3b-4d43-8222-a0a4061653c4",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970645)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "6cfcbb52-8d5b-4fae-a902-a67d3a5a580e",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970673)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "1b5ba453-29d4-4878-a5a7-14d34972978d",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970732)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "44bc42ed-4a3b-4d43-8222-a0a4061653c4",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970645)\/",
+                            "EndDateTime":  "\/Date(1534882970828)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "51b6bcc4-925b-4408-baae-fa5f0203c7aa",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970897)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "6cfcbb52-8d5b-4fae-a902-a67d3a5a580e",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970673)\/",
+                            "EndDateTime":  "\/Date(1534882970956)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "c3d65e3c-222f-41d7-a04e-b86de4264640",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882971042)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "1b5ba453-29d4-4878-a5a7-14d34972978d",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970732)\/",
+                            "EndDateTime":  "\/Date(1534882971102)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "51b6bcc4-925b-4408-baae-fa5f0203c7aa",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882970897)\/",
+                            "EndDateTime":  "\/Date(1534882971197)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "14dbe61c-c780-40cb-a004-2e0cfe081f4b",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882971214)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "c3d65e3c-222f-41d7-a04e-b86de4264640",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882971042)\/",
+                            "EndDateTime":  "\/Date(1534882971337)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Started",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "5f8174b7-912d-4d41-bac8-e889204f5925",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882971411)\/",
+                            "EndDateTime":  "\/Date(-62135578800000)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "14dbe61c-c780-40cb-a004-2e0cfe081f4b",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882971214)\/",
+                            "EndDateTime":  "\/Date(1534882971531)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "",
+                            "Status":  "Completed",
+                            "ScriptAst":  "\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    ",
+                            "ID":  "5f8174b7-912d-4d41-bac8-e889204f5925",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882971411)\/",
+                            "EndDateTime":  "\/Date(1534882971823)\/"
+                        },
+                        {
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Server":  "DHARDAN-WS",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSync\\Public\\Activity\\Start-PSYForEachActivity.ps1",
+                            "Status":  "Completed",
+                            "ScriptAst":  "{\r\n        Lock-PSYState \u0027TestVariable\u0027 {\r\n            Set-PSYState \u0027TestVariable\u0027 ($args[0] + 1)     # will work as expected since we\u0027re locking the variable\r\n        }\r\n    }",
+                            "ID":  "04fa87c8-3c2a-4b77-9635-c493a856fc44",
+                            "ParentID":  null,
+                            "StartDateTime":  "\/Date(1534882969637)\/",
+                            "EndDateTime":  "\/Date(1534882972313)\/"
                         }
                     ],
     "InformationLog":  [
                            {
-                               "ID":  "8cf5cdaa-2561-4fae-b81e-30ae5c41c274",
-                               "ActivityID":  "ded99a4e-352c-48e9-a826-425ec636a887",
+                               "ID":  "f7d25719-e1e6-4a34-bc66-ed88efdd2c7c",
+                               "ActivityID":  null,
                                "Category":  "",
-                               "Message":  "Main script is executing",
-                               "CreatedDateTime":  "\/Date(1534801507703)\/"
+                               "Message":  "Parallel nested script 1 is executing",
+                               "CreatedDateTime":  "\/Date(1534882965748)\/"
                            },
                            {
-                               "ID":  "ada626ee-850d-420e-8f2d-2283c5dce4f6",
-                               "ActivityID":  "1f22c49c-c6eb-4e2a-9e38-ce2bc7fd55c5",
+                               "ID":  "2c03f966-2867-4968-b196-9b70e2f6dc0d",
+                               "ActivityID":  null,
                                "Category":  "",
-                               "Message":  "Nested script A is executing",
-                               "CreatedDateTime":  "\/Date(1534801507956)\/"
+                               "Message":  "Parallel nested script 2 is executing",
+                               "CreatedDateTime":  "\/Date(1534882965998)\/"
                            },
                            {
-                               "ID":  "855910d6-8482-4874-a5a8-8e8d422dbc66",
-                               "ActivityID":  "4f70f979-2c85-49d4-91c0-b7125145cb8b",
+                               "ID":  "efbce87a-50ce-4b36-9054-2112cfca824d",
+                               "ActivityID":  null,
                                "Category":  "",
-                               "Message":  "Nested script B is executing",
-                               "CreatedDateTime":  "\/Date(1534801508004)\/"
+                               "Message":  "Parallel nested script 3 is executing",
+                               "CreatedDateTime":  "\/Date(1534882966243)\/"
                            }
                        ],
     "ExceptionLog":  [

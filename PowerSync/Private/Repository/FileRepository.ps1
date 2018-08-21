@@ -13,7 +13,6 @@ class FileRepository : Repository {
     [System.Collections.ArrayList] $Registry
 
     FileRepository () {
-        $this.LockPath = "PSYRepoLock.txt"
         # These lists simulate in-memory tables of a database
         $this.ActivityLog = New-Object System.Collections.ArrayList
         $this.ExceptionLog = New-Object System.Collections.ArrayList
@@ -95,22 +94,10 @@ class FileRepository : Repository {
 
     # Synchronously executes a scriptblock as an atomic unit, blocking any other process attempting a critical section.
     [object] CriticalSection([scriptblock] $ScriptBlock) {
-        $file = $null
         try {
-            # Acquire an exclusive lock to the repository using a separate file who's sole purpose is to control locking.  If
-            # acquiring a lock fails, keep trying for a specified amount of time.
-            foreach ($retries in 1..100) {
-                try {
-                    $file = [System.IO.File]::Open($this.LockPath, 'OpenOrCreate', 'ReadWrite', 'None')
-                    break
-                }
-                catch {
-                    # Couldn't acquire, so we sleep for a bit then try again.
-                    Start-Sleep -Milliseconds (100 / $this.LockTimeout)
-                }
-            }
-
-            # Lock acquired
+            # Grab an exclusive lock
+            $mutex = New-Object System.Threading.Mutex($false, "ae831404-511f-4577-ba63-56a21fd70425")
+            $null = $mutex.WaitOne($this.LockTimeout)
             
             # Reload the repository in case another process made changes.
             $this.LoadRepository()
@@ -128,8 +115,7 @@ class FileRepository : Repository {
             throw "CriticalSection of $($this.GetType()) failed. $($_.Exception.Message)"
         }
         finally {
-            $file.Close()
-            Remove-Item $this.LockPath
+            $mutex.ReleaseMutex()
         }
     }
 }

@@ -20,22 +20,23 @@ function Start-PSYParallelActivity {
 
         # We can't use the original scriptblock because PowerShell forces it to run in the original runspace (i.e. single threaded). A
         # workaround is to recreate the scriptblocks.
-        $recreatedScriptBlock = New-Object System.Collections.ArrayList
-        if (-not $Ctx.System.DisableParallel) {
-            foreach ($script in $ScriptBlock) {
-                $null = $recreatedScriptBlock.Add([Scriptblock]::Create($script.ToString()))
+        $workItems = New-Object System.Collections.ArrayList
+        foreach ($o in $ScriptBlock) {
+            $workItem = @{
+                ScriptBlock = $ScriptBlock[$ScriptBlock.IndexOf($o)]
+                Index = $ScriptBlock.IndexOf($o)
             }
-        }
-        else {
-            # Don't recreate, forcing the process to be sequential (and debugging to work seamlessly).
-            $recreatedScriptBlock = $ScriptBlock
+            if (-not $Ctx.Option.DisableParallel) {
+                $workItem.ScriptBlock = [Scriptblock]::Create($o.ToString())
+            }
+            $null = $workItems.Add($workItem)
         }
 
         # Execute each (new) script block in parallel, importing all variables and modules.
-        $recreatedScriptBlock | Invoke-Parallel -ImportVariables -ImportModules -Throttle $Ctx.Option.Throttle -RunspaceTimeout $Ctx.Option.ScriptTimeout -ScriptBlock {
-            #Write-ActivityLog $ScriptBlock $Name "Parallel Activity [$($recreatedScriptBlock.IndexOf($_))] Started" 'Started'
-            Invoke-Command $_
-            #Write-ActivityLog $ScriptBlock $Name "Parallel Activity [$($recreatedScriptBlock.IndexOf($_))] Completed" 'Completed'
+        $workItems | Invoke-Parallel -ImportVariables -ImportModules -ImportFunctions -Throttle $Ctx.Option.Throttle -RunspaceTimeout $Ctx.Option.ScriptTimeout -ScriptBlock {
+            $a = Write-ActivityLog $_.ScriptBlock $Name "Parallel Activity [$($_.Index)] Started" 'Started'
+            Invoke-Command $_.ScriptBlock
+            Write-ActivityLog $_.ScriptBlock $Name "Parallel Activity [$($_.Index)] Completed" 'Completed' $a
         }
 
         <# THE CODE BELOW WAS AN ATTEMPT TO USE JOBS TO RUN PARALLEL ACTIVITIES.
@@ -55,9 +56,9 @@ function Start-PSYParallelActivity {
         #>
 
         # Log activity end
-        Write-ActivityLog $ScriptBlock[0] $Name 'Main Activity Completed' 'Completed' $a
+        Write-ActivityLog $ScriptBlock[0] $Name 'Parallel Activity Completed' 'Completed' $a
     }
     catch {
-        Write-PSYExceptionLog $_ "Error starting parallel activity '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error starting ParallelActivity '$Name'." -Rethrow
     }
 }

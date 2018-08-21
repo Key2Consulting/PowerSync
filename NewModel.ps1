@@ -41,7 +41,6 @@ Start-PSYMainActivity -ConnectScriptBlock {
             Checkpoint-PSYState $that
         }
 
-
         Start-PSYForEachActivity -Name "Process each manifest item" -Throttle 5 -Enumerate $m -ContinueOnError -ScriptBlock {
             param ($that)
             Export-PSYOleDb -Name $that.Table -Connection "Source" -ExtractScript "SELECT * FROM dbo.$($that.Table) WHERE DT > $($that.LastDT)" -Timeout = 3600 `

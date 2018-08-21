@@ -24,6 +24,6 @@ function Start-PSYActivity {
         Write-ActivityLog $ScriptBlock $Name 'Activity Completed' 'Completed' $a
     }
     catch {
-        Write-PSYExceptionLog $_ "Error starting activity '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error starting Activity '$Name'." -Rethrow
     }
 }

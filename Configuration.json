@@ -6,14 +6,6 @@
 
                  ],
     "State":  [
-                  {
-                      "ID":  "57359c29-28b2-438b-ba4f-7fb08bc22d3a",
-                      "Name":  "Control",
-                      "Type":  1,
-                      "Value":  "foo",
-                      "CreatedDateTime":  "\/Date(1534801507795)\/",
-                      "ModifiedDateTime":  "\/Date(1534801507798)\/",
-                      "ReadDateTime":  "\/Date(1534801507800)\/"
-                  }
+
               ]
 }

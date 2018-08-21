@@ -31,7 +31,6 @@ function Start-PSYMainActivity {
             DisableParallel = $DisableParallel
             PrintVerbose = $PrintVerbose
         }
-        # State = @{}
     }
 
     # If any runtime options weren't explicitly passed, attempt to retrieve them from the Registry. This gives control
@@ -69,6 +68,6 @@ function Start-PSYMainActivity {
         Write-ActivityLog $ScriptBlock $Name 'Main Activity Completed' 'Completed' $a
     }
     catch {
-        Write-PSYExceptionLog $_ "Unable to start main activity '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Unable to start Main Activity '$Name'." -Rethrow
     }
 }
