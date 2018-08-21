@@ -3,12 +3,16 @@ class Repository {
     Repository () {
     }
 
-    [void] SaveEntity([object] $O) {
-        throw "The repository SaveEntity method should be overridden by derived classes."
+    [void] CreateEntity([object] $O) {
+        throw "The repository CreateEntity method should be overridden by derived classes."
     }
 
-    [object] GetEntity([type] $EntityType, [object] $EntityID) {
-        throw "The repository GetEntity method should be overridden by derived classes."
+    [object] ReadEntity([type] $EntityType, [object] $EntityID) {
+        throw "The repository ReadEntity method should be overridden by derived classes."
+    }
+
+    [void] UpdateEntity([object] $O) {
+        throw "The repository UpdateEntity method should be overridden by derived classes."
     }
 
     [void] DeleteEntity([type] $EntityType, [object] $EntityID) {

@@ -2,25 +2,16 @@ class FileRepository : Repository {
     # Locking
     [string] $LockPath              # file used to acquire an exclusive lock to the file repository
     [int] $LockTimeout = 5000       # number of milliseconds to keep trying to acquire exclusive lock to the file repository
-    # Logging
-    [System.Collections.ArrayList] $ActivityLog
-    [System.Collections.ArrayList] $ExceptionLog
-    [System.Collections.ArrayList] $InformationLog
-    [System.Collections.ArrayList] $VariableLog
-    # Configuration
-    [System.Collections.ArrayList] $State
-    [System.Collections.ArrayList] $Connection
-    [System.Collections.ArrayList] $Registry
+    [hashtable] $TableList          # a list of lists, simulating in-memory tables of a database
 
     FileRepository () {
         # These lists simulate in-memory tables of a database
-        $this.ActivityLog = New-Object System.Collections.ArrayList
-        $this.ExceptionLog = New-Object System.Collections.ArrayList
-        $this.InformationLog = New-Object System.Collections.ArrayList
-        $this.VariableLog = New-Object System.Collections.ArrayList
-        $this.State = New-Object System.Collections.ArrayList
-        $this.Connection = New-Object System.Collections.ArrayList
-        $this.Registry = New-Object System.Collections.ArrayList
+        $this.TableList.ActivityLog = New-Object System.Collections.ArrayList
+        $this.TableList.ExceptionLog = New-Object System.Collections.ArrayList
+        $this.TableList.InformationLog = New-Object System.Collections.ArrayList
+        $this.TableList.State = New-Object System.Collections.ArrayList
+        $this.TableList.Connection = New-Object System.Collections.ArrayList
+        $this.TableList.Registry = New-Object System.Collections.ArrayList
     }
 
     [void] SaveRepository() {
@@ -31,27 +22,34 @@ class FileRepository : Repository {
         throw "The file repository LoadRepository method should be overridden by derived classes."
     }
 
+    [System.Collections.ArrayList] GetEntityTable([type] $EntityType) {
+        # Retrieve the table for this entity
+        $table = $this.TableList[$EntityType.GetType().Name]
+        if (-not $table) {
+            throw "GetEntityTable encountered unknown type $($EntityType.Name)."
+        }
+        return $table
+    }
+
+    [string] GetEntityKey([type] $EntityType) {
+        # Entities generally use ID as their key, with few exceptions
+        $keyField = 'ID'
+        if ($EntityType -eq [State]) {
+            $keyField = "Name"
+        }        
+        return $keyField
+    }
+
     [object] GetEntity([type] $EntityType, [object] $EntityID) {
-        # Load this entity based on its type and identifier
-        if ($EntityType -eq [ActivityLog]) {
-            return $this.ActivityLog.Where({$_.ID -eq $EntityID})[0]
-        }
-        elseif ($EntityType -eq [ExceptionLog]) {
-            return $this.ExceptionLog.Where({$_.ID -eq $EntityID})[0]
-        }
-        elseif ($EntityType -eq [InformationLog]) {
-            return $this.InformationLog.Where({$_.ID -eq $EntityID})[0]
-        }
-        elseif ($EntityType -eq [VariableLog]) {
-            return $this.VariableLog.Where({$_.ID -eq $EntityID})[0]
-        }
-        elseif ($EntityType -eq [State]) {
-            return $this.State.Where({$_.Name -eq $EntityID})[0]
-        }
-        return $null
+        $table = $this.GetEntityTable($EntityType)
+        return $table.Where({$_."$($this.GetEntityTable($EntityType))" -eq $EntityID})[0]
     }
 
     [void] SaveEntity([object] $Entity) {
+        $table = $this.GetEntityTable($Entity.GetType())
+        $key = $this.GetEntityKey($Entity.GetType())
+        $existing = $this.GetEntity($Entity.GetType(), $info[1])
+
         # Save this item based on its type
         if ($Entity -is [ActivityLog]) {
             $this.ActivityLog.Add($Entity)
