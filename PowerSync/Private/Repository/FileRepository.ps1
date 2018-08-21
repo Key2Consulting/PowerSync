@@ -129,6 +129,7 @@ class FileRepository : Repository {
         }
         finally {
             $file.Close()
+            Remove-Item $this.LockPath
         }
     }
 }

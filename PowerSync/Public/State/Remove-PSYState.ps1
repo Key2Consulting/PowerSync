@@ -1,4 +1,4 @@
-function Unregister-PSYState {
+function Remove-PSYState {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
@@ -16,6 +16,6 @@ function Unregister-PSYState {
         $Ctx.System.Repository.DeleteState($Name)
     }
     catch {
-        throw "Error setting state $Name. $($_.Exception.Message)"
+        Write-PSYExceptionLog $_ "Error removing state '$Name'." -Rethrow
     }
 }

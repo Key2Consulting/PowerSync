@@ -11,6 +11,6 @@ function Connect-PSYJsonRepository {
         New-Object JsonRepository $LogPath, $ConfigurationPath
     }
     catch {
-
+        Write-PSYExceptionLog $_ "Error connecting to JSON repository." -Rethrow
     }
 }

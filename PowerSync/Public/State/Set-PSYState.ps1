@@ -3,8 +3,12 @@ function Set-PSYState {
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
         [string] $Name,
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
-        [object] $Data
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [object] $Value,
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [object] $Type = [StateType]::DiscreteState,
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [string] $CustomType
     )
 
     try {
@@ -12,12 +16,12 @@ function Set-PSYState {
         Confirm-PSYInitialized($Ctx)
 
         # Log
-        $Ctx.System.Repository.LogVariable($Ctx.System.ActivityStack[$Ctx.System.ActivityStack.Count - 1], $Name, $Data)
+        Write-PSYVariableLog $Name $Value
 
-        # Update the state in the repository
-        $Ctx.System.Repository.SaveState($Name, $Data)
+        # Set the state in the repository.  If it doesn't exist, it will be created.
+        $Ctx.System.Repository.SetState($Name, $Value, $Type, $CustomType)
     }
     catch {
-        throw "Error setting state $Name. $($_.Exception.Message)"
+        Write-PSYExceptionLogWrite-PSYException $_ "Error setting state '$Name'." -Rethrow
     }
 }

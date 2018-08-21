@@ -12,5 +12,10 @@ function Write-PSYInformationLog {
 
     # Write Log and output to screen
     $Ctx.System.Repository.LogInformation($Ctx.System.ActivityStack[$Ctx.System.ActivityStack.Count - 1], $Category, $Message)
-    Write-Host "Information: $Category $Message"
+    if ($Category) {
+        Write-Host "Information: ($Category) $Message"
+    }
+    else {
+        Write-Host "Information: $Message"
+    }
 }

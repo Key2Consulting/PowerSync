@@ -9,6 +9,6 @@ function Connect-PSYOleDbRepository {
 
     }
     catch {
-
+        Write-PSYExceptionLog $_ "Error starting activity $Name." -Rethrow
     }
 }

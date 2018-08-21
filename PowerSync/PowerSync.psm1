@@ -1,10 +1,12 @@
 # Manually load private modules since the order they are loaded matters. Attempting to do this dynamically (as depicted below) results
 # in random dependency errors.
+. "$PSScriptRoot\Private\Library\Invoke-Parallel.ps1"
 . "$PSScriptRoot\Private\Common\Model.ps1"
 . "$PSScriptRoot\Private\Repository\Repository.ps1"
 . "$PSScriptRoot\Private\Repository\FileRepository.ps1"
 . "$PSScriptRoot\Private\Repository\JsonRepository.ps1"
 . "$PSScriptRoot\Private\Common\Core.ps1"
+. "$PSScriptRoot\Private\Common\Write-ActivityLog.ps1"
 
 # Dynamically load all of our dependent modules, separating Public from Private functionality (public gets exported).
 $Public = @(Get-ChildItem -Path "$PSScriptRoot\Public\*.ps1" -Recurse)

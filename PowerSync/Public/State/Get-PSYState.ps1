@@ -13,6 +13,6 @@ function Get-PSYState {
         return $Ctx.System.Repository.GetState($Name)
     }
     catch {
-        throw "Error getting state $Name. $($_.Exception.Message)"
+        Write-PSYExceptionLog $_ "Error getting state '$Name'." -Rethrow
     }
 }

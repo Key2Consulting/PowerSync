@@ -43,11 +43,13 @@ class Repository {
         })
     }
 
-    [void] LogException([ActivityLog] $Activity, [object] $Exception, [bool] $Rethrow) {
+    [void] LogException([ActivityLog] $Activity, [string] $Message, [string] $Exception, [string] $StackTrace) {
         $o = New-Object ExceptionLog
         $o.ID = New-Guid
         $o.ActivityID = $Activity.ID
-        $o.Exception = $Exception.ToString()
+        $o.Message = $Message
+        $o.Exception = $Exception
+        $o.StackTrace = $StackTrace
         $o.CreatedDateTime = Get-Date
         $this.CriticalSection({
             $this.SaveEntity($o)
@@ -82,17 +84,6 @@ class Repository {
         })
     }
     
-    [void] SaveState([string] $Name, [object] $Data) {
-        $this.CriticalSection({
-            $existing = $this.GetEntity([State], $Name)
-            if (-not $existing) {
-                throw "State $Name not found."
-            }
-            $existing.Value = $Data
-            $this.SaveEntity($existing)
-        })
-    }
-    
     [object] GetState([string] $Name) {
         $o = $this.CriticalSection({
             return $this.GetEntity([State], $Name)
@@ -100,12 +91,12 @@ class Repository {
         return $o.Value
     }
 
-    [object] RegisterState([string] $Name, [object] $Data, [StateType] $Type, [string] $CustomType) {
+    [void] SetState([string] $Name, [object] $Value, [StateType] $Type, [string] $CustomType) {
         $o = New-Object State
         $o.ID = New-Guid
         $o.Name = $Name
         $o.Type = $Type
-        $o.Value = $Data
+        $o.Value = $Value
         $o.CreatedDateTime = Get-Date
         $o.ModifiedDateTime = Get-Date
         $o.ReadDateTime = Get-Date
@@ -115,10 +106,10 @@ class Repository {
                 $this.SaveEntity($o)
             }
             else {
-                $o = $existing
+                $existing.Value = $Value
+                $this.SaveEntity($existing)
             }
         })
-        return $o.Value
     }
 
     [void] DeleteState([string] $Name) {

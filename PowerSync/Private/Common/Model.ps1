@@ -1,5 +1,5 @@
 enum StateType {
-    None = 0
+    None = $null
     DiscreteState = 1
     CollectionState = 2
     CustomState = 3
@@ -30,7 +30,9 @@ class ActivityLog {
 class ExceptionLog {
     [object] $ID
     [object] $ActivityID
+    [string] $Message
     [string] $Exception
+    [string] $StackTrace
     [DateTime] $CreatedDateTime
 }
 
