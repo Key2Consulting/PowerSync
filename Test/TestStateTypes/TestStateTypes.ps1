@@ -1,3 +1,4 @@
+<#
 Start-PSYMainActivity -PrintVerbose -ConnectScriptBlock {
     Connect-PSYJsonRepository
 } -Name 'Test State Types' -ScriptBlock {
@@ -20,3 +21,4 @@ Start-PSYMainActivity -PrintVerbose -ConnectScriptBlock {
     #$x.My = "Property"
     $y = $x.Hello
 }
+#>

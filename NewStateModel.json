@@ -1,0 +1,41 @@
+[
+    {
+        "ID": "58114fc0-303d-47c3-b1e8-cd05dbef10ae",
+        "Name": "var1",
+        "Value": 123,
+        "Type": "Variable"
+    },
+    {
+        "ID": "58114fc0-303d-47c3-b1e8-cd05dbef10ae",
+        "Name": "h1",
+        "Type": "HashTable",
+        "Value": {
+            "MyID": "1",
+            "MyName": "Hello World",
+            "DateTime": "Wednesday, August 22, 2018 8:29:16 AM"
+        }
+    },
+    {
+        "ID": "58114fc0-303d-47c3-b1e8-cd05dbef10ae",
+        "Name": "tableList",
+        "Type": "HashTable",
+        "Value": {
+            "1": {
+                "ID":"58114fc0-303d-47c3-b1e8-cd05dbef10ae",
+                "TYpe": "Row",
+                "SourceConnection": "SourceA",
+                "SourceTable": "dbo.MyData",
+                "TargetConnection": "SourceA",
+                "TargetTable": "Load.MyData",
+                "ProcessType": "Full"
+            },
+            "2": {
+                "SourceConnection": "SourceA",
+                "SourceTable": "dbo.MyData",
+                "TargetConnection": "SourceA",
+                "TargetTable": "Load.MyData",
+                "ProcessType": "Full"
+            }
+        }
+    }    
+]

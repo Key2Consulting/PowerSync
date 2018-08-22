@@ -10,7 +10,7 @@ class JsonRepository : FileRepository {
     [void] LoadRepository() {
         # Attempt to initialize from the existing log and configuration files. If it fails, it will be recreated on save.
         try {
-            $log = Get-Content -Path $this.LogPath | ConvertFrom-Json
+            $log = Get-Content -Path $this.LogPath -ErrorAction SilentlyContinue | ConvertFrom-Json
             if ($log) {
                 $this.TableList.ActivityLog = [System.Collections.ArrayList] $log.ActivityLog
                 $this.TableList.ExceptionLog = [System.Collections.ArrayList] $log.ExceptionLog
@@ -18,7 +18,7 @@ class JsonRepository : FileRepository {
                 $this.TableList.VariableLog = [System.Collections.ArrayList] $log.VariableLog
             }
 
-            $config = Get-Content -Path $this.ConfigurationPath | ConvertFrom-Json
+            $config = Get-Content -Path $this.ConfigurationPath -ErrorAction SilentlyContinue | ConvertFrom-Json
             if ($config) {
                 $this.TableList.State = [System.Collections.ArrayList] $config.State
                 $this.TableList.Connection = [System.Collections.ArrayList] $config.Connection
