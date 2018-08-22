@@ -1,6 +1,6 @@
 Start-PSYMainActivity -PrintVerbose -ConnectScriptBlock {
     Connect-PSYJsonRepository
-} -Name 'TestConcurrency' -ScriptBlock {
+} -Name 'Test Concurrency' -ScriptBlock {
     
     Set-PSYState 'TestVariable' "Initial value"
 

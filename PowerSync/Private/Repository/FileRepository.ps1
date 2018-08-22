@@ -53,6 +53,12 @@ class FileRepository : Repository {
             $table = $this.GetEntityTable($EntityType)
             $key = $this.GetEntityKey($EntityType)
             $e = $table.Where({$_."$key" -eq $EntityID})[0]
+            # If the repo returned a PSObject, convert to a hash table (our preferred type)
+            if ($e -is [psobject]) {
+                $hash = @{}
+                $e.PSObject.Properties | foreach { $hash[$_.Name] = $_.Value }
+                return $hash
+            }
             return $e
         })
     }

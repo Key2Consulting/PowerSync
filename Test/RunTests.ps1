@@ -26,7 +26,8 @@ Clear-Content "$rootPath\Configuration.json" -ErrorAction SilentlyContinue
 # Import dependent modules
 Import-Module "$rootPath\PowerSync"
 
-.\Test\TestConcurrency\TestConcurrency.ps1
+#.\Test\TestConcurrency\TestConcurrency.ps1
+.\Test\TestStateTypes\TestStateTypes.ps1
 
 #.\Test\TestCSVToSQL\TestCSVToSQL.ps1
 #.\Test\TestSQLToSQL\TestSQLToSQL.ps1

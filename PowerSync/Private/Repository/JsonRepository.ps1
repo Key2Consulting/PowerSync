@@ -38,13 +38,13 @@ class JsonRepository : FileRepository {
                 ExceptionLog = $this.TableList.ExceptionLog
                 InformationLog = $this.TableList.InformationLog
                 VariableLog = $this.TableList.VariableLog
-            } | ConvertTo-Json | Set-Content -Path $this.LogPath
+            } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.LogPath
 
             @{
                 State = $this.TableList.State
                 Connection = $this.TableList.Connection
                 Registry = $this.TableList.Registry
-            } | ConvertTo-Json | Set-Content -Path $this.ConfigurationPath
+            } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.ConfigurationPath
         }
         catch {
             throw "Json SaveRepository failed. $($_.Exception.Message)"

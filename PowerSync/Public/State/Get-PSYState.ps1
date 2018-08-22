@@ -10,6 +10,7 @@ function Get-PSYState {
         Confirm-PSYInitialized($Ctx)
 
         # Load the state from the repository
+        $x = $Ctx.System.Repository.GetState($Name)
         return $Ctx.System.Repository.GetState($Name)
     }
     catch {
