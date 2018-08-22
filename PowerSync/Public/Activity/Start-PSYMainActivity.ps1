@@ -17,6 +17,8 @@ function Start-PSYMainActivity {
         [switch] $PrintVerbose
     )
     
+    $x = New-Object FileRepository
+
     # The global context variable is used to store critical runtime information used by the PowerSync engine. The runtime options
     # can be set via the command-line, or stored in the repository Registry, the former taking precedence over the latter.
     [hashtable] $Ctx = @{

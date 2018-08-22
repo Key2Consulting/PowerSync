@@ -22,6 +22,6 @@ function Set-PSYState {
         $Ctx.System.Repository.SetState($Name, $Value, $Type, $CustomType)
     }
     catch {
-        Write-PSYExceptionLogWrite-PSYException $_ "Error setting state '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error setting state '$Name'." -Rethrow
     }
 }

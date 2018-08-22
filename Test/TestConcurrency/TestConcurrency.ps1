@@ -36,7 +36,7 @@ Start-PSYMainActivity -PrintVerbose -ConnectScriptBlock {
         }
     }
     if ((Get-PSYState 'TestVariable') -ne 10) {
-        throw "TestConcurrency failed"      # the code above isn't thread synchronized, so TestVariable should never equal 10
+        throw "TestConcurrency failed"
     }
 
     Remove-PSYState 'TestVariable'

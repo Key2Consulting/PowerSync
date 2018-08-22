@@ -19,10 +19,6 @@ class Repository {
         throw "The repository DeleteEntity method should be overridden by derived classes."
     }
 
-    [object] CriticalSection([scriptblock] $Script) {
-        throw "The repository CriticalSection method should be overridden by derived classes."
-    }
-
     [ActivityLog] StartActivity([ActivityLog] $Parent, [string] $Name, [string] $Server, [string] $ScriptFile, [string] $ScriptAst, [string] $Status) {
         $o = New-Object ActivityLog
         $o.ID = New-Guid
@@ -33,18 +29,15 @@ class Repository {
         $o.Status = $Status
         $o.ScriptAst = $ScriptAst
         $o.StartDateTime = Get-Date
-        $this.CriticalSection({
-            $this.SaveEntity($o)
-        })
+        
+        $this.CreateEntity($o)
         return $o
     }
     
-    [void] EndActivity([ActivityLog] $Activity, [string] $Status) {
-        $this.CriticalSection({
-            $Activity.Status = $Status
-            $Activity.EndDateTime = Get-Date
-            $this.SaveEntity($Activity)
-        })
+    [void] EndActivity([ActivityLog] $Activity, [string] $Status) {        
+        $Activity.Status = $Status
+        $Activity.EndDateTime = Get-Date
+        $this.UpdateEntity($Activity)
     }
 
     [void] LogException([ActivityLog] $Activity, [string] $Message, [string] $Exception, [string] $StackTrace) {
@@ -55,9 +48,7 @@ class Repository {
         $o.Exception = $Exception
         $o.StackTrace = $StackTrace
         $o.CreatedDateTime = Get-Date
-        $this.CriticalSection({
-            $this.SaveEntity($o)
-        })
+        $this.CreateEntity($o)
     }
 
     [void] LogInformation([ActivityLog] $Activity, [string] $Category, [string] $Message) {
@@ -67,9 +58,7 @@ class Repository {
         $o.Category = $Category
         $o.Message = $Message
         $o.CreatedDateTime = Get-Date
-        $this.CriticalSection({
-            $this.SaveEntity($o)
-        })
+        $this.CreateEntity($o)
     }
 
     [void] LogVariable([ActivityLog] $Activity, [string] $VariableName, [object] $VariableValue) {
@@ -83,16 +72,11 @@ class Repository {
         $o.VariableName = $o.VariableName
         $o.VariableValue = $logValue
         $o.CreatedDateTime = Get-Date
-        $this.CriticalSection({
-            $this.SaveEntity($o)
-        })
+        $this.CreateEntity($o)
     }
     
     [object] GetState([string] $Name) {
-        $o = $this.CriticalSection({
-            return $this.GetEntity([State], $Name)
-        })
-        return $o.Value
+        return $this.ReadEntity([State], $Name).Value
     }
 
     [void] SetState([string] $Name, [object] $Value, [StateType] $Type, [string] $CustomType) {
@@ -104,16 +88,16 @@ class Repository {
         $o.CreatedDateTime = Get-Date
         $o.ModifiedDateTime = Get-Date
         $o.ReadDateTime = Get-Date
-        $this.CriticalSection({
-            $existing = $this.GetEntity([State], $Name)
-            if (-not $existing) {
-                $this.SaveEntity($o)
-            }
-            else {
-                $existing.Value = $Value
-                $this.SaveEntity($existing)
-            }
-        })
+        
+        # If not exists then create, otherwise update.
+        $existing = $this.ReadEntity([State], $Name)
+        if (-not $existing) {
+            $this.CreateEntity($o)
+        }
+        else {
+            $existing.Value = $Value
+            $this.UpdateEntity($existing)
+        }
     }
 
     [void] DeleteState([string] $Name) {
@@ -122,9 +106,27 @@ class Repository {
         })
     }
     
-    [void] SaveConnection([string] $Name, [string] $Class, [string] $ConnectionString) {
+    [void] CreateConnection([string] $Name, [string] $Class, [string] $ConnectionString) {
     }
     
-    [void] GetConnection([string] $Name) {
+    [void] ReadConnection([string] $Name) {
+    }
+
+    [void] UpdateConnection([string] $Name, [string] $Class, [string] $ConnectionString) {
+    }
+
+    [void] DeleteConnection([string] $Name, [string] $Class, [string] $ConnectionString) {
+    }
+    
+    [void] CreateRegistry([string] $Name, [string] $Value) {
+    }
+    
+    [void] ReadRegistry([string] $Name) {
+    }
+    
+    [void] UpdateRegistry([string] $Name, [string] $Value) {
+    }
+
+    [void] DeleteRegistry([string] $Name) {
     }
 }
