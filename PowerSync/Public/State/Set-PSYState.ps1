@@ -6,7 +6,7 @@ function Set-PSYState {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [object] $Value,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [object] $Type = [StateType]::DiscreteState,
+        [string] $Type = 'DiscreteState',
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $CustomType
     )

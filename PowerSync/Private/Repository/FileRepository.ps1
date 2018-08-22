@@ -23,48 +23,49 @@ class FileRepository : Repository {
         throw "The file repository LoadRepository method should be overridden by derived classes."
     }
 
-    [System.Collections.ArrayList] GetEntityTable([type] $EntityType) {
+    [System.Collections.ArrayList] GetEntityTable([string] $EntityType) {
         # Retrieve the table for this entity
-        $table = $this.TableList[$EntityType.Name]
+        $table = $this.TableList[$EntityType]
         if ($table -eq $null) {
-            throw "GetEntityTable encountered unknown type $($EntityType.Name)."
+            throw "GetEntityTable encountered unknown type $($EntityType)."
         }
         return $table
     }
 
-    [string] GetEntityKey([type] $EntityType) {
+    [string] GetEntityKey([string] $EntityType) {
         # Entities generally use ID as their key, with few exceptions
         $keyField = 'ID'
-        if ($EntityType -eq [State]) {
+        if ($EntityType -eq 'State') {
             $keyField = "Name"
         }        
         return $keyField
     }
 
-    [void] CreateEntity([object] $Entity) {
+    [void] CreateEntity([string] $EntityType, [object] $Entity) {
         $this.CriticalSection({
-            $table = $this.GetEntityTable($Entity.GetType())
+            $table = $this.GetEntityTable($EntityType)
             $table.Add($Entity)
         })
     }
     
-    [object] ReadEntity([type] $EntityType, [object] $EntityID) {
+    [object] ReadEntity([string] $EntityType, [object] $EntityID) {
         return $this.CriticalSection({
             $table = $this.GetEntityTable($EntityType)
             $key = $this.GetEntityKey($EntityType)
-            return $table.Where({$_."$key" -eq $EntityID})[0]
+            $e = $table.Where({$_."$key" -eq $EntityID})[0]
+            return $e
         })
     }
 
-    [void] UpdateEntity([object] $Entity) {
+    [void] UpdateEntity([string] $EntityType, [object] $Entity) {
         $this.CriticalSection({
-            $table = $this.GetEntityTable($Entity.GetType())
-            $key = $this.GetEntityKey($Entity.GetType())
-            $existing = $this.ReadEntity($Entity.GetType(), $key)
+            $table = $this.GetEntityTable($EntityType)
+            $key = $this.GetEntityKey($EntityType)
+            $existing = $table.Where({$_."$key" -eq $Entity."$key"})[0]      # we can't use ReadEntity for this since it reloads the repo and we'll get a different entity instance
             
             # The updated entity is already passed into this method, but we want to keep it's position in the repository.
             $position = $table.IndexOf($existing)
-            $table.Remove($e)
+            $table.Remove($existing)
             if ($position -gt -1) {
                 $table.Insert($position, $Entity)
             }
@@ -74,7 +75,7 @@ class FileRepository : Repository {
         })
     }
 
-    [void] DeleteEntity([type] $EntityType, [object] $EntityID) {
+    [void] DeleteEntity([string] $EntityType, [object] $EntityID) {
         $this.CriticalSection({
             $table = $this.GetEntityTable($EntityType)
             $key = $this.GetEntityKey($EntityType)

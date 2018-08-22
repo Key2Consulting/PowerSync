@@ -1,7 +1,7 @@
 function Write-PSYExceptionLog {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [System.Management.Automation.ErrorRecord] $ErrorRecord,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [object] $Message,
@@ -13,12 +13,18 @@ function Write-PSYExceptionLog {
     Confirm-PSYInitialized($Ctx)
 
     # Write Log and output to screen
-    $exception = $ErrorRecord.Exception.ToString()
-    $stackTrace = $ErrorRecord.ScriptStackTrace
+    if ($ErrorRecord) {
+        $exception = $ErrorRecord.Exception.ToString()
+        $stackTrace = $ErrorRecord.ScriptStackTrace
+        $exceptionMsg = $ErrorRecord.Exception.Message
+    }
     $Ctx.System.Repository.LogException($Ctx.System.ActivityStack[$Ctx.System.ActivityStack.Count - 1], $Message, $exception, $stackTrace)
-    Write-Host "$Message $($ErrorRecord.Exception.Message)" -ForegroundColor DarkRed
-    Write-Host $stackTrace -ForegroundColor Red
-    Write-Host $exception
+    Write-Host "$Message $exceptionMsg" -ForegroundColor DarkRed
+    
+    if ($ErrorRecord) {
+        Write-Host $stackTrace -ForegroundColor Red
+        Write-Host $exception
+    }
 
     if ($Rethrow) {
         throw

@@ -70,6 +70,6 @@ function Start-PSYMainActivity {
         Write-ActivityLog $ScriptBlock $Name 'Main Activity Completed' 'Completed' $a
     }
     catch {
-        Write-PSYExceptionLog $_ "Unable to start Main Activity '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Main Activity '$Name'." -Rethrow
     }
 }

@@ -12,8 +12,8 @@ $targetTestDBPath = "$rootPath\PowerSyncTargetDB.MDF"
 ######################################################
 $ErrorActionPreference = "Stop"
 # Clean up prior JSON repository files
-Remove-Item "$rootPath\Log.json" -ErrorAction SilentlyContinue
-Remove-Item "$rootPath\Configuration.json" -ErrorAction SilentlyContinue
+Clear-Content "$rootPath\Log.json" -ErrorAction SilentlyContinue
+Clear-Content "$rootPath\Configuration.json" -ErrorAction SilentlyContinue
 
 # Reset the source and target databases
 #Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Database.sql" -ServerInstance $sqlServerInstance -Variable "TestDB=$testDBPath"

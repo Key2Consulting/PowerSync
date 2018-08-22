@@ -10,38 +10,44 @@ class JsonRepository : FileRepository {
     [void] LoadRepository() {
         # Attempt to initialize from the existing log and configuration files. If it fails, it will be recreated on save.
         try {
-            if ([System.IO.File]::Exists($this.LogPath)) {
-                $log = Get-Content -Path $this.LogPath | ConvertFrom-Json
-                $this.ActivityLog = $log.ActivityLog
-                $this.ExceptionLog = $log.ExceptionLog
-                $this.InformationLog = $log.InformationLog
-                $this.VariableLog = $log.VariableLog
+            $log = Get-Content -Path $this.LogPath | ConvertFrom-Json
+            if ($log) {
+                $this.TableList.ActivityLog = [System.Collections.ArrayList] $log.ActivityLog
+                $this.TableList.ExceptionLog = [System.Collections.ArrayList] $log.ExceptionLog
+                $this.TableList.InformationLog = [System.Collections.ArrayList] $log.InformationLog
+                $this.TableList.VariableLog = [System.Collections.ArrayList] $log.VariableLog
             }
-            if ([System.IO.File]::Exists($this.ConfigurationPath)) {
-                $config = Get-Content -Path $this.ConfigurationPath | ConvertFrom-Json
-                $this.State = $config.State
-                $this.Connection = $config.Connection
-                $this.Registry = $config.Registry
+
+            $config = Get-Content -Path $this.ConfigurationPath | ConvertFrom-Json
+            if ($config) {
+                $this.TableList.State = [System.Collections.ArrayList] $config.State
+                $this.TableList.Connection = [System.Collections.ArrayList] $config.Connection
+                $this.TableList.Registry = [System.Collections.ArrayList] $config.Registry
             }
         }
         catch {
+            throw "Json LoadRepository failed. $($_.Exception.Message)"
         }
     }
 
-
     [void] SaveRepository() {
-        # Since you can't really update just part of a JSON file, we rewrite the entire thing.
-        @{
-            ActivityLog = $this.ActivityLog
-            ExceptionLog = $this.ExceptionLog
-            InformationLog = $this.InformationLog
-            VariableLog = $this.VariableLog
-        } | ConvertTo-Json | Set-Content -Path $this.LogPath
+        try {
+            # Since you can't really update just part of a JSON file, we rewrite the entire thing.
+            @{
+                ActivityLog = $this.TableList.ActivityLog
+                ExceptionLog = $this.TableList.ExceptionLog
+                InformationLog = $this.TableList.InformationLog
+                VariableLog = $this.TableList.VariableLog
+            } | ConvertTo-Json | Set-Content -Path $this.LogPath
 
-        @{
-            State = $this.State
-            Connection = $this.Connection
-            Registry = $this.Registry
-        } | ConvertTo-Json | Set-Content -Path $this.ConfigurationPath
+            @{
+                State = $this.TableList.State
+                Connection = $this.TableList.Connection
+                Registry = $this.TableList.Registry
+            } | ConvertTo-Json | Set-Content -Path $this.ConfigurationPath
+        }
+        catch {
+            throw "Json SaveRepository failed. $($_.Exception.Message)"
+        }
     }  
 }
