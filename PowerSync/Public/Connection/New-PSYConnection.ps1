@@ -15,6 +15,6 @@ function New-PSYConnection {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in $($MyInvocation.MyCommand)." -Rethrow
+        Write-PSYExceptionLog $_ "Error in New-PSYConnection." -Rethrow
     }
 }

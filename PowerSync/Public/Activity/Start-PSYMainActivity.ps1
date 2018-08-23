@@ -21,7 +21,7 @@ function Start-PSYMainActivity {
 
     # The global context variable is used to store critical runtime information used by the PowerSync engine. The runtime options
     # can be set via the command-line, or stored in the repository Registry, the former taking precedence over the latter.
-    [hashtable] $Ctx = @{
+    [hashtable] $global:Ctx = @{
         System = @{
             Repository = $null                                          # reference to the connected repository
             ActivityStack = New-Object System.Collections.ArrayList     # all activity logs in stack formation

@@ -19,6 +19,6 @@ function Export-PSYOleDb {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in $($MyInvocation.MyCommand)." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Export-PSYOleDb." -Rethrow
     }
 }

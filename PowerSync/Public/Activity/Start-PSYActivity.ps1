@@ -16,17 +16,15 @@ function Start-PSYActivity {
         Confirm-PSYInitialized($Ctx)
         
         # Setup sequential or parallel processing configuration
-        $logTitle = "Activity"
         $throttle = 1
         $runParallel = $false
         if ($Parallel -and -not $Ctx.Option.DisableParallel) {
             $runParallel = $true
-            $logTitle = "Activity (Parallel)"
             $throttle = $Ctx.Option.Throttle
         }
 
         # Log activity start
-        $a = Write-ActivityLog $ScriptBlock[0] $Name "$logTitle Started" 'Started'
+        $a = Write-PSYActivityLog $ScriptBlock[0] $Name "Start-PSYActivity Started" 'Started'
 
         # Enumerate all ScriptBlocks passed in, and asynchrously execute them. By using runspaces, variables are easily imported
         # into ScriptBlock.  If we used jobs, we'd need to marshal the variables over, which is difficult to do with object types & classes.
@@ -49,9 +47,9 @@ function Start-PSYActivity {
 
         # Execute each (new) script block in parallel, importing all variables and modules.
         $workItems | Invoke-Parallel -ImportVariables -ImportModules -ImportFunctions -Throttle $throttle -RunspaceTimeout $Ctx.Option.ScriptTimeout -ScriptBlock {
-            $a = Write-ActivityLog $_.ScriptBlock $Name "$logTitle [$($_.Index)] Started" 'Started'
+            $a = Write-PSYActivityLog $_.ScriptBlock $Name "Start-PSYActivity [$($_.Index)] Started" 'Started'
             Invoke-Command $_.ScriptBlock
-            Write-ActivityLog $_.ScriptBlock $Name "$logTitle [$($_.Index)] Completed" 'Completed' $a
+            Write-PSYActivityLog $_.ScriptBlock $Name "Start-PSYActivity [$($_.Index)] Completed" 'Completed' $a
         }
 
         <# THE CODE BELOW WAS AN ATTEMPT TO USE JOBS TO RUN PARALLEL ACTIVITIES.
@@ -71,9 +69,9 @@ function Start-PSYActivity {
         #>
 
         # Log activity end
-        Write-ActivityLog $ScriptBlock[0] $Name "$logTitle Completed" 'Completed' $a
+        Write-PSYActivityLog $ScriptBlock[0] $Name "Start-PSYActivity Completed" 'Completed' $a
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in $modeTitle '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Start-PSYActivity '$Name'." -Rethrow
     }
 }

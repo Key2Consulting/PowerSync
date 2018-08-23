@@ -14,6 +14,6 @@ function Import-PSYTextFile {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in $($MyInvocation.MyCommand)." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Import-PSYTextFile." -Rethrow
     }
 }

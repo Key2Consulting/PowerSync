@@ -25,6 +25,6 @@ function Import-PSYSqlServer {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in $($MyInvocation.MyCommand)." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Import-PSYSqlServer." -Rethrow
     }
 }

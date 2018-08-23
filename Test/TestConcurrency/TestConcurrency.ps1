@@ -25,6 +25,7 @@ Start-PSYMainActivity -PrintVerbose -ConnectScriptBlock {
     Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -Enumerate (1..10) -Parallel -ScriptBlock {
         Set-PSYState 'TestVariable' ((Get-PSYState 'TestVariable') + 1)     # will not work as expected
     }
+
     if ((Get-PSYState 'TestVariable') -eq 10) {
         Write-PSYExceptionLog -Message "Failed test 'Test ForEach Incorrect Concurrency Execution'"      # the code above isn't synchronized, so TestVariable should never equal 10
     }
@@ -32,7 +33,7 @@ Start-PSYMainActivity -PrintVerbose -ConnectScriptBlock {
     Set-PSYState 'TestVariable' 0
     Start-PSYForEachActivity -Name 'Test ForEach Correct Concurrency Execution' -Enumerate (1..10) -Parallel -ScriptBlock {
         Lock-PSYState 'TestVariable' {
-            Set-PSYState 'TestVariable' ($args[0] + 1)     # will work as expected since we're locking the variable
+            Set-PSYState 'TestVariable' ((Get-PSYState 'TestVariable') + 1)     # will work as expected since we're locking the variable
         }
     }
     if ((Get-PSYState 'TestVariable') -ne 10) {

@@ -19,6 +19,6 @@ function Export-PSYSqlServer {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in $($MyInvocation.MyCommand)." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Export-PSYSqlServer." -Rethrow
     }
 }

@@ -11,6 +11,6 @@ function Remove-PSYConnection {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in $($MyInvocation.MyCommand)." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Remove-PSYConnection." -Rethrow
     }
 }
