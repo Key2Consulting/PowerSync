@@ -7,10 +7,10 @@ function Get-PSYConnection {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Get-PSYConnection." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Get-PSYConnection."
     }
 }

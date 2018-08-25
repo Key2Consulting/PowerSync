@@ -1,6 +1,12 @@
 class Repository {
+    [string] $ClassType = $this.GetType().Name
 
     Repository () {
+    }
+
+    [object] static Deserialize([object] $SerializedData) {
+        $clone = New-Object "$($SerializedData.TypeName)" ($SerializedData)
+        return $clone
     }
 
     [void] CreateEntity([string] $EntityType, [object] $Entity) {
@@ -21,16 +27,23 @@ class Repository {
         throw "The repository DeleteEntity method should be overridden by derived classes."
     }
 
+    # Note that the Repository is not intended to be threadsafe, which is why it must be cloned during parallel processing.
+    [hashtable] Serialize() {
+        throw "The repository Serialize method should be overridden by derived classes."
+    }
+
     [hashtable] StartActivity([hashtable] $Parent, [string] $Name, [string] $Server, [string] $ScriptFile, [string] $ScriptAst, [string] $Status) {
         $o = @{
             ID = New-Guid
-            ParentID = $Parent.ID
             Name = $Name
             Server = $Server
             ScriptFile = $ScriptFile
             Status = $Status
             ScriptAst = $ScriptAst
             StartDateTime = Get-Date
+        }
+        if ($Parent) {
+            $o.ParentID = $Parent.ID
         }
         $this.CreateEntity('ActivityLog', $o)
         return $o

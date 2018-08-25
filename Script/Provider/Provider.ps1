@@ -42,7 +42,7 @@ class Provider {
                 $writeback = [ordered] @{}
                 if ($r -is [System.Data.IDataReader]) {
                     # Copy results into hashtable (only single row supported)
-                    $null = $r.Read()
+                    [void] $r.Read()
                     for ($i=0;$i -lt $r.FieldCount; $i++) {
                         $col = $r.GetName($i)
                         $writeback."$col" = $r[$col]

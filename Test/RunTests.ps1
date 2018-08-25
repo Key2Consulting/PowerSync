@@ -26,7 +26,17 @@ Clear-Content "$rootPath\Configuration.json" -ErrorAction SilentlyContinue
 # Import dependent modules
 Import-Module "$rootPath\PowerSync"
 
-.\Test\TestConcurrency\TestConcurrency.ps1
+Start-PSYMainActivity -Verbose -Debug -ConnectScriptBlock {
+    Connect-PSYJsonRepository
+} -Name 'Test Concurrency' -ScriptBlock {
+    Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -InputObject (1..20) -Parallel -ScriptBlock {
+        Write-PSYVerboseLog "foo actual $Input"
+        "hello"
+        "world"
+    }
+}
+
+#.\Test\TestConcurrency\TestConcurrency.ps1
 #.\Test\TestStateTypes\TestStateTypes.ps1
 
 #.\Test\TestCSVToSQL\TestCSVToSQL.ps1

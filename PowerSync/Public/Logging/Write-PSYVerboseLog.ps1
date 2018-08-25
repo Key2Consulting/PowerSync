@@ -1,4 +1,4 @@
-function Write-PSYInformationLog {
+function Write-PSYVerboseLog {
     [CmdletBinding()]
     param
     (
@@ -12,5 +12,5 @@ function Write-PSYInformationLog {
     if ((Confirm-PSYInitialized -NoTerminate)) {
         $PSYSessionRepository.LogInformation($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], $Category, $Message)
     }
-    Write-Host -Message "Information: ($Category) $Message"
+    Write-Verbose -Message "Information Verbose: ($Category) $Message"
 }

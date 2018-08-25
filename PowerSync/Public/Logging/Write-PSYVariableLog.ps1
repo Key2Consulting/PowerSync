@@ -1,4 +1,5 @@
 function Write-PSYVariableLog {
+    [CmdletBinding()]
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
@@ -7,13 +8,9 @@ function Write-PSYVariableLog {
         [object] $Value
     )
 
-    # Validation
-    Confirm-PSYInitialized($Ctx)
-
     # Write Log and output to screen
-    $Ctx.System.Repository.LogVariable($Ctx.System.ActivityStack[$Ctx.System.ActivityStack.Count - 1], $Name, $Value)
-    
-    if ($Ctx.Option.PrintVerbose) {
-        Write-Host "Variable: $Name = $Value"
+    if ((Confirm-PSYInitialized -NoTerminate)) {
+        $PSYSessionRepository.LogVariable($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], $Name, $Value)
     }
+    Write-Verbose -Message "Variable: $Name = $Value"
 }

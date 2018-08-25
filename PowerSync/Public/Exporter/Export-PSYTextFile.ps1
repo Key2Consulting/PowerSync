@@ -10,10 +10,10 @@ function Export-PSYTextFile {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Export-PSYTextFile." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Export-PSYTextFile."
     }
 }

@@ -1,7 +1,7 @@
 # Load conn strings from a local file
 $connString = Get-Content -Path "myfile"
 
-Start-PSYMainActivity -PrintVerbose -ConnectScriptBlock {
+Start-PSYMainActivity -Verbose -ConnectScriptBlock {
     Connect-PSYJsonRepository
 } -Name 'Test CSV To SQL' -ScriptBlock {
 

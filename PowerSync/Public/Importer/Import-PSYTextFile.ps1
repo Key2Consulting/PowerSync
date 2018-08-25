@@ -10,10 +10,10 @@ function Import-PSYTextFile {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Import-PSYTextFile." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Import-PSYTextFile."
     }
 }

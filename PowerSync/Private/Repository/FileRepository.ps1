@@ -99,7 +99,7 @@ class FileRepository : Repository {
 
             # Grab an exclusive lock
             $mutex = New-Object System.Threading.Mutex($false, "ae831404-511f-4577-ba63-56a21fd70425")
-            $null = $mutex.WaitOne($this.LockTimeout)
+            [void] $mutex.WaitOne($this.LockTimeout)
             
             # Reload the repository in case another process made changes
             $this.LoadRepository()

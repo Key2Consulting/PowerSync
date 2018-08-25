@@ -21,10 +21,10 @@ function Import-PSYOleDb {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Import-PSYOleDb." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Import-PSYOleDb."
     }
 }

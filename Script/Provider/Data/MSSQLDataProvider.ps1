@@ -80,7 +80,7 @@ class MSSQLDataProvider : DataProvider {
                 "$($this.Namespace)SchemaInfo" = $s
                 "$($this.Namespace)LoadTable" = $loadTableName
             }
-            $null = $this.RunScript("AutoCreateScript", $false, $additionalConfig)
+            [void] $this.RunScript("AutoCreateScript", $false, $additionalConfig)
         }
         else {
             # Otherwise, load into the pre-created table defined in the manifest
@@ -96,12 +96,12 @@ class MSSQLDataProvider : DataProvider {
 
         # If AutoIndex is set, execute AutoIndex script
         if ($this.GetConfigSetting("AutoIndex", $true) -eq $true) {
-            $null = $this.RunScript("AutoIndexScript", $false, $additionalConfig)
+            [void] $this.RunScript("AutoIndexScript", $false, $additionalConfig)
         }
 
         # If AutoCreate is set, we must swap the "temp" load table as the final one.
         if ($this.GetConfigSetting("AutoCreate", $true) -eq $true) {
-            $null = $this.RunScript("AutoSwapScript", $false, $additionalConfig)
+            [void] $this.RunScript("AutoSwapScript", $false, $additionalConfig)
         }
 
         return $null;

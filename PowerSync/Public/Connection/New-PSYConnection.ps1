@@ -11,10 +11,10 @@ function New-PSYConnection {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in New-PSYConnection." -Rethrow
+        Write-PSYExceptionLog $_ "Error in New-PSYConnection."
     }
 }

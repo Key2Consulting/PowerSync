@@ -21,10 +21,10 @@ function Import-PSYSqlServer {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Import-PSYSqlServer." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Import-PSYSqlServer."
     }
 }

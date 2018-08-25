@@ -7,6 +7,12 @@ class JsonRepository : FileRepository {
         $this.ConfigurationPath = $ConfigurationPath
     }
 
+    # Loads from a previously serialized data
+    JsonRepository ([object] $SerializedData) {
+        $this.LogPath = $SerializedData.LogPath
+        $this.ConfigurationPath = $SerializedData.ConfigurationPath
+    }
+
     [void] LoadRepository() {
         # Attempt to initialize from the existing log and configuration files. If it fails, it will be recreated on save.
         try {
@@ -49,5 +55,13 @@ class JsonRepository : FileRepository {
         catch {
             throw "Json SaveRepository failed. $($_.Exception.Message)"
         }
-    }  
+    }
+
+    [hashtable] Serialize() {
+        return @{
+            TypeName = $this.GetType().Name
+            LogPath = $this.LogPath
+            ConfigurationPath = $this.ConfigurationPath
+        }
+    }
 }

@@ -7,15 +7,15 @@ function Remove-PSYState {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
 
         # Log
-        $Ctx.System.Repository.LogVariable($Ctx.System.ActivityStack[$Ctx.System.ActivityStack.Count - 1], $Name, $null)
+        $PSYSessionRepository.LogVariable($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], $Name, $null)
 
         # Remove the state from the repository
-        $Ctx.System.Repository.DeleteState($Name)
+        $PSYSessionRepository.DeleteState($Name)
     }
     catch {
-        Write-PSYExceptionLog $_ "Error removing state '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error removing state '$Name'."
     }
 }

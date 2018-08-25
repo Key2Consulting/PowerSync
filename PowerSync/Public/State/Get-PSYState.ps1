@@ -7,13 +7,13 @@ function Get-PSYState {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
 
         # Load the state from the repository
-        $x = $Ctx.System.Repository.GetState($Name)
-        return $Ctx.System.Repository.GetState($Name)
+        $x = $PSYSessionRepository.GetState($Name)
+        return $PSYSessionRepository.GetState($Name)
     }
     catch {
-        Write-PSYExceptionLog $_ "Error getting state '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error getting state '$Name'."
     }
 }

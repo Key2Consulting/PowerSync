@@ -6,25 +6,23 @@ function Start-PSYActivity {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $Name,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $Parallel,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $ContinueOnError
+        [switch] $Parallel
     )
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
         # Setup sequential or parallel processing configuration
         $throttle = 1
         $runParallel = $false
-        if ($Parallel -and -not $Ctx.Option.DisableParallel) {
+        if ($Parallel -and -not $PSYSessionState.Option.DisableParallel) {
             $runParallel = $true
-            $throttle = $Ctx.Option.Throttle
+            $throttle = $PSYSessionState.Option.Throttle
         }
 
         # Log activity start
-        $a = Write-PSYActivityLog $ScriptBlock[0] $Name "Start-PSYActivity Started" 'Started'
+        $a = Write-ActivityLog $ScriptBlock[0] $Name "Start-PSYActivity Started" 'Started'
 
         # Enumerate all ScriptBlocks passed in, and asynchrously execute them. By using runspaces, variables are easily imported
         # into ScriptBlock.  If we used jobs, we'd need to marshal the variables over, which is difficult to do with object types & classes.
@@ -42,14 +40,14 @@ function Start-PSYActivity {
             if ($runParallel) {
                 $workItem.ScriptBlock = [Scriptblock]::Create($o.ToString())
             }
-            $null = $workItems.Add($workItem)
+            [void] $workItems.Add($workItem)
         }
 
         # Execute each (new) script block in parallel, importing all variables and modules.
-        $workItems | Invoke-Parallel -ImportVariables -ImportModules -ImportFunctions -Throttle $throttle -RunspaceTimeout $Ctx.Option.ScriptTimeout -ScriptBlock {
-            $a = Write-PSYActivityLog $_.ScriptBlock $Name "Start-PSYActivity [$($_.Index)] Started" 'Started'
+        $workItems | Invoke-Parallel -ImportVariables -ImportModules -ImportFunctions -Throttle $throttle -RunspaceTimeout $PSYSessionState.Option.ScriptTimeout -ScriptBlock {
+            $a = Write-ActivityLog $_.ScriptBlock $Name "Start-PSYActivity [$($_.Index)] Started" 'Started'
             Invoke-Command $_.ScriptBlock
-            Write-PSYActivityLog $_.ScriptBlock $Name "Start-PSYActivity [$($_.Index)] Completed" 'Completed' $a
+            Write-ActivityLog $_.ScriptBlock $Name "Start-PSYActivity [$($_.Index)] Completed" 'Completed' $a
         }
 
         <# THE CODE BELOW WAS AN ATTEMPT TO USE JOBS TO RUN PARALLEL ACTIVITIES.
@@ -69,9 +67,9 @@ function Start-PSYActivity {
         #>
 
         # Log activity end
-        Write-PSYActivityLog $ScriptBlock[0] $Name "Start-PSYActivity Completed" 'Completed' $a
+        Write-ActivityLog $ScriptBlock[0] $Name "Start-PSYActivity Completed" 'Completed' $a
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Start-PSYActivity '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Start-PSYActivity '$Name'."
     }
 }

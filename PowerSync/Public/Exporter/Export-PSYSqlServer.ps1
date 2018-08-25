@@ -15,10 +15,10 @@ function Export-PSYSqlServer {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Export-PSYSqlServer." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Export-PSYSqlServer."
     }
 }

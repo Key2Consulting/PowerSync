@@ -13,15 +13,15 @@ function Set-PSYState {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
 
         # Log
         Write-PSYVariableLog $Name $Value
 
         # Set the state in the repository.  If it doesn't exist, it will be created.
-        $Ctx.System.Repository.SetState($Name, $Value, $Type, $CustomType)
+        $PSYSessionRepository.SetState($Name, $Value, $Type, $CustomType)
     }
     catch {
-        Write-PSYExceptionLog $_ "Error setting state '$Name'." -Rethrow
+        Write-PSYExceptionLog $_ "Error setting state '$Name'."
     }
 }

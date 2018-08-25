@@ -1,4 +1,4 @@
-function Write-PSYInformationLog {
+function Write-PSYDebugLog {
     [CmdletBinding()]
     param
     (
@@ -8,9 +8,9 @@ function Write-PSYInformationLog {
         [string] $Category
     )
 
-    # Write Log and output to screen
+    # Write Log and output to screen    
     if ((Confirm-PSYInitialized -NoTerminate)) {
         $PSYSessionRepository.LogInformation($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], $Category, $Message)
     }
-    Write-Host -Message "Information: ($Category) $Message"
+    Write-Debug -Message "Debug: $Category $Message"
 }

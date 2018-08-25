@@ -7,10 +7,10 @@ function Remove-PSYConnection {
 
     try {
         # Validation
-        Confirm-PSYInitialized($Ctx)
+        Confirm-PSYInitialized
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Remove-PSYConnection." -Rethrow
+        Write-PSYExceptionLog $_ "Error in Remove-PSYConnection." 
     }
 }
