@@ -1,4 +1,3 @@
-# Kept here for reference purposes in case we need to roll our own.
 function Invoke-ForEach {
     [CmdletBinding()]
     param
@@ -10,7 +9,9 @@ function Invoke-ForEach {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $LogTitle = 'Invoke-ForEach {0}',
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [int] $Throttle = 10,        # $env:NUMBER_OF_PROCESSORS + 1
+        [int] $Throttle = 5,        # $env:NUMBER_OF_PROCESSORS + 1
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [int] $Timeout = 0,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [switch] $Parallel,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -57,6 +58,19 @@ function Invoke-ForEach {
             $index += 1
 
             if ($Parallel) {
+                # Job throttling (https://stackoverflow.com/questions/23552058/powershell-start-jobs-throttling)
+                while (@(Get-Job -State Running).Count -ge $Throttle) {
+                    $now = Get-Date
+                    foreach ($job in @(Get-Job -State Running)) {
+                        if ($Timeout) {
+                            if ($now - (Get-Job -Id $job.id).PSBeginTime -gt [TimeSpan]::FromSeconds($Timeout)) {
+                                Stop-Job $job
+                            }
+                        }
+                    }
+                    Start-Sleep -Milliseconds 500
+                }
+
                 # Invoke a job to handle item processing
                 $workItem.Job = (Start-Job -ArgumentList $workItem -Verbose -Debug -ScriptBlock {
                     param ($workItem)
