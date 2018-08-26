@@ -2,6 +2,7 @@
 # Test Configuration
 ######################################################
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\"
+$jsonRepo = "$rootPath\Repository.json"
 $sourceSqlServerInstance = "(LocalDb)\MSSQLLocalDB"
 $sourceTestDBPath = "$rootPath\PowerSyncSourceDB.MDF"
 $targetSqlServerInstance = "(LocalDb)\MSSQLLocalDB"
@@ -11,9 +12,6 @@ $targetTestDBPath = "$rootPath\PowerSyncTargetDB.MDF"
 # Initialize Tests
 ######################################################
 $ErrorActionPreference = "Stop"
-# Clean up prior JSON repository files
-Clear-Content "$rootPath\Log.json" -ErrorAction SilentlyContinue
-Clear-Content "$rootPath\Configuration.json" -ErrorAction SilentlyContinue
 
 # Reset the source and target databases
 #Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Database.sql" -ServerInstance $sqlServerInstance -Variable "TestDB=$testDBPath"
@@ -26,10 +24,13 @@ Clear-Content "$rootPath\Configuration.json" -ErrorAction SilentlyContinue
 # Import dependent modules
 Import-Module "$rootPath\PowerSync"
 
-Start-PSYMainActivity -Verbose -Debug -ConnectScriptBlock {
-    Connect-PSYJsonRepository
-} -Name 'Test Concurrency' -ScriptBlock {
-    Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -InputObject (1..20) -Parallel -ScriptBlock {
+# Clean up prior JSON repository files
+Remove-PSYJsonRepository $jsonRepo
+New-PSYJsonRepository $jsonRepo
+Connect-PSYJsonRepository $jsonRepo
+
+Start-PSYActivity -Verbose -Debug -Name 'Test Concurrency' -ScriptBlock {
+    Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -InputObject (1..5) -Parallel -ScriptBlock {
         Write-PSYVerboseLog "foo actual $Input"
         "hello"
         "world"

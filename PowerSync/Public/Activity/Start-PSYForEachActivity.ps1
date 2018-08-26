@@ -20,7 +20,6 @@ function Start-PSYForEachActivity {
 
         # Execute foreach (in parallel if specified)
         $jobs = ($InputObject | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -LogTitle "$Name[{0}]")
-        #$InputObject | Invoke-ForEachCustom -ScriptBlock $ScriptBlock -Parallel:$Parallel
         
         # Log activity end
         Write-ActivityLog $ScriptBlock[0] $Name "Start-PSYForEachActivity Completed" 'Completed' $a

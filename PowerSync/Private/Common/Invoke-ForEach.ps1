@@ -15,7 +15,7 @@ function Invoke-ForEach {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [switch] $Parallel,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $DebugJob
+        [switch] $ForceDebug
     )
 
     begin {
@@ -49,7 +49,7 @@ function Invoke-ForEach {
                 DebugPreference = $DebugPreference
                 VerbosePreference = $VerbosePreference
                 ErrorActionPreference = $ErrorActionPreference
-                DebugJob = $DebugJob
+                ForceDebug = $ForceDebug
             }
             if ($ScriptBlock -is [array]) {                                 # ScriptBlocks can either be a single definition, or an array of different definitions, one per pipeline item.
                 ScriptBlock = $ScriptBlock[$index]
@@ -76,16 +76,17 @@ function Invoke-ForEach {
                     param ($workItem)
                     
                     # Initialize environment
-                    if ($workItem.DebugJob) {
-                        Wait-Debugger       # if the DebugJob option is set in Invoke-ForEach, will break here. Step into Invoke-Command to debug client code.
+                    if ($workItem.ForceDebug) {
+                        Wait-Debugger       # if the ForceDebug option is set in Invoke-ForEach, will break here. Step into Invoke-Command to debug client code.
                     }
-                    Import-Module -Name 'C:\Users\Dan\Dropbox\Project\Key2\PowerSync\PowerSync'
-                    $PSYSessionState = $workItem.SessionState
-                    $PSYSessionRepository = & (Get-Module 'PowerSync').NewBoundScriptBlock({        # https://stackoverflow.com/questions/31051103/how-to-export-a-class-in-powershell-v5-module
+                    Import-Module $workItem.SessionState.System.Module
+                    $global:PSYSessionState = $workItem.SessionState
+                    $PSYSessionState.System.UserModules | ForEach-Object { Import-Module $_ }       # load any user modules
+                    $global:PSYSessionRepository = & (Get-Module 'PowerSync').NewBoundScriptBlock({        # https://stackoverflow.com/questions/31051103/how-to-export-a-class-in-powershell-v5-module
                         [Repository]::Deserialize($workItem.RepositorySerializedData)
                     })
                     Set-Location -Path $PSYSessionState.System.WorkingFolder    # default to parent session's working folder
-                    
+                   
                     # Without setting these preferences, this output won't get returned
                     $DebugPreference = $workItem.DebugPreference
                     $VerbosePreference = $workItem.VerbosePreference
@@ -113,7 +114,7 @@ function Invoke-ForEach {
                 Write-PSYDebugLog ("$($LogTitle): Sequential" -f $workItem.Index)
             }
 
-            if ($workItem.DebugJob -and $Parallel) {
+            if ($workItem.ForceDebug -and $Parallel) {
                 Start-Sleep -Milliseconds 500       # isn't there a better way?
                 Debug-Job $workItem.Job
             }

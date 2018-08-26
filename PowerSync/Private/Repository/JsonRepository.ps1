@@ -1,34 +1,27 @@
 class JsonRepository : FileRepository {
-    [string] $LogPath
-    [string] $ConfigurationPath
+    [string] $Path
 
-    JsonRepository ([string] $LogPath, [string] $ConfigurationPath) {
-        $this.LogPath = $LogPath
-        $this.ConfigurationPath = $ConfigurationPath
+    JsonRepository ([string] $Path) {
+        $this.Path = $Path
     }
 
     # Loads from a previously serialized data
     JsonRepository ([object] $SerializedData) {
-        $this.LogPath = $SerializedData.LogPath
-        $this.ConfigurationPath = $SerializedData.ConfigurationPath
+        $this.Path = $SerializedData.Path
     }
 
     [void] LoadRepository() {
         # Attempt to initialize from the existing log and configuration files. If it fails, it will be recreated on save.
         try {
-            $log = Get-Content -Path $this.LogPath -ErrorAction SilentlyContinue | ConvertFrom-Json
-            if ($log) {
-                $this.TableList.ActivityLog = [System.Collections.ArrayList] $log.ActivityLog
-                $this.TableList.ExceptionLog = [System.Collections.ArrayList] $log.ExceptionLog
-                $this.TableList.InformationLog = [System.Collections.ArrayList] $log.InformationLog
-                $this.TableList.VariableLog = [System.Collections.ArrayList] $log.VariableLog
-            }
-
-            $config = Get-Content -Path $this.ConfigurationPath -ErrorAction SilentlyContinue | ConvertFrom-Json
-            if ($config) {
-                $this.TableList.State = [System.Collections.ArrayList] $config.State
-                $this.TableList.Connection = [System.Collections.ArrayList] $config.Connection
-                $this.TableList.Registry = [System.Collections.ArrayList] $config.Registry
+            $data = Get-Content -Path $this.Path -ErrorAction SilentlyContinue | ConvertFrom-Json
+            if ($data) {
+                $this.TableList.State = [System.Collections.ArrayList] $data.State
+                $this.TableList.Connection = [System.Collections.ArrayList] $data.Connection
+                $this.TableList.Registry = [System.Collections.ArrayList] $data.Registry
+                $this.TableList.ActivityLog = [System.Collections.ArrayList] $data.ActivityLog
+                $this.TableList.ExceptionLog = [System.Collections.ArrayList] $data.ExceptionLog
+                $this.TableList.InformationLog = [System.Collections.ArrayList] $data.InformationLog
+                $this.TableList.VariableLog = [System.Collections.ArrayList] $data.VariableLog
             }
         }
         catch {
@@ -40,17 +33,14 @@ class JsonRepository : FileRepository {
         try {
             # Since you can't really update just part of a JSON file, we rewrite the entire thing.
             @{
+                State = $this.TableList.State
+                Connection = $this.TableList.Connection
+                Registry = $this.TableList.Registry
                 ActivityLog = $this.TableList.ActivityLog
                 ExceptionLog = $this.TableList.ExceptionLog
                 InformationLog = $this.TableList.InformationLog
                 VariableLog = $this.TableList.VariableLog
-            } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.LogPath
-
-            @{
-                State = $this.TableList.State
-                Connection = $this.TableList.Connection
-                Registry = $this.TableList.Registry
-            } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.ConfigurationPath
+            } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.Path
         }
         catch {
             throw "Json SaveRepository failed. $($_.Exception.Message)"
@@ -60,8 +50,7 @@ class JsonRepository : FileRepository {
     [hashtable] Serialize() {
         return @{
             TypeName = $this.GetType().Name
-            LogPath = $this.LogPath
-            ConfigurationPath = $this.ConfigurationPath
+            Path = $this.Path
         }
     }
 }

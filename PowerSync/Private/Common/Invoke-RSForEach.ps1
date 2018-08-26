@@ -1,4 +1,6 @@
-# Kept here for reference purposes in case we need to roll our own.
+# Kept here for reference purposes in case the project switches from Jobs to RunSpaces.  However, RunSpaces gave a lot of problems
+# mainly freezing up at runtime during high loads.  The tests used synchronized lists and simple serializable data type (no class
+# as POSH classes are not threadsafe), but still couldn't get it to work.  Also tried PoshRSJobs and Invoke-Parallel, same issue.
 function Invoke-RSForEach {
     [CmdletBinding()]
     param

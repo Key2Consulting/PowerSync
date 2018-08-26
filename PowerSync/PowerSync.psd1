@@ -18,19 +18,23 @@
         "$PSScriptRoot\Private\Common\Confirm-PSYInitialized.ps1",
         "$PSScriptRoot\Private\Common\Invoke-ForEach.ps1",
         "$PSScriptRoot\Private\Common\Write-ActivityLog.ps1",
+        "$PSScriptRoot\Public\System\Import-PSYModule.ps1",
         "$PSScriptRoot\Public\Activity\Start-PSYActivity.ps1",
         "$PSScriptRoot\Public\Activity\Start-PSYForEachActivity.ps1",
-        "$PSScriptRoot\Public\Activity\Start-PSYMainActivity.ps1"
         "$PSScriptRoot\Public\Logging\Write-PSYExceptionLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYInformationLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYVerboseLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYVariableLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYDebugLog.ps1",
+        "$PSScriptRoot\Public\Logging\Get-PSYLog.ps1",
         "$PSScriptRoot\Public\State\Get-PSYState.ps1",
         "$PSScriptRoot\Public\State\Lock-PSYState.ps1",
         "$PSScriptRoot\Public\State\Remove-PSYState.ps1",
         "$PSScriptRoot\Public\State\Set-PSYState.ps1",
+        "$PSScriptRoot\Public\Repository\Disconnect-PSYRepository.ps1",
+        "$PSScriptRoot\Public\Repository\New-PSYJsonRepository.ps1",
         "$PSScriptRoot\Public\Repository\Connect-PSYJsonRepository.ps1",
+        "$PSScriptRoot\Public\Repository\Remove-PSYJsonRepository.ps1",
         "$PSScriptRoot\Public\Repository\Connect-PSYOleDbRepository.ps1"
     )
 }
