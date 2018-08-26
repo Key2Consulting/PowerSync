@@ -10,7 +10,7 @@ class FileRepository : Repository {
         $this.TableList.ExceptionLog = New-Object System.Collections.ArrayList
         $this.TableList.InformationLog = New-Object System.Collections.ArrayList
         $this.TableList.VariableLog = New-Object System.Collections.ArrayList
-        $this.TableList.State = New-Object System.Collections.ArrayList
+        $this.TableList.StateVar = New-Object System.Collections.ArrayList
         $this.TableList.Connection = New-Object System.Collections.ArrayList
         $this.TableList.Registry = New-Object System.Collections.ArrayList
     }
@@ -35,7 +35,7 @@ class FileRepository : Repository {
     [string] GetEntityKey([string] $EntityType) {
         # Entities generally use ID as their key, with few exceptions
         $keyField = 'ID'
-        if ($EntityType -eq 'State') {
+        if ($EntityType -eq 'StateVar') {
             $keyField = "Name"
         }        
         return $keyField
@@ -52,14 +52,19 @@ class FileRepository : Repository {
         return $this.CriticalSection({
             $table = $this.GetEntityTable($EntityType)
             $key = $this.GetEntityKey($EntityType)
-            $e = $table.Where({$_."$key" -eq $EntityID})[0]
+            $e = $table.Where({$_."$key" -eq $EntityID})
             # If the repo returned a PSObject, convert to a hash table (our preferred type)
-            if ($e -is [psobject]) {
-                $hash = @{}
-                $e.PSObject.Properties | foreach { $hash[$_.Name] = $_.Value }
-                return $hash
+            if ($e) {
+                if ($e[0] -is [psobject]) {
+                    $hash = @{}
+                    $e[0].PSObject.Properties | foreach { $hash[$_.Name] = $_.Value }
+                    return $hash
+                }
             }
-            return $e
+            else {
+                return $null
+            }
+            return $e[0]
         })
     }
 

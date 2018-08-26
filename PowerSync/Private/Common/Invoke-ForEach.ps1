@@ -5,7 +5,7 @@ function Invoke-ForEach {
         [parameter(HelpMessage = "TODO", Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
-        [scriptblock] $ScriptBlock,
+        [object] $ScriptBlock,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $LogTitle = 'Invoke-ForEach {0}',
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -52,7 +52,7 @@ function Invoke-ForEach {
                 ForceDebug = $ForceDebug
             }
             if ($ScriptBlock -is [array]) {                                 # ScriptBlocks can either be a single definition, or an array of different definitions, one per pipeline item.
-                ScriptBlock = $ScriptBlock[$index]
+                $workItem.ScriptBlock = $ScriptBlock[$index]
             }
             [void] $workItems.Add($workItem)
             $index += 1
@@ -90,7 +90,8 @@ function Invoke-ForEach {
                     # Without setting these preferences, this output won't get returned
                     $DebugPreference = $workItem.DebugPreference
                     $VerbosePreference = $workItem.VerbosePreference
-
+                    $global:PSYSessionRepository
+                    $workItem.Repository        # TODO
                     # Execute the input scriptblock
                     $scriptBlock = [Scriptblock]::Create($workItem.ScriptBlock)     # only the text was serialized, not the object, so reconstruct
                     Invoke-Command -ScriptBlock $scriptBlock -InputObject $workItem.InputObject     # run client code

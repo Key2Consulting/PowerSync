@@ -1,6 +1,9 @@
 class JsonRepository : FileRepository {
     [string] $Path
 
+    JsonRepository () {
+    }
+
     JsonRepository ([string] $Path) {
         $this.Path = $Path
     }
@@ -15,7 +18,7 @@ class JsonRepository : FileRepository {
         try {
             $data = Get-Content -Path $this.Path -ErrorAction SilentlyContinue | ConvertFrom-Json
             if ($data) {
-                $this.TableList.State = [System.Collections.ArrayList] $data.State
+                $this.TableList.StateVar = [System.Collections.ArrayList] $data.StateVar
                 $this.TableList.Connection = [System.Collections.ArrayList] $data.Connection
                 $this.TableList.Registry = [System.Collections.ArrayList] $data.Registry
                 $this.TableList.ActivityLog = [System.Collections.ArrayList] $data.ActivityLog
@@ -33,7 +36,7 @@ class JsonRepository : FileRepository {
         try {
             # Since you can't really update just part of a JSON file, we rewrite the entire thing.
             @{
-                State = $this.TableList.State
+                StateVar = $this.TableList.StateVar
                 Connection = $this.TableList.Connection
                 Registry = $this.TableList.Registry
                 ActivityLog = $this.TableList.ActivityLog

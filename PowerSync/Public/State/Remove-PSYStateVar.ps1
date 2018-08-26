@@ -1,4 +1,4 @@
-function Remove-PSYState {
+function Remove-PSYStateVar {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]

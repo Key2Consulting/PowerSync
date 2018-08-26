@@ -1,4 +1,4 @@
-function Lock-PSYState {
+function Lock-PSYStateVar {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]

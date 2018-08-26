@@ -24,21 +24,13 @@ $ErrorActionPreference = "Stop"
 # Import dependent modules
 Import-Module "$rootPath\PowerSync"
 
-# Clean up prior JSON repository files
+# Initialize repository
 Remove-PSYJsonRepository $jsonRepo
 New-PSYJsonRepository $jsonRepo
 Connect-PSYJsonRepository $jsonRepo
 
-Start-PSYActivity -Verbose -Debug -Name 'Test Concurrency' -ScriptBlock {
-    Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -InputObject (1..5) -Parallel -ScriptBlock {
-        Write-PSYVerboseLog "foo actual $Input"
-        "hello"
-        "world"
-    }
-}
-
+.\Test\TestStateTypes\TestStateTypes.ps1
 #.\Test\TestConcurrency\TestConcurrency.ps1
-#.\Test\TestStateTypes\TestStateTypes.ps1
 
 #.\Test\TestCSVToSQL\TestCSVToSQL.ps1
 #.\Test\TestSQLToSQL\TestSQLToSQL.ps1

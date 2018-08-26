@@ -28,6 +28,7 @@ class Repository {
     }
 
     # Note that the Repository is not intended to be threadsafe, which is why it must be cloned during parallel processing.
+    # We roll our own serialization b/c the default POSH serialization has trouble with classes due to runspace affinity:  https://github.com/PowerShell/PowerShell/issues/3173
     [hashtable] Serialize() {
         throw "The repository Serialize method should be overridden by derived classes."
     }
@@ -94,10 +95,10 @@ class Repository {
     }
     
     [object] GetState([string] $Name) {
-        return $this.ReadEntity('State', $Name).Value
+        return $this.ReadEntity('StateVar', $Name).Value
     }
 
-    [void] SetState([string] $Name, [object] $Value, [string] $Type, [string] $CustomType) {
+    [void] SetState([string] $Name, [object] $Value, [string] $Type) {
         $o = @{
             ID = New-Guid
             Name = $Name
@@ -108,19 +109,19 @@ class Repository {
             ReadDateTime = Get-Date
         }
         # If not exists then create, otherwise update.
-        $existing = $this.ReadEntity('State', $Name)
+        $existing = $this.ReadEntity('StateVar', $Name)
         if (-not $existing) {
-            $this.CreateEntity('State', $o)
+            $this.CreateEntity('StateVar', $o)
         }
         else {
             $existing.Value = $Value
-            $this.UpdateEntity('State', $existing)
+            $this.UpdateEntity('StateVar', $existing)
         }
     }
 
     [void] DeleteState([string] $Name) {
         $o = $this.CriticalSection({
-            return $this.DeleteEntity('State', $Name)
+            return $this.DeleteEntity('StateVar', $Name)
         })
     }
     

@@ -13,11 +13,6 @@ Trap {"Error: $_"; Break;}
         Initialized = $false
         WorkingFolder = "$(Get-Location)"
     }
-    Option = @{
-        Throttle = 10               # max parallel processes
-        ScriptTimeout = 5000        # milliseconds
-        QueryTimeout = 3600         # seconds
-    }
 }
 # Keep the repository out of session state since it doesn't support default POSH serialization.
 [Repository] $global:PSYSessionRepository = $null

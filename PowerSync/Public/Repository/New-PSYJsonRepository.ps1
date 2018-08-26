@@ -6,7 +6,7 @@ function New-PSYJsonRepository {
     )
 
     try {
-        New-Item $Path
+        $null = New-Item $Path
     }
     catch {
         Write-PSYExceptionLog $_ "Error creating JSON repository."

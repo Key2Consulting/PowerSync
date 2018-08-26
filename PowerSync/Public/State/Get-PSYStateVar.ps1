@@ -1,4 +1,4 @@
-function Get-PSYState {
+function Get-PSYStateVar {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
