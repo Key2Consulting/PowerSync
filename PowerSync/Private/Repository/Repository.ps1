@@ -91,11 +91,8 @@ class Repository {
         $this.CreateEntity('VariableLog', $o)
     }
     
-    [object] GetState([string] $Name) {
-        return $this.ReadEntity('StateVar', $Name).Value
-    }
-
-    [void] SetState([string] $Name, [object] $Value, [string] $Type) {
+    [void] SetStateVar([string] $Name, [object] $Value, [string] $Type) {
+        # TODO: SHOULD CRITICALSECTION BE MOVED FROM FILEREPOSITORY HERE? ESSENTIALLY THIS WOULD MEAN ALL REPOSITORY FUNCTIONALITY IS SYNCHRONIZED.
         $o = @{
             ID = New-Guid
             Name = $Name
@@ -114,6 +111,14 @@ class Repository {
             $existing.Value = $Value
             $this.UpdateEntity('StateVar', $existing)
         }
+    }
+
+    [object] GetStateVar([string] $Name) {
+        return $this.ReadEntity('StateVar', $Name).Value
+    }
+
+    [object] RemoveStateVar([string] $Name) {
+        return $this.ReadEntity('StateVar', $Name).Value
     }
 
     [void] DeleteState([string] $Name) {

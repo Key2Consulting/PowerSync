@@ -11,7 +11,7 @@ $targetTestDBPath = "$rootPath\PowerSyncTargetDB.MDF"
 ######################################################
 # Initialize Tests
 ######################################################
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 
 # Reset the source and target databases
 #Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Database.sql" -ServerInstance $sqlServerInstance -Variable "TestDB=$testDBPath"
@@ -29,6 +29,8 @@ Remove-PSYJsonRepository $jsonRepo
 New-PSYJsonRepository $jsonRepo
 Connect-PSYJsonRepository $jsonRepo
 
+# Run required tests
+# TODO: MIGRATE THIS TO PESTER?
 .\Test\TestStateTypes\TestStateTypes.ps1
 #.\Test\TestConcurrency\TestConcurrency.ps1
 

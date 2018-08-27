@@ -13,7 +13,8 @@ function Connect-PSYJsonRepository {
 
         # Create the instance, passing it our session state. The class should set it's state properties to the session,
         # making the connection available on subsequent requests.
-        $repo = New-Object JsonRepository $Path, $LockTimeout, $PSYSession.RepositoryState
+        $fullPath = Resolve-Path -Path $Path
+        $repo = New-Object JsonRepository $fullPath, $LockTimeout, $PSYSession.RepositoryState
         $global:PSYSession.Initialized = $true
     }
     catch {
