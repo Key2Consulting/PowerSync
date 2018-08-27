@@ -6,8 +6,6 @@ function Remove-PSYConnection {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
         
     }
     catch {

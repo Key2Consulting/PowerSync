@@ -20,8 +20,6 @@ function Import-PSYSqlServer {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
         
     }
     catch {

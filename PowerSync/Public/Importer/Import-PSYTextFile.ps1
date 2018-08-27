@@ -9,8 +9,6 @@ function Import-PSYTextFile {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
         
     }
     catch {

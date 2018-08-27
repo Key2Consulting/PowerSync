@@ -10,14 +10,13 @@ function Set-PSYStateVar {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
+        $repo = New-RepositoryFromFactory       # instantiate repository
 
         # Log
         Write-PSYVariableLog $Name $Value
 
         # Set the state in the repository.  If it doesn't exist, it will be created.
-        $PSYSessionRepository.SetState($Name, $Value, $ContainerType)
+        $repo.SetState($Name, $Value, $ContainerType)
     }
     catch {
         Write-PSYExceptionLog $_ "Error setting state '$Name'."

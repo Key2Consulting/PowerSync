@@ -8,9 +8,17 @@ function Write-PSYDebugLog {
         [string] $Category
     )
 
-    # Write Log and output to screen    
-    if ((Confirm-PSYInitialized -NoTerminate)) {
-        $PSYSessionRepository.LogInformation($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], $Category, $Message)
+    try {
+        $repo = New-RepositoryFromFactory       # instantiate repository
+
+        # Write Log and output to screen    
+        if ($PSYSession.Initialized) {
+            $repo.LogInformation($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Category, $Message)
+        }
+        Write-Debug -Message "Debug: $Category $Message"
     }
-    Write-Debug -Message "Debug: $Category $Message"
+    catch {
+        Write-PSYExceptionLog $_ "Error in Write-PSYDebugLog."
+    }
+
 }

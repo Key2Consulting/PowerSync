@@ -1,12 +1,9 @@
 class Repository {
-    [string] $ClassType = $this.GetType().Name
+    [hashtable] $State      # the only pointer we have to our state for this class and all derived classes
 
-    Repository () {
-    }
-
-    [object] static Deserialize([object] $SerializedData) {
-        $clone = New-Object "$($SerializedData.TypeName)" ($SerializedData)
-        return $clone
+    Repository ([hashtable] $State) {
+        $this.State = $State
+        $this.State.ClassType = $this.GetType().FullName        # needed to support rehydration
     }
 
     [void] CreateEntity([string] $EntityType, [object] $Entity) {

@@ -10,9 +10,6 @@ function Start-PSYActivity {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
-
         # Log activity start. We also lock the scriptblock AST for reference purposes.  If multiple scriptblocks are
         # defined, just log the first one.
         $logScriptBlock = $ScriptBlock

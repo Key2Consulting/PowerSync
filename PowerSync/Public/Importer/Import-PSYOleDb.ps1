@@ -20,8 +20,6 @@ function Import-PSYOleDb {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
         
     }
     catch {

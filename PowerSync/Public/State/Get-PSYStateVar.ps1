@@ -6,12 +6,11 @@ function Get-PSYStateVar {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
+        $repo = New-RepositoryFromFactory       # instantiate repository
 
         # Load the state from the repository
-        $x = $PSYSessionRepository.GetState($Name)
-        return $PSYSessionRepository.GetState($Name)
+        $x = $repo.GetState($Name)
+        return $repo.GetState($Name)
     }
     catch {
         Write-PSYExceptionLog $_ "Error getting state '$Name'."

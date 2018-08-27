@@ -1,18 +1,21 @@
 class FileRepository : Repository {
-    # Locking
-    [string] $LockPath              # file used to acquire an exclusive lock to the file repository
-    [int] $LockTimeout = 5000       # number of milliseconds to keep trying to acquire exclusive lock to the file repository
-    [hashtable] $TableList = @{}    # a list of lists, simulating in-memory tables of a database
 
-    FileRepository () {
-        # These lists simulate in-memory tables of a database
-        $this.TableList.ActivityLog = New-Object System.Collections.ArrayList
-        $this.TableList.ExceptionLog = New-Object System.Collections.ArrayList
-        $this.TableList.InformationLog = New-Object System.Collections.ArrayList
-        $this.TableList.VariableLog = New-Object System.Collections.ArrayList
-        $this.TableList.StateVar = New-Object System.Collections.ArrayList
-        $this.TableList.Connection = New-Object System.Collections.ArrayList
-        $this.TableList.Registry = New-Object System.Collections.ArrayList
+    # The initial construction of the FileRepository
+    FileRepository ([int] $LockTimeout, [hashtable] $State) : base([hashtable] $State) {
+        $this.State.LockTimeout = $LockTimeout      # number of milliseconds to keep trying to acquire exclusive lock to the file repository
+        $this.State.TableList = @{                  # a list of lists, simulating in-memory tables of a database
+            ActivityLog = New-Object System.Collections.ArrayList
+            ExceptionLog = New-Object System.Collections.ArrayList
+            InformationLog = New-Object System.Collections.ArrayList
+            VariableLog = New-Object System.Collections.ArrayList
+            StateVar = New-Object System.Collections.ArrayList
+            Connection = New-Object System.Collections.ArrayList
+            Registry = New-Object System.Collections.ArrayList
+        }
+    }
+
+    # The rehydration of the Repository via the factory
+    FileRepository ([hashtable] $State) : base([hashtable] $State) {
     }
 
     [void] SaveRepository() {
@@ -25,7 +28,7 @@ class FileRepository : Repository {
 
     [System.Collections.ArrayList] GetEntityTable([string] $EntityType) {
         # Retrieve the table for this entity
-        $table = $this.TableList[$EntityType]
+        $table = $this.State.TableList[$EntityType]
         if ($table -eq $null) {
             throw "GetEntityTable encountered unknown type $($EntityType)."
         }
@@ -104,7 +107,7 @@ class FileRepository : Repository {
 
             # Grab an exclusive lock
             $mutex = New-Object System.Threading.Mutex($false, "ae831404-511f-4577-ba63-56a21fd70425")
-            [void] $mutex.WaitOne($this.LockTimeout)
+            [void] $mutex.WaitOne($this.State.LockTimeout)
             
             # Reload the repository in case another process made changes
             $this.LoadRepository()

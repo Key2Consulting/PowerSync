@@ -7,8 +7,19 @@ function Write-PSYExceptionLog {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [object] $Message
     )
+    $repo = $null
+    
+    # Must be careful trying to connect to repository within an exception handler. The exception could
+    # be caused by connectivity issues with the repository. If so, we disconnect before proceeding.
+    try {
+        $repo = New-RepositoryFromFactory       # instantiate repository
+    }
+    catch {
+        Disconnect-PSYRepository
+    }
 
     try {
+
         # Write Log and output to screen
         $exception = $null
         $stackTrace = $null
@@ -21,8 +32,8 @@ function Write-PSYExceptionLog {
             $stackTrace = (Get-PSCallStack) -join '`r`n'
         }
 
-        if ((Confirm-PSYInitialized -NoTerminate)) {
-            $PSYSessionRepository.LogException($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], $Message, $exception, $stackTrace)
+        if (($PSYSession.Initialized)) {
+            $repo.LogException($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Message, $exception, $stackTrace)
         }
         # Print to console
         if ($ErrorRecord) {

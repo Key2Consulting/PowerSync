@@ -19,9 +19,6 @@ function Invoke-ForEach {
     )
 
     begin {
-        # Validation
-        Confirm-PSYInitialized
-
         # Initialize processing variables
         $workItems = New-Object System.Collections.ArrayList     # to pass parameters, and track jobs while they're processing
         $index = 0
@@ -44,8 +41,7 @@ function Invoke-ForEach {
                 InputObject = $InputObject
                 ScriptBlock = $ScriptBlock
                 Index = $index
-                SessionState = $PSYSessionState
-                RepositorySerializedData = $PSYSessionRepository.Serialize()        # Posh classes are not threadsafe, so we copy the entire session and serialize/deserialize repository
+                PSYSession = $PSYSession
                 DebugPreference = $DebugPreference
                 VerbosePreference = $VerbosePreference
                 ErrorActionPreference = $ErrorActionPreference
@@ -79,19 +75,15 @@ function Invoke-ForEach {
                     if ($workItem.ForceDebug) {
                         Wait-Debugger       # if the ForceDebug option is set in Invoke-ForEach, will break here. Step into Invoke-Command to debug client code.
                     }
-                    Import-Module $workItem.SessionState.System.Module
-                    $global:PSYSessionState = $workItem.SessionState
-                    $PSYSessionState.System.UserModules | ForEach-Object { Import-Module $_ }       # load any user modules
-                    $global:PSYSessionRepository = & (Get-Module 'PowerSync').NewBoundScriptBlock({        # https://stackoverflow.com/questions/31051103/how-to-export-a-class-in-powershell-v5-module
-                        [Repository]::Deserialize($workItem.RepositorySerializedData)
-                    })
-                    Set-Location -Path $PSYSessionState.System.WorkingFolder    # default to parent session's working folder
+                    Import-Module $workItem.PSYSession.Module
+                    $global:PSYSession = $workItem.PSYSession
+                    $PSYSession.UserModules | ForEach-Object { Import-Module $_ }       # load any user modules
+                    Set-Location -Path $PSYSession.WorkingFolder    # default to parent session's working folder
                    
                     # Without setting these preferences, this output won't get returned
                     $DebugPreference = $workItem.DebugPreference
                     $VerbosePreference = $workItem.VerbosePreference
-                    $global:PSYSessionRepository
-                    $workItem.Repository        # TODO
+
                     # Execute the input scriptblock
                     $scriptBlock = [Scriptblock]::Create($workItem.ScriptBlock)     # only the text was serialized, not the object, so reconstruct
                     Invoke-Command -ScriptBlock $scriptBlock -InputObject $workItem.InputObject     # run client code

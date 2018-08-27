@@ -15,21 +15,23 @@ function Write-ActivityLog {
     )
 
     try {
+        $repo = New-RepositoryFromFactory       # instantiate repository
+
         if ($Status -eq 'Started') {
             # Log activity start
             $aParentLog = $null
-            if ($PSYSessionState.System.ActivityStack.Count -gt 0) {
-                $aParentLog = $PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1]
+            if ($PSYSession.ActivityStack.Count -gt 0) {
+                $aParentLog = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
             }
-            $Activity = $PSYSessionRepository.StartActivity($aParentLog, $Name, $env:COMPUTERNAME, $MyInvocation.PSCommandPath, $ScriptBlock.Ast.ToString(), $Status)
-            [void] $PSYSessionState.System.ActivityStack.Add($Activity)
+            $Activity = $repo.StartActivity($aParentLog, $Name, $env:COMPUTERNAME, $MyInvocation.PSCommandPath, $ScriptBlock.Ast.ToString(), $Status)
+            [void] $PSYSession.ActivityStack.Add($Activity)
             Write-Host "$($Title): $Name"
             return $Activity
         }
         else {
             # Log activity end
-            $PSYSessionRepository.EndActivity($Activity, $Status)
-            $PSYSessionState.System.ActivityStack.Remove($Activity)
+            $repo.EndActivity($Activity, $Status)
+            $PSYSession.ActivityStack.Remove($Activity)
             Write-Host "$($Title): $Name"
         }
     }

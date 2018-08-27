@@ -10,8 +10,6 @@ function New-PSYConnection {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
         
     }
     catch {

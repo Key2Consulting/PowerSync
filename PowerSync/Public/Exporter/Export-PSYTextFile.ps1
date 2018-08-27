@@ -9,8 +9,6 @@ function Export-PSYTextFile {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
         
     }
     catch {

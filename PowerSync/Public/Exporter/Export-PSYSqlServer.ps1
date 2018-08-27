@@ -14,8 +14,6 @@ function Export-PSYSqlServer {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
         
     }
     catch {

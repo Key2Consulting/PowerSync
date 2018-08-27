@@ -6,14 +6,13 @@ function Remove-PSYStateVar {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
+        $repo = New-RepositoryFromFactory       # instantiate repository
 
         # Log
-        $PSYSessionRepository.LogVariable($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], $Name, $null)
+        $repo.LogVariable($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Name, $null)
 
         # Remove the state from the repository
-        $PSYSessionRepository.DeleteState($Name)
+        $repo.DeleteState($Name)
     }
     catch {
         Write-PSYExceptionLog $_ "Error removing state '$Name'."

@@ -6,9 +6,6 @@ function Get-PSYConnection {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
-        
     }
     catch {
         Write-PSYExceptionLog $_ "Error in Get-PSYConnection."

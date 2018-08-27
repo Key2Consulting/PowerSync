@@ -6,7 +6,7 @@ function Import-PSYModule {
     )
 
     try {
-        $PSYSessionState.System.UserModules.Add($Name)
+        $PSYSession.UserModules.Add($Name)
         Import-Module -Name $Name
     }
     catch {

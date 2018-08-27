@@ -8,9 +8,16 @@ function Write-PSYVariableLog {
         [object] $Value
     )
 
-    # Write Log and output to screen
-    if ((Confirm-PSYInitialized -NoTerminate)) {
-        $PSYSessionRepository.LogVariable($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], $Name, $Value)
+    try {
+        $repo = New-RepositoryFromFactory       # instantiate repository
+
+        # Write Log and output to screen
+        if ($PSYSession.Initialized) {
+            $repo.LogVariable($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Name, $Value)
+        }
+        Write-Verbose -Message "Variable: $Name = $Value"
     }
-    Write-Verbose -Message "Variable: $Name = $Value"
+    catch {
+        Write-PSYExceptionLog $_ "Error in Write-PSYVariableLog."
+    }
 }

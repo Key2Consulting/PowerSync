@@ -13,9 +13,9 @@
     NestedModules = @(
         "$PSScriptRoot\Private\Common\Copy-Object.ps1",
         "$PSScriptRoot\Private\Repository\Repository.ps1",
+        "$PSScriptRoot\Private\Repository\New-RepositoryFromFactory.ps1",
         "$PSScriptRoot\Private\Repository\FileRepository.ps1",
         "$PSScriptRoot\Private\Repository\JsonRepository.ps1",
-        "$PSScriptRoot\Private\Common\Confirm-PSYInitialized.ps1",
         "$PSScriptRoot\Private\Common\Invoke-ForEach.ps1",
         "$PSScriptRoot\Private\Common\Write-ActivityLog.ps1",
         "$PSScriptRoot\Public\System\Enums.ps1",

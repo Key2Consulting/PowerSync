@@ -12,9 +12,6 @@ function Start-PSYForEachActivity {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
-
         # Log activity start
         $a = Write-ActivityLog $ScriptBlock $Name "Start-PSYForEachActivity Started" 'Started'
 

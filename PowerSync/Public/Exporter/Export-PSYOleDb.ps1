@@ -14,8 +14,6 @@ function Export-PSYOleDb {
     )
 
     try {
-        # Validation
-        Confirm-PSYInitialized
         
     }
     catch {

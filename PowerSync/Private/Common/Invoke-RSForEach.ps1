@@ -16,9 +16,6 @@ function Invoke-RSForEach {
     )
 
     begin {
-        # Validation
-        Confirm-PSYInitialized
-
         # Initialize RunSpacePool to handle parallelization.
         # https://blogs.technet.microsoft.com/heyscriptingguy/2015/11/28/beginning-use-of-powershell-runspaces-part-3/
         [void] [runspacefactory]::CreateRunspacePool()
@@ -47,7 +44,7 @@ function Invoke-RSForEach {
             #$job.InputObject = $o
             $job.ScriptBlock = $ScriptBlock.ToString()
             $job.Index = $index
-            #$job.PSYSessionSerializedData = Copy-ObjectToStream $PSYSessionState      # Posh classes are not threadsafe, so we copy the entire session and serialize/deserialize repository
+            #$job.PSYSessionSerializedData = Copy-ObjectToStream $PSYSession      # Posh classes are not threadsafe, so we copy the entire session and serialize/deserialize repository
             $job.DebugPreference = $DebugPreference
             $job.VerbosePreference = $VerbosePreference
             $job.ErrorActionPreference = $ErrorActionPreference
@@ -83,7 +80,7 @@ function Invoke-RSForEach {
                     #$script:PSYSession = Copy-ObjectFromStream $job.PSYSessionSerializedData
                     
                     # Default Posh serialization converts our class to a PSObject, so we use that state data to deserialize into class instance.
-                    #$PSYSessionState = & (Get-Module 'PowerSync').NewBoundScriptBlock({        # https://stackoverflow.com/questions/31051103/how-to-export-a-class-in-powershell-v5-module
+                    #$PSYSession = & (Get-Module 'PowerSync').NewBoundScriptBlock({        # https://stackoverflow.com/questions/31051103/how-to-export-a-class-in-powershell-v5-module
                     #    [Repository]::Deserialize($PSYSessionRepository)
                     #})
                     Start-PSYMainActivity -ConnectScriptBlock {
@@ -111,15 +108,15 @@ function Invoke-RSForEach {
                     #Start-Sleep -Seconds 5
                     #Write-Debug 'Yada Yada Yada Again'
                     #throw "don't try it"
-                    #$PSYSessionRepository.LogInformation($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], "HELLO WORLD", 'TODAY')
-                    #$PSYSessionRepository = [Repository]::Deserialize($PSYSessionState.SerializedData)
+                    #$PSYSessionRepository.LogInformation($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], "HELLO WORLD", 'TODAY')
+                    #$PSYSessionRepository = [Repository]::Deserialize($PSYSession.SerializedData)
 
-                    #$PSYSessionRepository.LogInformation($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], "HELLO WORLD", 'TODAY')
+                    #$PSYSessionRepository.LogInformation($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], "HELLO WORLD", 'TODAY')
                     <#
                     Start-PSYMainActivity -ConnectScriptBlock {
                         Connect-PSYJsonRepository
                     } -Name 'Test Concurrency' -ScriptBlock {
-                        $PSYSessionRepository.LogInformation($PSYSessionState.System.ActivityStack[$PSYSessionState.System.ActivityStack.Count - 1], "HELLO WORLD", 'TODAY')
+                        $PSYSessionRepository.LogInformation($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], "HELLO WORLD", 'TODAY')
                     }
                     #>
                     #$threadID = [appdomain]::GetCurrentThreadId()
@@ -172,7 +169,7 @@ function Invoke-RSForEach {
 
 
 <#
-        $jobs = ($workItems | Start-RSJob -VariablesToImport 'Ctx' -Throttle $PSYSessionState.Option.Throttle -ScriptBlock {
+        $jobs = ($workItems | Start-RSJob -VariablesToImport 'Ctx' -Throttle $PSYSession.Option.Throttle -ScriptBlock {
             Start-Sleep -Seconds 1      # somehow this avoids the "You cannot call a method on a null-valued expression." error
             Write-PSYInformationLog "here"
             #$a = Write-ActivityLog $_.ScriptBlock $Name "Start-PSYForEachActivity [$($_.Index)] Started" 'Started'
@@ -186,7 +183,7 @@ function Invoke-RSForEach {
         #$variables = Get-Variable | Select-Object -ExpandProperty Name
 
         # Execute each (new) script block in parallel, importing all variables and modules.
-        $workItems | Invoke-Parallel -ImportVariables -ImportModules -ImportFunctions -Throttle $PSYSessionState.Option.Throttle -RunspaceTimeout $PSYSessionState.Option.ScriptTimeout -ScriptBlock {
+        $workItems | Invoke-Parallel -ImportVariables -ImportModules -ImportFunctions -Throttle $PSYSession.Option.Throttle -RunspaceTimeout $PSYSession.Option.ScriptTimeout -ScriptBlock {
             Write-PSYInformationLog "here"
             #$a = Write-ActivityLog $_.ScriptBlock $Name "$logTitle [$($_.Index)] Started" 'Started'
             #Invoke-Command -ArgumentList $_.InputObject -ScriptBlock $_.ScriptBlock
