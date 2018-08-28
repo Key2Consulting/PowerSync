@@ -19,18 +19,36 @@ function Write-ActivityLog {
 
         if ($Status -eq 'Started') {
             # Log activity start
-            $aParentLog = $null
-            if ($PSYSession.ActivityStack.Count -gt 0) {
-                $aParentLog = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
-            }
-            $Activity = $repo.StartActivity($aParentLog, $Name, $env:COMPUTERNAME, $MyInvocation.PSCommandPath, $ScriptBlock.Ast.ToString(), $Status)
+            $Activity =  $repo.CriticalSection({        # execute the operation as a critical section to ensure proper concurrency
+                $o = @{
+                    ID = $null                          # let the repository assign the surrogate key
+                    Name = $Name
+                    Server = $env:COMPUTERNAME
+                    ScriptFile = $MyInvocation.PSCommandPath
+                    Status = $Status
+                    ScriptAst = $ScriptBlock.Ast.ToString()
+                    StartDateTime = Get-Date
+                    Test = $PSYSession.ActivityStack
+                }
+                if ($PSYSession.ActivityStack.Count -gt 0) {
+                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
+                }
+                $this.CreateEntity('ActivityLog', $o)
+                return $o
+            })
+    
             [void] $PSYSession.ActivityStack.Add($Activity)
+            
             Write-Host "$($Title): $Name"
             return $Activity
         }
         else {
             # Log activity end
-            $repo.EndActivity($Activity, $Status)
+            [void] $repo.CriticalSection({
+                $Activity.Status = $Status
+                $Activity.EndDateTime = Get-Date
+                $this.UpdateEntity('ActivityLog', $Activity)
+            })
             $PSYSession.ActivityStack.Remove($Activity)
             Write-Host "$($Title): $Name"
         }

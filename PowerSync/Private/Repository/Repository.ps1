@@ -1,9 +1,21 @@
+# The base repository handling all persistence within PowerSync. Although the base class is not usable by itself, it provides
+# core functionality and a contract derived classes must adhere to. The derived classes provide the implementation for the
+# specific platform.
+#
+# Note:
+#   - Repository is not thread safe.
+#   - Is designed to be instantiated, used, and discarded for every user operation (i.e. command).
+#   - State is stored outside of the class to ensure proper marshaling of data for remote jobs.
+#   - Assumes all entities have a surrogate identifier named 'ID'
+#   - Due to the threading & state limitations, a strongly typed object model isn't used. Instead, every object is a hashtable (preferred over PSObjects for performance). https://powertoe.wordpress.com/2011/03/31/combining-objects-efficiently-use-a-hash-table-to-index-a-collection-of-objects/
+#
 class Repository {
     [hashtable] $State      # the only pointer we have to our state for this class and all derived classes
 
     Repository ([hashtable] $State) {
         $this.State = $State
-        $this.State.ClassType = $this.GetType().FullName        # needed to support rehydration
+        $this.State.LockTimeout = 5000
+        $this.State.ClassType = $this.GetType().FullName        # needed to support rehydration via New-RepositoryFromFactory
     }
 
     [void] CreateEntity([string] $EntityType, [object] $Entity) {
@@ -15,7 +27,7 @@ class Repository {
     [object] ReadEntity([string] $EntityType, [object] $EntityID) {
         throw "The repository ReadEntity method should be overridden by derived classes."
     }
-
+    
     [void] UpdateEntity([string] $EntityType, [object] $Entity) {
         throw "The repository UpdateEntity method should be overridden by derived classes."
     }
@@ -24,130 +36,78 @@ class Repository {
         throw "The repository DeleteEntity method should be overridden by derived classes."
     }
 
-    # Note that the Repository is not intended to be threadsafe, which is why it must be cloned during parallel processing.
-    # We roll our own serialization b/c the default POSH serialization has trouble with classes due to runspace affinity:  https://github.com/PowerShell/PowerShell/issues/3173
-    [hashtable] Serialize() {
-        throw "The repository Serialize method should be overridden by derived classes."
+    [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue) {
+        throw "The repository FindEntity method should be overridden by derived classes."
     }
 
-    [hashtable] StartActivity([hashtable] $Parent, [string] $Name, [string] $Server, [string] $ScriptFile, [string] $ScriptAst, [string] $Status) {
-        $o = @{
-            ID = New-Guid
-            Name = $Name
-            Server = $Server
-            ScriptFile = $ScriptFile
-            Status = $Status
-            ScriptAst = $ScriptAst
-            StartDateTime = Get-Date
-        }
-        if ($Parent) {
-            $o.ParentID = $Parent.ID
-        }
-        $this.CreateEntity('ActivityLog', $o)
-        return $o
-    }
-    
-    [void] EndActivity([hashtable] $Activity, [string] $Status) {
-        $Activity.Status = $Status
-        $Activity.EndDateTime = Get-Date
-        $this.UpdateEntity('ActivityLog', $Activity)
-    }
+    # Common repository utility routines
+    #
 
-    [void] LogException([hashtable] $Activity, [string] $Message, [string] $Exception, [string] $StackTrace) {
-        $o = @{
-            ID = New-Guid
-            ActivityID = $Activity.ID
-            Message = $Message
-            Exception = $Exception
-            StackTrace = $StackTrace
-            CreatedDateTime = Get-Date
-        }
-        $this.CreateEntity('ExceptionLog', $o)
-    }
-
-    [void] LogInformation([hashtable] $Activity, [string] $Category, [string] $Message) {
-        $o = @{
-            ID = New-Guid
-            ActivityID = $Activity.ID
-            Category = $Category
-            Message = $Message
-            CreatedDateTime = Get-Date
-        }
-        $this.CreateEntity('InformationLog', $o)
-    }
-
-    [void] LogVariable([hashtable] $Activity, [string] $VariableName, [object] $VariableValue) {
-        $logValue = ConvertTo-Json $VariableValue
-        if ($logValue) {
-            $logValue = $VariableValue
-        }
-        $o = @{
-            ID = New-Guid
-            ActivityID = $Activity.ID
-            VariableName = $VariableName
-            VariableValue = $logValue
-            CreatedDateTime = Get-Date
-        }
-        $this.CreateEntity('VariableLog', $o)
-    }
-    
-    [void] SetStateVar([string] $Name, [object] $Value, [string] $Type) {
-        # TODO: SHOULD CRITICALSECTION BE MOVED FROM FILEREPOSITORY HERE? ESSENTIALLY THIS WOULD MEAN ALL REPOSITORY FUNCTIONALITY IS SYNCHRONIZED.
-        $o = @{
-            ID = New-Guid
-            Name = $Name
-            Type = $Type
-            Value = $Value
-            CreatedDateTime = Get-Date
-            ModifiedDateTime = Get-Date
-            ReadDateTime = Get-Date
-        }
-        # If not exists then create, otherwise update.
-        $existing = $this.ReadEntity('StateVar', $Name)
-        if (-not $existing) {
-            $this.CreateEntity('StateVar', $o)
+    # Converts any object to a hashtable, our preferred type.
+    [hashtable] ConvertToHashTable([object] $Obj) {
+        $hash = @{}
+        if ($Obj -is [psobject]) {
+            foreach ($p in $Obj.PSObject.Properties) {
+                if ($p.Value -is [System.Management.Automation.PSCustomObject]) {
+                    if ($p.Value.PSObject.Properties.Name -match 'DateTime') {
+                        #TODO - Need to properly convert dates.  Also consider always returning a serialized/deserialized object.
+                        $hash[$p.Name] = [datetime] $p.Value
+                    }
+                    $hash[$p.Name] = $this.ConvertToHashTable($p.Value)
+                }
+                else {
+                    $hash[$p.Name] = $p.Value
+                }
+            }
         }
         else {
-            $existing.Value = $Value
-            $this.UpdateEntity('StateVar', $existing)
+            throw "ConvertToHashTable encountered unexpected type for $($Obj.ToString())"
         }
+        return $hash
     }
 
-    [object] GetStateVar([string] $Name) {
-        return $this.ReadEntity('StateVar', $Name).Value
+    # Synchronously executes a scriptblock as an atomic unit, blocking any other process attempting a critical section. This is used
+    # to ensure concurrency when performing certain muli-step data storage operations requiring synchronization. Derived classes can
+    # opt out of synchronizing across processes by overriding this method and removing the mutex.
+    #
+    # Global lock
+    [object] CriticalSection([scriptblock] $ScriptBlock) {
+        return $this.CriticalSection('f9f98a02-f7c2-47fd-aecc-090b9015a47d', $ScriptBlock)        # TODO: MAKE GLOBAL LOCK NAME SPECIFIC TO PHYSICAL REPOSITORY
     }
 
-    [object] RemoveStateVar([string] $Name) {
-        return $this.ReadEntity('StateVar', $Name).Value
+    # Specific lock
+    [object] CriticalSection([string] $LockName, [scriptblock] $ScriptBlock) {
+        return $this.CriticalSection($LockName, $ScriptBlock, $null, $null)
     }
 
-    [void] DeleteState([string] $Name) {
-        $o = $this.CriticalSection({
-            return $this.DeleteEntity('StateVar', $Name)
-        })
-    }
-    
-    [void] CreateConnection([string] $Name, [string] $Class, [string] $ConnectionString) {
-    }
-    
-    [void] ReadConnection([string] $Name) {
-    }
+    # Specific lock with Pre/Post processing
+    [object] CriticalSection([string] $LockName, [scriptblock] $ScriptBlock, [scriptblock] $PreScriptBlock, [scriptblock] $PostScriptBlock) {
+        try {
+            # Grab an exclusive lock using a Mutex, which works across process spaces.
+            $mutex = New-Object System.Threading.Mutex($false, $LockName)
+            [void] $mutex.WaitOne($this.State.LockTimeout)
+            
+            # Execute the scriptblock
+            if ($PreScriptBlock) {
+                Invoke-Command -ScriptBlock $PreScriptBlock    
+            }
+            $r = Invoke-Command -ScriptBlock $ScriptBlock
+            if ($PostScriptBlock) {
+                Invoke-Command -ScriptBlock $PostScriptBlock
+            }
 
-    [void] UpdateConnection([string] $Name, [string] $Class, [string] $ConnectionString) {
-    }
-
-    [void] DeleteConnection([string] $Name, [string] $Class, [string] $ConnectionString) {
-    }
-    
-    [void] CreateRegistry([string] $Name, [string] $Value) {
-    }
-    
-    [void] ReadRegistry([string] $Name) {
-    }
-    
-    [void] UpdateRegistry([string] $Name, [string] $Value) {
-    }
-
-    [void] DeleteRegistry([string] $Name) {
+            if ($r) {
+                return $r
+            }
+            else {
+                return $null
+            }
+        }
+        catch {
+            throw "CriticalSection of $($this.State.ClassType) failed. $($_.Exception.Message)"
+        }
+        finally {
+            $mutex.ReleaseMutex()
+        }
     }
 }

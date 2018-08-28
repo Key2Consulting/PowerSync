@@ -7,10 +7,10 @@ function Write-PSYExceptionLog {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [object] $Message
     )
-    $repo = $null
     
     # Must be careful trying to connect to repository within an exception handler. The exception could
     # be caused by connectivity issues with the repository. If so, we disconnect before proceeding.
+    $repo = $null
     try {
         $repo = New-RepositoryFromFactory       # instantiate repository
     }
@@ -33,7 +33,19 @@ function Write-PSYExceptionLog {
         }
 
         if (($PSYSession.Initialized)) {
-            $repo.LogException($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Message, $exception, $stackTrace)
+            [void] $repo.CriticalSection({
+                $o = @{
+                    ID = $null                          # let the repository assign the surrogate key
+                    Message = $Message
+                    Exception = $exception
+                    StackTrace = $stackTrace
+                    CreatedDateTime = Get-Date
+                }
+                if ($PSYSession.ActivityStack.Count -gt 0) {
+                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
+                }
+                $this.CreateEntity('ExceptionLog', $o)
+            })            
         }
         # Print to console
         if ($ErrorRecord) {

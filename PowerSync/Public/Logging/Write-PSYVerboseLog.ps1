@@ -13,7 +13,19 @@ function Write-PSYVerboseLog {
 
         # Write Log and output to screen
         if ($PSYSession.Initialized) {
-            $repo.LogInformation($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Category, $Message)
+            [void] $repo.CriticalSection({
+                $o = @{
+                    ID = $null                          # let the repository assign the surrogate key
+                    Type = 'Verbose'
+                    Category = $Category
+                    Message = $Message
+                    CreatedDateTime = Get-Date
+                }
+                if ($PSYSession.ActivityStack.Count -gt 0) {
+                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
+                }
+                $this.CreateEntity('InformationLog', $o)
+            })
         }
         Write-Verbose -Message "Information Verbose: ($Category) $Message"
     }

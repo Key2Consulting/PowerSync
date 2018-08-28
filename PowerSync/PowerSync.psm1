@@ -22,6 +22,9 @@ Trap {"Error: $_"; Break;}
     WorkingFolder = "$(Get-Location)"                           # where the PowerSync module is located
 }
 
+# Import Local Module Dependencies
+#Import-Module "$PSScriptRoot\Private\Library\Newtonsoft.Json"
+
 # REFERENCES
 # https://github.com/PowerShell/PowerShell/issues/3173
 # https://stackoverflow.com/questions/3563262/how-to-make-c-sharp-powershell-invoke-member-thread-safe

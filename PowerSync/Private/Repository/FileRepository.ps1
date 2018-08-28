@@ -8,7 +8,7 @@ class FileRepository : Repository {
             ExceptionLog = New-Object System.Collections.ArrayList
             InformationLog = New-Object System.Collections.ArrayList
             VariableLog = New-Object System.Collections.ArrayList
-            StateVar = New-Object System.Collections.ArrayList
+            Variable = New-Object System.Collections.ArrayList
             Connection = New-Object System.Collections.ArrayList
             Registry = New-Object System.Collections.ArrayList
         }
@@ -35,101 +35,77 @@ class FileRepository : Repository {
         return $table
     }
 
-    [string] GetEntityKey([string] $EntityType) {
-        # Entities generally use ID as their key, with few exceptions
-        $keyField = 'ID'
-        if ($EntityType -eq 'StateVar') {
-            $keyField = "Name"
-        }        
-        return $keyField
-    }
-
     [void] CreateEntity([string] $EntityType, [object] $Entity) {
-        $this.CriticalSection({
-            $table = $this.GetEntityTable($EntityType)
-            $table.Add($Entity)
-        })
+        # Assign the new entity a surrogate key
+        if (-not $Entity.ID) {
+            $Entity.ID = New-Guid
+        }
+        # Add the entity to our table
+        $table = $this.GetEntityTable($EntityType)
+        [void] $table.Add($Entity)
     }
     
     [object] ReadEntity([string] $EntityType, [object] $EntityID) {
-        return $this.CriticalSection({
-            $table = $this.GetEntityTable($EntityType)
-            $key = $this.GetEntityKey($EntityType)
-            $e = $table.Where({$_."$key" -eq $EntityID})
-            # If the repo returned a PSObject, convert to a hash table (our preferred type)
-            if ($e) {
-                if ($e[0] -is [psobject]) {
-                    $hash = @{}
-                    $e[0].PSObject.Properties | foreach { $hash[$_.Name] = $_.Value }
-                    return $hash
-                }
-            }
-            else {
-                return $null
-            }
-            return $e[0]
-        })
+        $table = $this.GetEntityTable($EntityType)
+        $e = $table.Where({$_.ID -eq $EntityID})
+        # If the repo returned a PSObject, convert to a hash table (our preferred type)
+        if ($e) {
+            $entityHash = $this.ConvertToHashTable($e)
+            return $entityHash
+        }
+        else {
+            return $null
+        }
+        return $e[0]
     }
 
     [void] UpdateEntity([string] $EntityType, [object] $Entity) {
-        $this.CriticalSection({
-            $table = $this.GetEntityTable($EntityType)
-            $key = $this.GetEntityKey($EntityType)
-            $existing = $table.Where({$_."$key" -eq $Entity."$key"})[0]      # we can't use ReadEntity for this since it reloads the repo and we'll get a different entity instance
-            
-            # The updated entity is already passed into this method, but we want to keep it's position in the repository.
-            $position = $table.IndexOf($existing)
-            $table.Remove($existing)
-            if ($position -gt -1) {
-                $table.Insert($position, $Entity)
-            }
-            else {
-                $table.Add($Entity)
-            }
-        })
+        $table = $this.GetEntityTable($EntityType)
+        $existing = $table.Where({$_.ID -eq $Entity.ID})[0]      # we can't use ReadEntity for this since it reloads the repo and we'll get a different entity instance
+        
+        # The updated entity is already passed into this method, but we want to keep it's position in the repository.
+        $position = $table.IndexOf($existing)
+        $table.Remove($existing)
+        if ($position -gt -1) {
+            $table.Insert($position, $Entity)
+        }
+        else {
+            $table.Add($Entity)
+        }
     }
 
     [void] DeleteEntity([string] $EntityType, [object] $EntityID) {
-        $this.CriticalSection({
-            $table = $this.GetEntityTable($EntityType)
-            $key = $this.GetEntityKey($EntityType)
-            $table.Remove($table.Where({$key -eq $EntityID}))
-        })
+        $table = $this.GetEntityTable($EntityType)
+        $table.Remove($table.Where({ID -eq $EntityID}))
     }
 
-    # Synchronously executes a scriptblock as an atomic unit, blocking any other process attempting a critical section.
-    [object] CriticalSection([scriptblock] $ScriptBlock) {
-        try {
-            # The file repository doesn't read/write specific parts of the file like a database does. However, it
-            # must still deal with concurrency when multiple threads are invoking the repo simultaneously. Instead,
-            # the repo will read and write the entire file for every operation. It's slower, but ensures consistency.
-            # A database repository should be used in process intensive scenarios.
+    [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue) {
+        $entityList = New-Object System.Collections.ArrayList
+        $table = $this.GetEntityTable($EntityType)
+        $eQuery = $table.Where({$_."$SearchField" -eq $SearchValue})
+        # If the repo returned a PSObject, convert to a hash table (our preferred type)
+        if ($eQuery) {
+            foreach ($entity in $eQuery) {
+                $entityHash = $this.ConvertToHashTable($entity)
+                [void] $entityList.Add($entityHash)
+            }
+        }
+        return $entityList
+    }
 
-            # Grab an exclusive lock
-            $mutex = New-Object System.Threading.Mutex($false, "ae831404-511f-4577-ba63-56a21fd70425")
-            [void] $mutex.WaitOne($this.State.LockTimeout)
-            
+    # Overrides base class behavior to require the complete reloading and resaving of the JSON repository after after operation.
+    [object] CriticalSection([string] $LockName, [scriptblock] $ScriptBlock) {
+        # The file repository doesn't read/write specific parts of the file like a database does. However, it
+        # must still deal with concurrency when multiple threads are invoking the repo simultaneously. Instead,
+        # the repo will read and write the entire file for every operation. It's slower, but ensures consistency.
+        # A database repository should be used in process intensive scenarios.
+
+        return ([Repository]$this).CriticalSection("ae831404-511f-4577-ba63-56a21fd70425", $ScriptBlock, {
             # Reload the repository in case another process made changes
             $this.LoadRepository()
-
-            # Execute the scriptblock
-            $r = Invoke-Command -ScriptBlock $ScriptBlock
-
+        }, {
             # Save the repository back to disk
             $this.SaveRepository()
-
-            if ($r) {
-                return $r
-            }
-            else {
-                return $null
-            }
-        }
-        catch {
-            throw "CriticalSection of $($this.GetType()) failed. $($_.Exception.Message)"
-        }
-        finally {
-            $mutex.ReleaseMutex()
-        }
+            })
     }
 }

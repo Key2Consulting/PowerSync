@@ -10,11 +10,26 @@ function Write-PSYVariableLog {
 
     try {
         $repo = New-RepositoryFromFactory       # instantiate repository
-
+        
         # Write Log and output to screen
         if ($PSYSession.Initialized) {
-            $repo.LogVariable($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Name, $Value)
-        }
+            [void] $repo.CriticalSection({
+                $logValue = ConvertTo-Json $Value
+                if ($logValue) {
+                    $logValue = $Value
+                }
+                $o = @{
+                    ID = $null                          # let the repository assign the surrogate key
+                    VariableName = $Name
+                    VariableValue = $logValue
+                    CreatedDateTime = Get-Date
+                }
+                if ($PSYSession.ActivityStack.Count -gt 0) {
+                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
+                }
+                $this.CreateEntity('VariableLog', $o)
+            })
+    }
         Write-Verbose -Message "Variable: $Name = $Value"
     }
     catch {
