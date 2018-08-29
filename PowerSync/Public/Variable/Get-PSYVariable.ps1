@@ -34,12 +34,22 @@ function Get-PSYVariable {
                 throw "Unknown variable in Set-PSYVariable. Either Name or ID parameter must be set."
             }
 
-            # Return the variable
             if (-not $existing) {
                 throw "Variable $Name$ID not found."
             }
+
+            # Check if this variable has children
+            $children = $this.FindEntity('Variable', 'ParentID', $existing.ID)
+            if ($children.Count -gt 0) {
+                $existing.Children = New-Object System.Collections.ArrayList
+                foreach ($child in $children) {
+                    [void] $existing.Children.Add($child)
+                }
+            }
+
             # Flag as read and return
-            $existing.ReadDateTime = Get-Date
+            $existing.ReadDateTime = Get-Date | ConvertTo-PSYNativeType
+            $this.UpdateEntity('Variable', $existing)
             return $existing
         })
     }

@@ -11,6 +11,8 @@ function Remove-PSYVariable {
         # Log
         $repo.LogVariable($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Name, $null)
 
+        throw "Remove-PSYVariable not implemented"
+        
         # Remove the state from the repository
         $repo.DeleteState($Name)
     }

@@ -27,7 +27,7 @@ function Write-ActivityLog {
                     ScriptFile = $MyInvocation.PSCommandPath
                     Status = $Status
                     ScriptAst = $ScriptBlock.Ast.ToString()
-                    StartDateTime = Get-Date
+                    StartDateTime = Get-Date | ConvertTo-PSYNativeType
                     Test = $PSYSession.ActivityStack
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
@@ -46,7 +46,7 @@ function Write-ActivityLog {
             # Log activity end
             [void] $repo.CriticalSection({
                 $Activity.Status = $Status
-                $Activity.EndDateTime = Get-Date
+                $Activity.EndDateTime = Get-Date | ConvertTo-PSYNativeType
                 $this.UpdateEntity('ActivityLog', $Activity)
             })
             $PSYSession.ActivityStack.Remove($Activity)

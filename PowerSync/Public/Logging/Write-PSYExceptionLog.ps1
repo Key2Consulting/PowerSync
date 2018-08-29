@@ -39,7 +39,7 @@ function Write-PSYExceptionLog {
                     Message = $Message
                     Exception = $exception
                     StackTrace = $stackTrace
-                    CreatedDateTime = Get-Date
+                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]

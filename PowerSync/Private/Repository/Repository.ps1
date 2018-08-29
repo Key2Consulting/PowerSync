@@ -42,30 +42,7 @@ class Repository {
 
     # Common repository utility routines
     #
-
-    # Converts any object to a hashtable, our preferred type.
-    [hashtable] ConvertToHashTable([object] $Obj) {
-        $hash = @{}
-        if ($Obj -is [psobject]) {
-            foreach ($p in $Obj.PSObject.Properties) {
-                if ($p.Value -is [System.Management.Automation.PSCustomObject]) {
-                    if ($p.Value.PSObject.Properties.Name -match 'DateTime') {
-                        #TODO - Need to properly convert dates.  Also consider always returning a serialized/deserialized object.
-                        $hash[$p.Name] = [datetime] $p.Value
-                    }
-                    $hash[$p.Name] = $this.ConvertToHashTable($p.Value)
-                }
-                else {
-                    $hash[$p.Name] = $p.Value
-                }
-            }
-        }
-        else {
-            throw "ConvertToHashTable encountered unexpected type for $($Obj.ToString())"
-        }
-        return $hash
-    }
-
+    
     # Synchronously executes a scriptblock as an atomic unit, blocking any other process attempting a critical section. This is used
     # to ensure concurrency when performing certain muli-step data storage operations requiring synchronization. Derived classes can
     # opt out of synchronizing across processes by overriding this method and removing the mutex.

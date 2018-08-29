@@ -39,30 +39,10 @@ class JsonRepository : FileRepository {
                 ExceptionLog = $this.State.TableList.ExceptionLog
                 InformationLog = $this.State.TableList.InformationLog
                 VariableLog = $this.State.TableList.VariableLog
-            } | Convert-Date | ConvertTo-Json -Depth 5 | Set-Content -Path $this.State.Path
+            } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.State.Path
         }
         catch {
             throw "Json SaveRepository failed. $($_.Exception.Message)"
         }
-    }
-}
-
-function Convert-Date {
-    [CmdletBinding()]
-    param
-    (
-        [parameter(HelpMessage = "TODO", Mandatory = $true, ValueFromPipeline = $true)]
-        [object] $InputObject
-    )
-
-    begin {
-    }
-
-    process {
-        $x = $InputObject
-        $InputObject
-    }
-    end {
-
     }
 }

@@ -90,7 +90,7 @@ function Invoke-ForEach {
                 })
                 Write-PSYDebugLog ("$($LogTitle): Job Running {1}" -f $workItem.Index, $workItem.Job.InstanceId)
             }
-            else {
+            else {      # Else not parallel
                 # Else, we're running sequentially. The primary reason for this is to make debugging client scripts
                 # easier. We still need to imitate parallel processing and output the same values as before.
                 try {

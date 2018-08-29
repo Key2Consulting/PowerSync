@@ -14,9 +14,10 @@ $targetTestDBPath = "$rootPath\PowerSyncTargetDB.MDF"
 $ErrorActionPreference = "Stop"
 
 # Reset the source and target databases
-#Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Database.sql" -ServerInstance $sqlServerInstance -Variable "TestDB=$testDBPath"
-#Remove-Item -Path "$testDBPath" -Force -ErrorAction SilentlyContinue
-#Invoke-Sqlcmd -InputFile "$rootPath\Setup\Create Test Objects.sql" -ServerInstance $sqlServerInstance -Variable "TestDB=$testDBPath"
+Invoke-Sqlcmd -InputFile "$rootPath\Test\Setup\Remove Database.sql" -ServerInstance $sqlServerInstance -Variable "DatabaseName=$sourceTestDBPath"
+Invoke-Sqlcmd -InputFile "$rootPath\Test\Setup\Remove Database.sql" -ServerInstance $sqlServerInstance -Variable "DatabaseName=$targetTestDBPath"
+Remove-Item -Path "$sourceTestDBPath" -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$targetTestDBPath" -Force -ErrorAction SilentlyContinue
 
 ######################################################
 # Run Tests
@@ -24,14 +25,15 @@ $ErrorActionPreference = "Stop"
 # Import dependent modules
 Import-Module "$rootPath\PowerSync"
 
-# Initialize repository
+# Initialize PowerSync repository
 Remove-PSYJsonRepository $jsonRepo
 New-PSYJsonRepository $jsonRepo
 Connect-PSYJsonRepository $jsonRepo
 
 # Run required tests
 # TODO: MIGRATE THIS TO PESTER?
-.\Test\TestStateTypes\TestStateTypes.ps1
+.\Test\TestGeneral\TestGeneral.ps1
+#.\Test\TestStateTypes\TestStateTypes.ps1
 #.\Test\TestConcurrency\TestConcurrency.ps1
 
 #.\Test\TestCSVToSQL\TestCSVToSQL.ps1

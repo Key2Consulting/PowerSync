@@ -54,12 +54,11 @@ catch {
 
 # Lists of scalar values
 try {
-    $list = Set-PSYVariable -Name 'My List'		# create a new list (will error if already exists)
-    $list.Value.MyField = 123
+    $list = Set-PSYVariable -Name 'My List' -Value @{MyField = 123}		# create a new list (will error if already exists)
     foreach ($i in (1..10)) {       # add children to our list
         $newItem = Set-PSYVariable -Parent $list -Value (5 * $i) -Name "I'm optional, but unique $i"       # add a new item (this operation should be atomic to the item)
         $newItem.Value = 6 * $i     # update that value we just added
-        Set-PSYVariable -Variable $newItem    # save it again
+        Set-PSYVariable -Variable $newItem -Overwrite    # save it again
     }
     $list = Get-PSYVariable -Name 'My List'     # retrieve it again
     if ($list.Value.MyField -ne 123 -or $list.Children.Count -ne 10 -or $list.Children[9].Value -ne 60) {
@@ -74,11 +73,11 @@ catch {
 try {
     $entityList = Set-PSYVariable -Name 'Entity List' -Value @{ParentPropA = 'Exists at the parent level'}
     foreach ($i in (1..10)) {       # add children to our list
-        $entity = Set-PSYVariable -Parent $entityList -Value @{Key = $i; BackOrdered = $true; ModifiedDate = Get-Date}
+        $entity = Set-PSYVariable -Parent $entityList -Value @{Key = $i; BackOrdered = $true; ModifiedDate = ConvertTo-PSYNativeType (Get-Date)}
     }
-    (11..20) | Set-PSYVariable -Parent $entityList -Value @{Key = $_; BackOrdered = $false; ModifiedDate = Get-Date}        # adding items via the pipeline
+    # (11..20) | Set-PSYVariable -Parent $entityList -Value @{Key = $_; BackOrdered = $false; ModifiedDate = Get-Date}        # adding items via the pipeline
     $entityList = Get-PSYVariable -Name 'Entity List'
-    if ($entityList.Value.ParentPropA -ne 'Exists at the parent level' -or $entityList.Children.Count -ne 20 -or $entityList.Children[19].Key -ne 20) {
+    if ($entityList.Value.ParentPropA -ne 'Exists at the parent level' -or $entityList.Children.Count -ne 10 -or $entityList.Children[9].Value.Key -ne 10) {
         throw "List of complex types didn't save correctly."
     }
 }
@@ -86,7 +85,9 @@ catch {
     Write-PSYExceptionLog -Message "Failed List of complex types Test"
 }
 
+# TODO: IMPLEMENT REMAINDER
 # List of User Types (aka a custom RDBMS table)
+<#
 try {
     $tableList = Set-PSYVariable -Name 'TableList' -UserType 'MyCustomTable'
     foreach ($i in (1..10)) {
@@ -113,6 +114,7 @@ try {
 catch {
     Write-PSYExceptionLog -Message "Failed List of User Types Test"
 }
+#>
 
 # Removal of state variables
 try {
@@ -138,4 +140,5 @@ catch {
     Write-P SYExceptionLog -Message "Failed Removal of State Variables Test"
 }
 
+# TODO: DATETIME AND CONVERTO-PSYNATIVETYPE
 # TODO: HIERARCHY TEST, WITH REPARENTING

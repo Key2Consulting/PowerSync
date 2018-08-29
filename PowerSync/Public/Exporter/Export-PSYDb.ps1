@@ -1,28 +1,22 @@
-function Import-PSYOleDb {
+function Export-PSYDb {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
         [string] $ConnectionName,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [object] $ImportQuery,
+        [object] $ExtractQuery,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $Schema,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $Table,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [int] $Timeout,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $Overwrite,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $AutoIndex,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $AutoCreate
+        [int] $Timeout
     )
 
     try {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Import-PSYOleDb."
+        Write-PSYExceptionLog $_ "Error in Export-PSYDb."
     }
 }

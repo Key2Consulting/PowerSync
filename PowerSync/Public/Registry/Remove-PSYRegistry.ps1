@@ -1,4 +1,4 @@
-function Remove-PSYConnection {
+function Remove-PSYRegistry {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -9,13 +9,13 @@ function Remove-PSYConnection {
         $repo = New-RepositoryFromFactory       # instantiate repository
         
         # Log
-        Write-PSYVariableLog "Connection.$Name" $null
+        Write-PSYVariableLog "Registry.$Name" $null
 
         # Set the in the repository.  If it doesn't exist, it will be created.
         return $repo.CriticalSection({
             
             # Determine if existing
-            $existing = $this.FindEntity('Connection', 'Name', $Name)
+            $existing = $this.FindEntity('Registry', 'Name', $Name)
             if ($existing.Count -eq 0) {
                 return
             }
@@ -23,10 +23,10 @@ function Remove-PSYConnection {
                 $existing = $existing[0]
             }
 
-            $this.DeleteEntity('Connection', $existing.ID)
+            $this.DeleteEntity('Registry', $existing.ID)
         })
     }
     catch {
-        Write-PSYExceptionLog $_ "Error removing connection '$Name'."
+        Write-PSYExceptionLog $_ "Error removing registry '$Name'."
     }
 }

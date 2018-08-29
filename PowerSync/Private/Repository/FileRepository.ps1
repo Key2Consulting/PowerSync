@@ -48,9 +48,9 @@ class FileRepository : Repository {
     [object] ReadEntity([string] $EntityType, [object] $EntityID) {
         $table = $this.GetEntityTable($EntityType)
         $e = $table.Where({$_.ID -eq $EntityID})
-        # If the repo returned a PSObject, convert to a hash table (our preferred type)
         if ($e) {
-            $entityHash = $this.ConvertToHashTable($e)
+            # In case the Json contains non-native types, convert to native
+            $entityHash = ConvertTo-PSYNativeType $e
             return $entityHash
         }
         else {
@@ -76,18 +76,18 @@ class FileRepository : Repository {
 
     [void] DeleteEntity([string] $EntityType, [object] $EntityID) {
         $table = $this.GetEntityTable($EntityType)
-        $table.Remove($table.Where({ID -eq $EntityID}))
+        $table.Remove($table.Where({$_.ID -eq $EntityID}))
     }
 
     [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue) {
         $entityList = New-Object System.Collections.ArrayList
         $table = $this.GetEntityTable($EntityType)
         $eQuery = $table.Where({$_."$SearchField" -eq $SearchValue})
-        # If the repo returned a PSObject, convert to a hash table (our preferred type)
         if ($eQuery) {
             foreach ($entity in $eQuery) {
-                $entityHash = $this.ConvertToHashTable($entity)
-                [void] $entityList.Add($entityHash)
+                # In case the Json contains non-native types, convert to native
+                $entityNative = ConvertTo-PSYNativeType $entity
+                [void] $entityList.Add($entityNative)
             }
         }
         return $entityList

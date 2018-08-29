@@ -1,4 +1,4 @@
-function Get-PSYConnection {
+function Get-PSYRegistry {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -9,18 +9,18 @@ function Get-PSYConnection {
         $repo = New-RepositoryFromFactory       # instantiate repository
 
         # Get the from the repository.
-        return $repo.CriticalSection({
-            $existing = $this.FindEntity('Connection', 'Name', $Name)
+        return $repo.CriticalSection({            
+            $existing = $this.FindEntity('Registry', 'Name', $Name)
             if ($existing.Count -eq 0) {
-                throw "No connection entry found with name '$Name'."
+                throw "No registry entry found with name '$Name'."
             }
             else {
-                return $existing[0]
+                return $existing[0].Value
             }
 
         })
     }
     catch {
-        Write-PSYExceptionLog $_ "Error getting connection $Name."
+        Write-PSYExceptionLog $_ "Error getting registry $Name."
     }
 }

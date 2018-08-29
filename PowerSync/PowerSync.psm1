@@ -1,6 +1,9 @@
 Set-StrictMode -Version latest
 Trap {"Error: $_"; Break;}
 
+
+#Export-ModuleMember -Function 'Remove-PSYJsonRepository'
+
 # The global context variable is used to store critical runtime information used by the PowerSync engine. The global session
 # used primarily during activity execution to pass state between activities and to store the repository connection information. 
 # Only serializable objects should be placed in the Session since PowerSync passes the state to Jobs for parallel processing 
@@ -31,3 +34,4 @@ Trap {"Error: $_"; Break;}
 # https://stackoverflow.com/questions/31051103/how-to-export-a-class-in-powershell-v5-module
 # https://github.com/proxb/PoshRSJob
 # https://github.com/RamblingCookieMonster/Invoke-Parallel
+# https://stackoverflow.com/questions/43032681/powershell-module-structure      Note this didn't work for us due to modules being loaded out of order

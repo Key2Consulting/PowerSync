@@ -19,7 +19,7 @@ function Write-PSYVerboseLog {
                     Type = 'Verbose'
                     Category = $Category
                     Message = $Message
-                    CreatedDateTime = Get-Date
+                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]

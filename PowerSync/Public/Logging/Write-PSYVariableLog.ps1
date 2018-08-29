@@ -22,7 +22,7 @@ function Write-PSYVariableLog {
                     ID = $null                          # let the repository assign the surrogate key
                     VariableName = $Name
                     VariableValue = $logValue
-                    CreatedDateTime = Get-Date
+                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
