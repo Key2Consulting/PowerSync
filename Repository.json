@@ -1,0 +1,77 @@
+{
+    "VariableLog":  [
+                        {
+                            "VariableName":  "Connection.TestDbOleDb",
+                            "CreatedDateTime":  "2018-08-30T14:12:53.862Z",
+                            "VariableValue":  "Provider = OleDb, ConnectionString = Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=D:\\Dropbox\\Project\\Key2\\PowerSync\\\\PowerSyncSourceDB.MDF;, Properties = ",
+                            "ID":  "292acef2-4d1d-4763-9bdb-e699fb3ad84b"
+                        },
+                        {
+                            "VariableName":  "Connection.TestDbSqlServer",
+                            "CreatedDateTime":  "2018-08-30T14:12:54.040Z",
+                            "VariableValue":  "Provider = OleDb, ConnectionString = Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=D:\\Dropbox\\Project\\Key2\\PowerSync\\\\PowerSyncSourceDB.MDF;Trusted_Connection=yes;, Properties = ",
+                            "ID":  "396ddc58-d929-4f32-a7df-c883fec8edfc"
+                        },
+                        {
+                            "VariableName":  "Connection.SampleFiles",
+                            "CreatedDateTime":  "2018-08-30T14:12:54.080Z",
+                            "VariableValue":  "Provider = File, ConnectionString = D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles, Properties = ",
+                            "ID":  "6db051a2-e760-4552-a976-466bbedb4ea1"
+                        }
+                    ],
+    "Variable":  [
+
+                 ],
+    "ActivityLog":  [
+                        {
+                            "ID":  "3fed6daf-dedf-473d-9640-d7863bc07b28",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test CSV to SQL",
+                            "Status":  "Started",
+                            "Test":  [
+
+                                     ],
+                            "StartDateTime":  "2018-08-30T14:12:54.123Z",
+                            "Server":  "DHARDAN-WS"
+                        }
+                    ],
+    "Connection":  [
+                       {
+                           "ID":  "67954978-deb4-4862-bfbf-594809d36ffe",
+                           "ModifiedDateTime":  "2018-08-30T14:12:54.002Z",
+                           "Properties":  null,
+                           "ConnectionString":  "Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=D:\\Dropbox\\Project\\Key2\\PowerSync\\\\PowerSyncSourceDB.MDF;",
+                           "Name":  "TestDbOleDb",
+                           "CreatedDateTime":  "2018-08-30T14:12:54.002Z",
+                           "Provider":  1
+                       },
+                       {
+                           "ID":  "abf57434-44fe-40cc-966d-0fc107f906c0",
+                           "ModifiedDateTime":  "2018-08-30T14:12:54.067Z",
+                           "Properties":  null,
+                           "ConnectionString":  "Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=D:\\Dropbox\\Project\\Key2\\PowerSync\\\\PowerSyncSourceDB.MDF;Trusted_Connection=yes;",
+                           "Name":  "TestDbSqlServer",
+                           "CreatedDateTime":  "2018-08-30T14:12:54.066Z",
+                           "Provider":  1
+                       },
+                       {
+                           "ID":  "e1e7ea21-9923-4eb8-8bf5-c3c850a4bf9c",
+                           "ModifiedDateTime":  "2018-08-30T14:12:54.090Z",
+                           "Properties":  null,
+                           "ConnectionString":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles",
+                           "Name":  "SampleFiles",
+                           "CreatedDateTime":  "2018-08-30T14:12:54.089Z",
+                           "Provider":  3
+                       }
+                   ],
+    "Registry":  [
+
+                 ],
+    "InformationLog":  [
+
+                       ],
+    "ExceptionLog":  [
+
+                     ]
+}

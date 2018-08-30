@@ -15,7 +15,7 @@ function Write-ActivityLog {
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
 
         if ($Status -eq 'Started') {
             # Log activity start

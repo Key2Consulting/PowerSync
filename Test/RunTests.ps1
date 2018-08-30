@@ -3,10 +3,8 @@
 ######################################################
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\"
 $jsonRepo = "$rootPath\Repository.json"
-$sourceSqlServerInstance = "(LocalDb)\MSSQLLocalDB"
-$sourceTestDBPath = "$rootPath\PowerSyncSourceDB.MDF"
-$targetSqlServerInstance = "(LocalDb)\MSSQLLocalDB"
-$targetTestDBPath = "$rootPath\PowerSyncTargetDB.MDF"
+$testDBServer = "(LocalDb)\MSSQLLocalDB"
+$testDBPath = "$rootPath\PowerSyncSourceDB.MDF"
 
 ######################################################
 # Initialize Tests
@@ -14,10 +12,10 @@ $targetTestDBPath = "$rootPath\PowerSyncTargetDB.MDF"
 $ErrorActionPreference = "Stop"
 
 # Reset the source and target databases
-Invoke-Sqlcmd -InputFile "$rootPath\Test\Setup\Remove Database.sql" -ServerInstance $sqlServerInstance -Variable "DatabaseName=$sourceTestDBPath"
-Invoke-Sqlcmd -InputFile "$rootPath\Test\Setup\Remove Database.sql" -ServerInstance $sqlServerInstance -Variable "DatabaseName=$targetTestDBPath"
-Remove-Item -Path "$sourceTestDBPath" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "$targetTestDBPath" -Force -ErrorAction SilentlyContinue
+Write-Host "Resetting test databases..."
+Invoke-Sqlcmd -InputFile "$rootPath\Test\Setup\Remove Database.sql" -ServerInstance $testDBServer -Variable "DatabaseName=$testDBPath"
+Remove-Item -Path "$testDBPath" -Force -ErrorAction SilentlyContinue
+Invoke-Sqlcmd -Query "CREATE DATABASE [$testDBPath]" -ServerInstance $testDBServer -Variable "DatabaseName=$testDBPath"
 
 ######################################################
 # Run Tests
@@ -26,15 +24,21 @@ Remove-Item -Path "$targetTestDBPath" -Force -ErrorAction SilentlyContinue
 Import-Module "$rootPath\PowerSync"
 
 # Initialize PowerSync repository
+Write-Host "Resetting repository..."
 Remove-PSYJsonRepository $jsonRepo
 New-PSYJsonRepository $jsonRepo
 Connect-PSYJsonRepository $jsonRepo
 
+Set-PSYConnection -Name "TestDbOleDb" -Provider OleDb -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=$testDBPath;"
+Set-PSYConnection -Name "TestDbSqlServer" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=$testDBServer;Database=$testDBPath;Trusted_Connection=yes;"
+Set-PSYConnection -Name "SampleFiles" -Provider File -ConnectionString "$($rootPath)Test\SampleFiles"
+
 # Run required tests
 # TODO: MIGRATE THIS TO PESTER?
-.\Test\TestGeneral\TestGeneral.ps1
-#.\Test\TestStateTypes\TestStateTypes.ps1
+#.\Test\TestGeneral\TestGeneral.ps1
+#.\Test\TestVariables\TestVariables.ps1
 #.\Test\TestConcurrency\TestConcurrency.ps1
+.\Test\TestCSVToSQL\TestCSVToSQL.ps1
 
 #.\Test\TestCSVToSQL\TestCSVToSQL.ps1
 #.\Test\TestSQLToSQL\TestSQLToSQL.ps1

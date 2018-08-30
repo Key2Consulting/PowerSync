@@ -1,4 +1,4 @@
-function Invoke-PSYDbCommand {
+function Invoke-PSYCommand {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]

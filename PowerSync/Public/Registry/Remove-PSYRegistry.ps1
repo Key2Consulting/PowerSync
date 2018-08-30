@@ -6,7 +6,7 @@ function Remove-PSYRegistry {
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
         
         # Log
         Write-PSYVariableLog "Registry.$Name" $null

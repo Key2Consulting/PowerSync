@@ -6,7 +6,7 @@ function Get-PSYRegistry {
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
 
         # Get the from the repository.
         return $repo.CriticalSection({            
