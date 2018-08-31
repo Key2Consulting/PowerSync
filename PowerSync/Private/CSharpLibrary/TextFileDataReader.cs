@@ -17,7 +17,7 @@ namespace PowerSync
         System.Collections.ArrayList _readBuffer;
         System.IO.StreamReader _reader;
 
-        public TextFileDataReader(string filePath, bool header, bool quoted, string regexParseExpression, string delimeter)
+        public TextFileDataReader(string filePath, bool header, string regexParseExpression, string delimeter)
         {
             this._filePath = filePath;
             this._header = header;
@@ -58,7 +58,7 @@ namespace PowerSync
                 this._reader.DiscardBufferedData();
             }
 
-            this.IsClosed2 = false;
+            this._isClosed = false;
         }
         
         public object this[int i]
@@ -73,7 +73,7 @@ namespace PowerSync
         {
             get
             {
-                throw new NotImplementedException();
+                return this._readBuffer[this._columnName.IndexOf(name)];
             }
         }
 
@@ -102,21 +102,16 @@ namespace PowerSync
 
         public int FieldCount
         {
-            get 
+            get
             {
                 return this._columnName.Count;
             }
         }
 
-        public bool IsClosed1 { get => IsClosed2; set => IsClosed2 = value; }
-        public bool IsClosed2 { get => IsClosed3; set => IsClosed3 = value; }
-        public bool IsClosed3 { get => _isClosed; set => _isClosed = value; }
-        public bool IsClosed4 { get => _isClosed; set => _isClosed = value; }
-
         public void Close()
         {
             this._reader.Close();
-            this.IsClosed2 = true;
+            this._isClosed = true;
         }
 
         public void Dispose()
@@ -218,7 +213,34 @@ namespace PowerSync
 
         public DataTable GetSchemaTable()
         {
-            return null;
+            // Even though we only support the string data type, we must generate a SchemaTable
+            // to adhere to the IDataReader standard (and required by importers).
+            DataTable dt = new DataTable();
+            dt.Clear();
+            dt.Columns.Add("ColumnName");
+            dt.Columns.Add("ColumnOrdinal");
+            dt.Columns.Add("ColumnSize");
+            dt.Columns.Add("DataType");
+            dt.Columns.Add("AllowDBNull");
+            dt.Columns.Add("NumericPrecision");
+            dt.Columns.Add("NumericScale");
+            
+            // For each column in the input text file
+            for (int i = 0; i < this._columnName.Count; i++)
+            {
+                // Add a row describing that column's schema.
+                DataRow textCol = dt.NewRow();
+                textCol["ColumnName"] = this._columnName[i];
+                textCol["ColumnOrdinal"] = i;
+                textCol["ColumnSize"] = -1;
+                textCol["DataType"] = "string";
+                textCol["AllowDBNull"] = true;
+                textCol["NumericPrecision"] = null;
+                textCol["NumericScale"] = null;
+                dt.Rows.Add(textCol);
+            }
+
+            return dt;
         }
 
         public string GetString(int i)
@@ -251,7 +273,7 @@ namespace PowerSync
             var line = this._reader.ReadLine();        // TODO: how could a row delimeter be applied here?
             if (line == null) {
                 this._reader.Close();
-                this.IsClosed2 = true;
+                this._isClosed = true;
                 return false;
             }
             

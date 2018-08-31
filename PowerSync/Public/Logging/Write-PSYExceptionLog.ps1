@@ -51,16 +51,10 @@ function Write-PSYExceptionLog {
         if ($ErrorRecord) {
             Write-Error -ErrorRecord $ErrorRecord -ErrorAction Continue     # we continue so we can append the full stack trace
             Write-Host $stackTrace -ForegroundColor Red
-            if ($ErrorActionPreference -eq "Stop") {        # if a terminating error, throw it again.
-                throw $ErrorRecord
-            }
         }
         else {
             Write-Host -Object $exception -ForegroundColor DarkRed -ErrorAction Continue     # we continue so we can append the full stack trace
             Write-Host $stackTrace -ForegroundColor Red
-            if ($ErrorActionPreference -eq "Stop") {        # if a terminating error, throw it again.
-                throw $exception
-            }
         }
     }
     catch {
@@ -68,4 +62,16 @@ function Write-PSYExceptionLog {
         Write-Error -ErrorRecord $_
         Write-Error -ErrorRecord $ErrorRecord
     }
+
+    # if a terminating error, throw it again.
+    if ($ErrorRecord) {
+        if ($ErrorActionPreference -eq "Stop") {
+            throw $ErrorRecord
+        }
+    }
+    else {
+        if ($ErrorActionPreference -eq "Stop") {
+            throw $exception
+        }
+    }    
 }

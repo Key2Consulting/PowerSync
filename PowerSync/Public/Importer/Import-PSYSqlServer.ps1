@@ -1,6 +1,5 @@
 function Import-PSYSqlServer {
-    param
-    (
+    param (
         [Parameter(HelpMessage = "TODO", Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -23,11 +22,26 @@ function Import-PSYSqlServer {
 
     try {
         # Initialize target connection
-        $c = Get-PSYConnection -Name $Connection
+        $conn = Get-PSYConnection -Name $Connection
+        $providerName = [Enum]::GetName([PSYDbConnectionProvider], $conn.Provider)
 
         # If AutoCreate, read the schema of the input stream and use that information to create a target table.
         if ($AutoCreate) {
             # If the table exists and the overwrite flag isn't set, it's an error condition.
+            $exists = Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.CheckIfTableExists" -Parameters @{Table = $Table}
+            if ($exists.TableExists) {
+                if (-not $Overwrite) {
+                    throw "Target table '$Table' already exists, and Overwrite not set. Aborting import operation."
+                }
+                else {
+                    # Otherwise, if it's set, drop the target table.
+                    Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.DropTable" -Parameters @{Table = $Table}
+                }
+            }
+
+            # Create the target table now
+            $schemaTableList = Convert-DataTypes -SourceProvider $InputObject.Provider -TargetProvider $conn.Provider -SchemaTable $InputObject.DataReader.GetSchemaTable()
+            Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.AutoCreate" -Parameters @{Table = $Table; SchemaTable = $schemaTableList}
         }
 
         if (-not $UsePolyBase) {

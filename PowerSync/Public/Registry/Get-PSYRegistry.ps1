@@ -2,7 +2,9 @@ function Get-PSYRegistry {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [string] $Name
+        [string] $Name,
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [object] $DefaultValue
     )
 
     try {
@@ -12,7 +14,8 @@ function Get-PSYRegistry {
         return $repo.CriticalSection({            
             $existing = $this.FindEntity('Registry', 'Name', $Name)
             if ($existing.Count -eq 0) {
-                throw "No registry entry found with name '$Name'."
+                Write-PSYInformationLog -Message "No registry entry found with name '$Name'."
+                return $DefaultValue
             }
             else {
                 return $existing[0].Value

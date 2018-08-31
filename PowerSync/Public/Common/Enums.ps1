@@ -1,12 +1,17 @@
 Enum PSYDbConnectionProvider {
     None = 0
     OleDb = 1
-    ODBC = 2
-    File = 3
-    SqlServer = 4
-    MySql = 5
-    AzureBlobStorage = 6
-    OData = 7
+    Odbc = 2
+    SqlServer = 3
+    MySql = 4
+    Oracle = 5
+    PostgreSQL = 6
+    TextFile = 7
+    Json = 8
+    Xml = 9
+    Yaml = 10
+    AzureBlobStorage = 11
+    OData = 12
 }
 
 Enum PSYTextFileFormat {

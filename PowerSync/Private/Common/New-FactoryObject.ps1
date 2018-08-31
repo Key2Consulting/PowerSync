@@ -4,7 +4,9 @@ function New-FactoryObject {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [switch] $Repository,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [hashtable] $ClassType,
+        [switch] $Connection,
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [string] $TypeName,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [switch] $NoLogError
     )
@@ -18,6 +20,20 @@ function New-FactoryObject {
     try {
         if ($Repository) {
             New-Object $PSYSession.RepositoryState.ClassType -ArgumentList $PSYSession.RepositoryState
+        }
+        elseif ($Connection) {
+            if ($TypeName -eq 'SqlServer') {
+                return New-Object System.Data.SqlClient.SqlConnection
+            }
+            elseif ($TypeName -eq 'OleDb') {
+                return New-Object System.Data.OleDb.OleDbConnection
+            }
+            elseif ($TypeName -eq 'ODBC') {
+                return New-Object System.Data.Odbc.OdbcConnection
+            }
+        }
+        else {
+            throw "Unable to create object from factory, missing switch."
         }
     }
     catch {

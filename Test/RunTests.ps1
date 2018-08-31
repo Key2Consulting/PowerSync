@@ -2,9 +2,9 @@
 # Test Configuration
 ######################################################
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\"
-$jsonRepo = "$rootPath\Repository.json"
+$jsonRepo = "$($rootPath)Repository.json"
 $testDBServer = "(LocalDb)\MSSQLLocalDB"
-$testDBPath = "$rootPath\PowerSyncSourceDB.MDF"
+$testDBPath = "$($rootPath)PowerSyncTestDB.MDF"
 
 ######################################################
 # Initialize Tests
@@ -13,9 +13,9 @@ $ErrorActionPreference = "Stop"
 
 # Reset the source and target databases
 Write-Host "Resetting test databases..."
-Invoke-Sqlcmd -InputFile "$rootPath\Test\Setup\Remove Database.sql" -ServerInstance $testDBServer -Variable "DatabaseName=$testDBPath"
+Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testDBServer -Variable "DatabaseName=PowerSyncTestDb"
 Remove-Item -Path "$testDBPath" -Force -ErrorAction SilentlyContinue
-Invoke-Sqlcmd -Query "CREATE DATABASE [$testDBPath]" -ServerInstance $testDBServer -Variable "DatabaseName=$testDBPath"
+Invoke-Sqlcmd -Query "CREATE DATABASE [PowerSyncTestDb]" -ServerInstance $testDBServer
 
 ######################################################
 # Run Tests
@@ -29,9 +29,9 @@ Remove-PSYJsonRepository $jsonRepo
 New-PSYJsonRepository $jsonRepo
 Connect-PSYJsonRepository $jsonRepo
 
-Set-PSYConnection -Name "TestDbOleDb" -Provider OleDb -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=$testDBPath;"
-Set-PSYConnection -Name "TestDbSqlServer" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=$testDBServer;Database=$testDBPath;Trusted_Connection=yes;"
-Set-PSYConnection -Name "SampleFiles" -Provider File -ConnectionString "$($rootPath)Test\SampleFiles"
+Set-PSYConnection -Name "TestDbSqlServer" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestDb"
+Set-PSYConnection -Name "TestDbOleDb" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=$testDBServer;Database=$testDBPath;Trusted_Connection=yes;"
+Set-PSYConnection -Name "SampleFiles" -Provider TextFile -ConnectionString "$($rootPath)Test\SampleFiles"
 
 # Run required tests
 # TODO: MIGRATE THIS TO PESTER?

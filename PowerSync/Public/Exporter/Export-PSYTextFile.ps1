@@ -1,6 +1,5 @@
 function Export-PSYTextFile {
-    param
-    (
+    param (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
         [string] $Connection,
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
@@ -32,8 +31,9 @@ function Export-PSYTextFile {
 
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer
         # of some basic contextual information, which can be used to make decisions on how best to import.
-        $reader
         @{
+            DataReader = $reader
+            Provider = [PSYDbConnectionProvider]::TextFile
             FilePath = $Path
             Format = $Format
             Header = $Header
