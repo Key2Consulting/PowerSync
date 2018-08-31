@@ -2,33 +2,33 @@
     "VariableLog":  [
                         {
                             "VariableName":  "Registry.PSYDefaultCommandTimeout",
-                            "CreatedDateTime":  "2018-08-30T21:40:48.934Z",
+                            "CreatedDateTime":  "2018-08-31T13:34:54.735Z",
                             "VariableValue":  3600,
-                            "ID":  "c70e126a-2e45-40e6-bf0b-37e5823fd909"
+                            "ID":  "50516593-8bc8-4118-a609-2d6bacc12e86"
                         },
                         {
                             "VariableName":  "Registry.PSYDefaultThrottle",
-                            "CreatedDateTime":  "2018-08-30T21:40:49.121Z",
+                            "CreatedDateTime":  "2018-08-31T13:34:54.891Z",
                             "VariableValue":  5,
-                            "ID":  "c7c36bcd-62df-44e6-aaeb-42d09eeda8e8"
+                            "ID":  "25a761b6-1478-436c-89eb-27e84ea586c0"
                         },
                         {
                             "VariableName":  "Connection.TestDbSqlServer",
-                            "CreatedDateTime":  "2018-08-30T21:40:49.171Z",
+                            "CreatedDateTime":  "2018-08-31T13:34:54.928Z",
                             "VariableValue":  "Provider = SqlServer, ConnectionString = Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncTestDb, Properties = ",
-                            "ID":  "2dd5ffac-95cb-46a6-86d1-6824b524338e"
+                            "ID":  "d6eaf0e4-e2bc-4456-8abe-f3081258ed42"
                         },
                         {
                             "VariableName":  "Connection.TestDbOleDb",
-                            "CreatedDateTime":  "2018-08-30T21:40:49.206Z",
+                            "CreatedDateTime":  "2018-08-31T13:34:54.951Z",
                             "VariableValue":  "Provider = OleDb, ConnectionString = Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSyncTestDB.MDF;Trusted_Connection=yes;, Properties = ",
-                            "ID":  "55d0d270-1a58-4f6d-8eec-fbb99a8ee124"
+                            "ID":  "82d3b03e-0c1c-4d32-862d-3b26a90c3a60"
                         },
                         {
                             "VariableName":  "Connection.SampleFiles",
-                            "CreatedDateTime":  "2018-08-30T21:40:49.229Z",
+                            "CreatedDateTime":  "2018-08-31T13:34:54.971Z",
                             "VariableValue":  "Provider = TextFile, ConnectionString = D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles, Properties = ",
-                            "ID":  "2b438ac0-9e5b-409a-9831-5dbe3145b1be"
+                            "ID":  "f3764417-509d-4aac-9731-2635413821b2"
                         }
                     ],
     "Variable":  [
@@ -36,7 +36,7 @@
                  ],
     "ActivityLog":  [
                         {
-                            "ID":  "13401ee4-b325-4b4d-b8aa-349f4dd6d609",
+                            "ID":  "e71c4744-ec39-4017-9cb8-81ed8ccebd5e",
                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
                             "Name":  "Test CSV to SQL",
@@ -44,111 +44,83 @@
                             "Test":  [
 
                                      ],
-                            "StartDateTime":  "2018-08-30T21:40:49.273Z",
+                            "StartDateTime":  "2018-08-31T13:34:55.007Z",
                             "Server":  "DHARDAN-WS"
                         }
                     ],
     "Connection":  [
                        {
-                           "ID":  "3c333333-249e-459e-a7fb-dad02f6f2562",
-                           "ModifiedDateTime":  "2018-08-30T21:40:49.191Z",
+                           "ID":  "15ba2159-81a3-4741-84ce-de237515eebc",
+                           "ModifiedDateTime":  "2018-08-31T13:34:54.940Z",
                            "Properties":  null,
                            "ConnectionString":  "Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncTestDb",
                            "Name":  "TestDbSqlServer",
-                           "CreatedDateTime":  "2018-08-30T21:40:49.190Z",
+                           "CreatedDateTime":  "2018-08-31T13:34:54.940Z",
                            "Provider":  3
                        },
                        {
-                           "ID":  "8b55fd2b-71f4-4a36-a633-7583c9ed73fc",
-                           "ModifiedDateTime":  "2018-08-30T21:40:49.217Z",
+                           "ID":  "c54e9390-cdf9-476e-afb8-0c3641a1aabe",
+                           "ModifiedDateTime":  "2018-08-31T13:34:54.961Z",
                            "Properties":  null,
                            "ConnectionString":  "Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSyncTestDB.MDF;Trusted_Connection=yes;",
                            "Name":  "TestDbOleDb",
-                           "CreatedDateTime":  "2018-08-30T21:40:49.217Z",
+                           "CreatedDateTime":  "2018-08-31T13:34:54.961Z",
                            "Provider":  1
                        },
                        {
-                           "ID":  "b094f0c0-5216-490f-a949-1e0ddb8fd6b9",
-                           "ModifiedDateTime":  "2018-08-30T21:40:49.243Z",
+                           "ID":  "ad298170-8dbc-4ac9-853b-4e81ece47618",
+                           "ModifiedDateTime":  "2018-08-31T13:34:54.981Z",
                            "Properties":  null,
                            "ConnectionString":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles",
                            "Name":  "SampleFiles",
-                           "CreatedDateTime":  "2018-08-30T21:40:49.243Z",
+                           "CreatedDateTime":  "2018-08-31T13:34:54.980Z",
                            "Provider":  7
                        }
                    ],
     "Registry":  [
                      {
-                         "ID":  "1c16cbe4-5bb1-46df-9b64-05ff64faa804",
-                         "ModifiedDateTime":  "2018-08-30T21:40:49.082Z",
+                         "ID":  "b562bf84-1d01-4f90-8eac-cd80fec30d12",
+                         "ModifiedDateTime":  "2018-08-31T13:34:54.856Z",
                          "Value":  3600,
                          "Name":  "PSYDefaultCommandTimeout",
-                         "CreatedDateTime":  "2018-08-30T21:40:49.082Z"
+                         "CreatedDateTime":  "2018-08-31T13:34:54.855Z"
                      },
                      {
-                         "ID":  "6af56e5e-3f66-43b4-b2b7-74c1597a2e80",
-                         "ModifiedDateTime":  "2018-08-30T21:40:49.147Z",
+                         "ID":  "72e84694-4a34-4c96-93a6-ee2ed2d0ee34",
+                         "ModifiedDateTime":  "2018-08-31T13:34:54.913Z",
                          "Value":  5,
                          "Name":  "PSYDefaultThrottle",
-                         "CreatedDateTime":  "2018-08-30T21:40:49.147Z"
+                         "CreatedDateTime":  "2018-08-31T13:34:54.912Z"
                      }
                  ],
     "InformationLog":  [
                            {
                                "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
                                "ActivityID":  {
-                                                  "ID":  "13401ee4-b325-4b4d-b8aa-349f4dd6d609",
+                                                  "ID":  "e71c4744-ec39-4017-9cb8-81ed8ccebd5e",
                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
                                                   "Name":  "Test CSV to SQL",
                                                   "Status":  "Started",
                                                   "Test":  [
                                                                {
-                                                                   "ID":  "13401ee4-b325-4b4d-b8aa-349f4dd6d609",
+                                                                   "ID":  "e71c4744-ec39-4017-9cb8-81ed8ccebd5e",
                                                                    "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
                                                                    "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
                                                                    "Name":  "Test CSV to SQL",
                                                                    "Status":  "Started",
                                                                    "Test":  "System.Collections.Hashtable",
-                                                                   "StartDateTime":  "2018-08-30T21:40:49.273Z",
+                                                                   "StartDateTime":  "2018-08-31T13:34:55.007Z",
                                                                    "Server":  "DHARDAN-WS"
                                                                }
                                                            ],
-                                                  "StartDateTime":  "2018-08-30T21:40:49.273Z",
+                                                  "StartDateTime":  "2018-08-31T13:34:55.007Z",
                                                   "Server":  "DHARDAN-WS"
                                               },
-                               "ID":  "c06a13df-f636-4ed4-a961-c99ecd13d2a2",
+                               "ID":  "6b967fac-aa4a-4d7b-89a4-d9fd1d2faa89",
                                "Type":  "Information",
                                "Category":  "",
-                               "CreatedDateTime":  "2018-08-30T21:40:49.393Z"
-                           },
-                           {
-                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
-                               "ActivityID":  {
-                                                  "ID":  "13401ee4-b325-4b4d-b8aa-349f4dd6d609",
-                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
-                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
-                                                  "Name":  "Test CSV to SQL",
-                                                  "Status":  "Started",
-                                                  "Test":  [
-                                                               {
-                                                                   "ID":  "13401ee4-b325-4b4d-b8aa-349f4dd6d609",
-                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
-                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
-                                                                   "Name":  "Test CSV to SQL",
-                                                                   "Status":  "Started",
-                                                                   "Test":  "System.Collections.Hashtable",
-                                                                   "StartDateTime":  "2018-08-30T21:40:49.273Z",
-                                                                   "Server":  "DHARDAN-WS"
-                                                               }
-                                                           ],
-                                                  "StartDateTime":  "2018-08-30T21:40:49.273Z",
-                                                  "Server":  "DHARDAN-WS"
-                                              },
-                               "ID":  "bb03179d-3c00-4c0f-bb98-439e0899a344",
-                               "Type":  "Information",
-                               "Category":  "",
-                               "CreatedDateTime":  "2018-08-30T21:40:51.028Z"
+                               "CreatedDateTime":  "2018-08-31T13:34:55.164Z"
                            }
                        ],
     "ExceptionLog":  [

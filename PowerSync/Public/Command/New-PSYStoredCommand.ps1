@@ -30,7 +30,7 @@ function New-PSYStoredCommand {
         if (-not $Parameters) {     # if no parameters, perhaps the template is ready to go
             return $template
         }
-
+        
         # This regular expression is used to identify :setvar commands in the TSQL script, and uses capturing 
         # groups to separate the variable name from the value.
         # Use non-PS quote for debugging REGEx:  :setvar\s*([A-Za-z0-9]*)\s*"?([A-Za-z0-9_\[\](',) .]*)"?.*\r?\n?
@@ -57,23 +57,44 @@ function New-PSYStoredCommand {
                         # Convert the array into SQL statement in the INSERT VALUES format i.e. ('Field', Field), ('Field', Field).
                         # Passing an array to a script is tricky, so we do this so it's easy to create a table for processing.
                         $sqlValues = ""
-                        foreach ($row in $value) {
-                            $sqlValues += '('
-                            foreach ($col in $row.Values) {
-                                if ($col -is [string] -or $col -is [datetime]) {        # quote the value depending on the type
-                                    $sqlValues += "'$col',"
+                        if ($value[0] -is [System.Data.DataRow]) {
+                            foreach ($row in $value) {
+                                $sqlValues += '('
+                                foreach ($col in $row.Table.Columns) {
+                                    $colVal = $row[$col.ColumnName]
+                                    if ($colVal -is [string] -or $colVal -is [datetime]) {        # quote the value depending on the type
+                                        $sqlValues += "'$colVal',"
+                                    }
+                                    elseif ($colVal -is [System.DBNull]) {
+                                        $sqlValues += "NULL,"
+                                    }
+                                    else {
+                                        $sqlValues += "$colVal,"
+                                    }
                                 }
-                                elseif ($col -is [System.DBNull]) {
-                                    $sqlValues += "NULL,"
-                                }
-                                else {
-                                    $sqlValues += "$col,"
-                                }
+                                $sqlValues = $sqlValues.TrimEnd(',') + '),'
                             }
-                            $sqlValues = $sqlValues.TrimEnd(',') + '),'
+                            $value = $sqlValues.TrimEnd(',')
+                        }
+                        else {
+                            foreach ($row in $value) {
+                                $sqlValues += '('
+                                foreach ($col in $row.Values) {
+                                    if ($col -is [string] -or $col -is [datetime]) {        # quote the value depending on the type
+                                        $sqlValues += "'$col',"
+                                    }
+                                    elseif ($col -is [System.DBNull]) {
+                                        $sqlValues += "NULL,"
+                                    }
+                                    else {
+                                        $sqlValues += "$col,"
+                                    }
+                                }
+                                $sqlValues = $sqlValues.TrimEnd(',') + '),'
+                            }
                         }
                         $value = $sqlValues.TrimEnd(',')
-                    }
+                    }                
                 }
                 $template = $template.Replace('$(' + $name + ')', $value)
             }

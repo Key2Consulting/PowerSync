@@ -40,17 +40,17 @@ function Import-PSYSqlServer {
             }
 
             # Create the target table now
-            $schemaTableList = Convert-DataTypes -SourceProvider $InputObject.Provider -TargetProvider $conn.Provider -SchemaTable $InputObject.DataReader.GetSchemaTable()
-            Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.AutoCreate" -Parameters @{Table = $Table; SchemaTable = $schemaTableList}
+            $targetSchemaTable = ConvertTo-TargetSchemaTable -SourceProvider $InputObject.Provider -TargetProvider $conn.Provider -SchemaTable $InputObject.DataReader.GetSchemaTable()
+            Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.AutoCreate" -Parameters @{Table = $Table; SchemaTable = $targetSchemaTable}
         }
 
         if (-not $UsePolyBase) {
             # Use SqlBulkCopy to import the data
-            $blk = New-Object Data.SqlClient.SqlBulkCopy($this.ConnectionString)
-            $blk.DestinationTableName = "$($this.Schema).$loadTableName"
-            $blk.BulkCopyTimeout = $this.Timeout
-            $blk.BatchSize = $this.GetConfigSetting("BatchSize", 10000)
-            $blk.WriteToServer($DataReader)
+            $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString)
+            $blk.DestinationTableName = "$Table"
+            $blk.BulkCopyTimeout = (Get-PSYRegistry 'PSYDefaultCommandTimeout')
+            $blk.BatchSize = (Get-PSYRegistry 'PSYDefaultCommandTimeout' 10000)
+            $blk.WriteToServer($InputObject.DataReader)
         }
         else {
             # TODO: HOW WILL THIS WORK? POLYBASE REALLY HANDLES THE EXPORT AND IMPORT SIDES OF THE DATA MOVEMENT. IF OUR FILE EXPORTER IS ALREADY
@@ -59,9 +59,9 @@ function Import-PSYSqlServer {
         }
 
         # If AutoIndex is set, execute AutoIndex script
-        if ($this.GetConfigSetting("AutoIndex", $true) -eq $true) {
-            [void] $this.RunScript("AutoIndexScript", $false, $additionalConfig)
-        }
+        #if ($this.GetConfigSetting("AutoIndex", $true) -eq $true) {
+            #[void] $this.RunScript("AutoIndexScript", $false, $additionalConfig)
+        #}
     }
     catch {
         Write-PSYExceptionLog $_ "Error in Import-PSYSqlServer."
