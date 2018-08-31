@@ -221,9 +221,11 @@ namespace PowerSync
             dt.Columns.Add("ColumnOrdinal");
             dt.Columns.Add("ColumnSize");
             dt.Columns.Add("DataType");
+            dt.Columns.Add("DataTypeName");
             dt.Columns.Add("AllowDBNull");
             dt.Columns.Add("NumericPrecision");
             dt.Columns.Add("NumericScale");
+            dt.Columns.Add("UdtAssemblyQualifiedName");
             
             // For each column in the input text file
             for (int i = 0; i < this._columnName.Count; i++)
@@ -233,10 +235,12 @@ namespace PowerSync
                 textCol["ColumnName"] = this._columnName[i];
                 textCol["ColumnOrdinal"] = i;
                 textCol["ColumnSize"] = -1;
-                textCol["DataType"] = "string";
+                textCol["DataType"] = typeof(System.String);
+                textCol["DataTypeName"] = "string";
                 textCol["AllowDBNull"] = true;
                 textCol["NumericPrecision"] = null;
                 textCol["NumericScale"] = null;
+                textCol["UdtAssemblyQualifiedName"] = "PowerSync.TextFileDataReader.String";
                 dt.Rows.Add(textCol);
             }
 

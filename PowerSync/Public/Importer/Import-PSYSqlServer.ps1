@@ -24,6 +24,8 @@ function Import-PSYSqlServer {
         # Initialize target connection
         $conn = Get-PSYConnection -Name $Connection
         $providerName = [Enum]::GetName([PSYDbConnectionProvider], $conn.Provider)
+        $targetSchemaTable = @(ConvertTo-TargetSchemaTable -SourceProvider $InputObject.Provider -TargetProvider $conn.Provider -SchemaTable $InputObject.DataReader.GetSchemaTable())
+        $reader = $InputObject.DataReader
 
         # If AutoCreate, read the schema of the input stream and use that information to create a target table.
         if ($AutoCreate) {
@@ -36,21 +38,34 @@ function Import-PSYSqlServer {
                 else {
                     # Otherwise, if it's set, drop the target table.
                     Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.DropTable" -Parameters @{Table = $Table}
+                    Write-PSYVerboseLog -Message "Dropped existing table [$Connection]:$Table."
                 }
             }
 
             # Create the target table now
-            $targetSchemaTable = ConvertTo-TargetSchemaTable -SourceProvider $InputObject.Provider -TargetProvider $conn.Provider -SchemaTable $InputObject.DataReader.GetSchemaTable()
             Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.AutoCreate" -Parameters @{Table = $Table; SchemaTable = $targetSchemaTable}
+            Write-PSYVerboseLog -Message "Created table [$Connection]:$Table."
         }
 
+        # Determine if we require type conversion. If we don't, we use the original data reader, which is faster by about 20%. If we
+        # do, we instantiate our TypeConversionDataReader class and wrap the original data reader to provide the necessary conversion.
+        foreach ($col in $targetSchemaTable) {
+            if ($col['TransportDataTypeName'] -isnot [System.DBNull]) {
+                foreach ($convertCol in $targetSchemaTable) {
+                    $convertCol['DataTypeName'] = $convertCol['TransportDataTypeName']
+                }
+                $reader = New-Object PowerSync.TypeConversionDataReader($InputObject.DataReader, $targetSchemaTable[0].Table)
+                break
+            }
+        }
+
+        # If we're not using PolyBase, use SqlBulkCopy to import the data, the fastest option aside from BCP and PolyBase.
         if (-not $UsePolyBase) {
-            # Use SqlBulkCopy to import the data
             $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString)
             $blk.DestinationTableName = "$Table"
             $blk.BulkCopyTimeout = (Get-PSYRegistry 'PSYDefaultCommandTimeout')
             $blk.BatchSize = (Get-PSYRegistry 'PSYDefaultCommandTimeout' 10000)
-            $blk.WriteToServer($InputObject.DataReader)
+            $blk.WriteToServer($reader)
         }
         else {
             # TODO: HOW WILL THIS WORK? POLYBASE REALLY HANDLES THE EXPORT AND IMPORT SIDES OF THE DATA MOVEMENT. IF OUR FILE EXPORTER IS ALREADY
@@ -59,9 +74,15 @@ function Import-PSYSqlServer {
         }
 
         # If AutoIndex is set, execute AutoIndex script
+        if ($AutoIndex) {
+            Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.AutoIndex" -Parameters @{Table = $Table}
+            Write-PSYVerboseLog -Message "Autocreated index for [$Connection]:$Table."
+        }
         #if ($this.GetConfigSetting("AutoIndex", $true) -eq $true) {
             #[void] $this.RunScript("AutoIndexScript", $false, $additionalConfig)
         #}
+        
+        Write-PSYInformationLog -Message "Imported $providerName data to [$Connection]:$Table."
     }
     catch {
         Write-PSYExceptionLog $_ "Error in Import-PSYSqlServer."

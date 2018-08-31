@@ -9,36 +9,72 @@ function ConvertTo-TargetSchemaTable {
     )
 
     try {
-        # Add new columns to support custom PowerSync mapping.
-        $transportDataType = [System.Data.DataColumn]::new()
-        $transportDataType.ColumnName = "TransportDataType";           # supports TypeConversionDataReader
-        $SchemaTable.Columns.Add($transportDataType)
+        # Create new schema table to hold the results of the map.
+        $newSchemaTable = [System.Data.DataTable]::new()
+        [void] $newSchemaTable.Clear()
+        [void] $newSchemaTable.Columns.Add("ColumnName");
+        [void] $newSchemaTable.Columns.Add("ColumnOrdinal");
+        [void] $newSchemaTable.Columns.Add("ColumnSize");
+        [void] $newSchemaTable.Columns.Add("DataTypeName");
+        [void] $newSchemaTable.Columns.Add("AllowDBNull");
+        [void] $newSchemaTable.Columns.Add("NumericPrecision");
+        [void] $newSchemaTable.Columns.Add("NumericScale");
+        [void] $newSchemaTable.Columns.Add("TransportDataTypeName");
 
-        foreach ($col in $SchemaTable) {
-            if ($col["DataType"].Contains('CHAR')) {
+        foreach ($srcCol in $SchemaTable) {
+            $col = $newSchemaTable.NewRow()
+            $col["ColumnName"] = $srcCol["ColumnName"]
+            $col["ColumnOrdinal"] = $srcCol["ColumnOrdinal"]
+            $col["ColumnSize"] = $srcCol["ColumnSize"]
+            $col["DataTypeName"] = Select-Coalesce @($srcCol["DataTypeName"], $srcCol["DataType"].ToString(), $srcCol["UdtAssemblyQualifiedName"])      # odd types don't have simple type name, so get next best
+            $col["AllowDBNull"] = $srcCol["AllowDBNull"]
+            $col["NumericPrecision"] = $srcCol["NumericPrecision"]
+            $col["NumericScale"] = $srcCol["NumericScale"]
+            $col["TransportDataTypeName"] = $null
+            [void] $newSchemaTable.Rows.Add($col);
+            
+            # Debugging columns
+            $columnName = $col["ColumnName"]
+            $dataTypeName = $col["DataTypeName"]
+            $columnSize = $col["ColumnSize"]
+
+            # Apply map rules
+            if ($col["DataTypeName"].Contains('CHAR')) {
                 # If size is greater than 8000 chars, convert to -1 to indicate unlimited.
                 if ($col["ColumnSize"] -gt 8000) {
                     $s.Size = -1
                 }
             }
 
-            if ($col["DataType"].Contains('string')) {
-                $col["DataType"] = 'VARCHAR'        # map 'string' to 'varchar'
+            if ($col["DataTypeName"].Contains('string')) {
+                $col["DataTypeName"] = 'VARCHAR'        # map 'string' to 'varchar'
                 if ($col["ColumnSize"] -gt 8000 -or -not $col["ColumnSize"]) {      # set size to max if empty or exceeds 8000 characters
-                    $s.Size = -1
+                    $col["ColumnSize"] = -1
                 }
             }
             
-            # Sql Server's Geography causes issues when being transported via SqlBulkCopy. We get around this by converting it to
+            # Special purpose data types (i.e. Geography) causes issues when being transported via SqlBulkCopy. We get around this by converting it to
             # binary during the transportion/reading of the data.
-            if ($col["DataType"].Contains("geography")) {
-                $col["DataType"] = "geography"
-                $col["TransportDataType"] = "BINARY"
+            #
+            # Sql Server Geography
+            if ($col["DataTypeName"].Contains("geography")) {
+                $col["DataTypeName"] = "geography"
+                $col["TransportDataTypeName"] = "BINARY"
+            }
+            # Sql Server Geometry
+            if ($col["DataTypeName"].Contains("geometry")) {
+                $col["DataTypeName"] = "geometry"
+                $col["TransportDataTypeName"] = "BINARY"
+            }
+            # SqlServer Hierarchyid
+            if ($col["DataTypeName"].Contains("hierarchyid")) {
+                $col["DataTypeName"] = "hierarchyid"
+                $col["TransportDataTypeName"] = "BINARY"
             }
         }
-        
+
         # Return converted schema table adapted for target system
-        return $SchemaTable
+        return $newSchemaTable
 
         # Translate the schema table into an array of hashtables representing the
         # various IDataReader SchemaTable properties. In addition, translate any

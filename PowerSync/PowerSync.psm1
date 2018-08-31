@@ -26,6 +26,10 @@ Trap {"Error: $_"; Break;}
 }
 
 # Import CSharp Library Dependencies
+#
+Add-Type -IgnoreWarnings `
+    -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
+    -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TypeConversionDataReader.cs"))
 
 Add-Type -IgnoreWarnings `
     -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `

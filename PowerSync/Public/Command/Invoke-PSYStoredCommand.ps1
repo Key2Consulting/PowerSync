@@ -12,11 +12,11 @@ function Invoke-PSYStoredCommand {
     $c = $null
     try {
         $cmdText = New-PSYStoredCommand -Name $Name -Parameters $Parameters
-        $conn = Get-PSYConnection -Name $Connection
-        $providerName = [Enum]::GetName([PSYDbConnectionProvider], $conn.Provider)
+        $connDef = Get-PSYConnection -Name $Connection
+        $providerName = [Enum]::GetName([PSYDbConnectionProvider], $connDef.Provider)
         $c = New-FactoryObject -Connection -TypeName $providerName
 
-        $c.ConnectionString = $conn.ConnectionString
+        $c.ConnectionString = $connDef.ConnectionString
         $c.Open()
         $cmd = $c.CreateCommand()
         $cmd.CommandText = $cmdText

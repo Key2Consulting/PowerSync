@@ -17,13 +17,13 @@ function Start-PSYActivity {
             $logScriptBlock = $ScriptBlock[0]
         }
 
-        $a = Write-ActivityLog $logScriptBlock $Name "Start-PSYActivity Started" 'Started'
+        $a = Write-ActivityLog $logScriptBlock $Name "Activity '$Name' started" 'Started'
 
         # Execute foreach (in parallel if specified)
         $job = ($ScriptBlock | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -LogTitle "$Name[{0}]")
         
         # Log activity end
-        Write-ActivityLog $ScriptBlock[0] $Name "Start-PSYActivity Completed" 'Completed' $a
+        Write-ActivityLog $ScriptBlock[0] $Name "Activity '$Name' completed" 'Completed' $a
     }
     catch {
         Write-PSYExceptionLog $_ "Error in Start-PSYActivity '$Name'."

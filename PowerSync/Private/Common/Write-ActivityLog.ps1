@@ -39,7 +39,7 @@ function Write-ActivityLog {
     
             [void] $PSYSession.ActivityStack.Add($Activity)
             
-            Write-Host "$($Title): $Name"
+            Write-PSYInformationLog $Title
             return $Activity
         }
         else {
@@ -50,7 +50,7 @@ function Write-ActivityLog {
                 $this.UpdateEntity('ActivityLog', $Activity)
             })
             $PSYSession.ActivityStack.Remove($Activity)
-            Write-Host "$($Title): $Name"
+            Write-PSYInformationLog $Title
         }
     }
     catch {

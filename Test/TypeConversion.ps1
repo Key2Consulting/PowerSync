@@ -1,10 +1,9 @@
-<#
 $c = New-Object System.Data.SqlClient.SqlConnection("Server=(LocalDb)\MSSQLLocalDB;Integrated Security=true;Database=SqlServerKit")
 #$c = New-Object System.Data.OleDb.OleDbConnection("Provider=SQLNCLI11;Server=(LocalDb)\MSSQLLocalDB;Database=SqlServerKit;Trusted_Connection=yes;")
 
 $c.Open()
 $cmd = $c.CreateCommand()
-$cmd.CommandText = "SELECT * FROM dbo.OddTypes"
+$cmd.CommandText = "SELECT Binary FROM dbo.OddTypes"
 $r = $cmd.ExecuteReader()
 
 # Copy results into arraylist of hashtables
@@ -18,7 +17,8 @@ if ($r.HasRows) {
             $v6 = $r.GetValue($i)
             $v2 = [byte[]] $r[$i]
             $buffer = [System.Byte[]]::CreateInstance([System.Byte],100)
-            $v3 = $r.GetBytes($i, 0, $buffer, 0, 100)
+            $v3Size = $r.GetBytes($i, 0, $null, 0, 0)
+            $v3 = $r.GetBytes($i, 0, $buffer, 0, 50)
             #$v3 = $r.GetData()
             #$v4 = $r.GetValue($i)
             #$v5 = $r.GetBytes($i)            
@@ -27,7 +27,7 @@ if ($r.HasRows) {
         }
     }
 }
-#>
+
 Add-Type -IgnoreWarnings `
     -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
     -TypeDefinition ([System.IO.File]::ReadAllText("D:\Dropbox\Project\Key2\PowerSync\PowerSync\Private\CSharpLibrary\TypeConversionDataReader.cs"))

@@ -1,3 +1,5 @@
+// A wrapper around another DataReader that provides type conversion using a mapped schema table.
+// TODO: MORE DOCUMENTATION NEEDED
 using System;
 using System.Data;
 using System.Collections;
@@ -8,23 +10,19 @@ namespace PowerSync
     public class TypeConversionDataReader : System.Data.IDataReader
     {
         IDataReader _reader = null;
-        object _conversionTable = null;
+        DataTable _schemaTable = null;
 
-        public TypeConversionDataReader(IDataReader reader, ArrayList conversionTable)
+        public TypeConversionDataReader(IDataReader reader, DataTable schemaTable)
         {
             this._reader = reader;
-            this._conversionTable = conversionTable;
+            this._schemaTable = schemaTable;
         }
         
-        public object Test()
-        {
-            return this._conversionTable.GetType().Name;
-        }
-
         public object this[int i]
         {
             get
             {
+                Console.WriteLine("this");
                 return this._reader[i];
             }
         }
@@ -33,6 +31,7 @@ namespace PowerSync
         {
             get
             {
+                Console.WriteLine("this name");
                 return this._reader[name];
             }
         }
@@ -85,11 +84,13 @@ namespace PowerSync
 
         public byte GetByte(int i)
         {
+            Console.WriteLine("GetByte");
             return this._reader.GetByte(i);
         }
 
         public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
         {
+            Console.WriteLine("GetBytes");
             return this._reader.GetBytes(i, fieldOffset, buffer, bufferoffset, length);
         }
 
@@ -105,11 +106,13 @@ namespace PowerSync
 
         public IDataReader GetData(int i)
         {
+            Console.WriteLine("GetData");
             return this._reader.GetData(i);
         }
 
         public string GetDataTypeName(int i)
         {
+            Console.WriteLine("GetDataTypeName");
             return this._reader.GetDataTypeName(i);
         }
 
@@ -130,6 +133,7 @@ namespace PowerSync
 
         public Type GetFieldType(int i)
         {
+            Console.WriteLine("GetFieldType");
             return this._reader.GetFieldType(i);
         }
 
@@ -170,7 +174,8 @@ namespace PowerSync
 
         public DataTable GetSchemaTable()
         {
-            return this._reader.GetSchemaTable();
+            return _schemaTable;
+            // return this._reader.GetSchemaTable();
         }
 
         public string GetString(int i)
@@ -180,11 +185,17 @@ namespace PowerSync
 
         public object GetValue(int i)
         {
-            return this._reader.GetValue(i);
+            var size = this.GetBytes(i, 0, null, 0, 0);
+            var buffer = new byte[size];
+            return this.GetBytes(i, 0, buffer, 0, (int)size);
+
+            // Console.WriteLine("GetValue");
+            // return this._reader.GetValue(i);
         }
 
         public int GetValues(object[] values)
         {
+            Console.WriteLine("GetValues");
             return this._reader.GetValues(values);
         }
 

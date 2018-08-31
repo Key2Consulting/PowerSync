@@ -52,7 +52,8 @@
 
     NestedModules = @(
         "$PSScriptRoot\Public\Common\Enums.ps1",
-        "$PSScriptRoot\Private\Common\Get-EnumName.ps1",
+        "$PSScriptRoot\Private\Common\Select-Coalesce.ps1",
+        "$PSScriptRoot\Private\Common\Get-EnumName.ps1",        
         "$PSScriptRoot\Private\Common\ConvertTo-TargetSchemaTable.ps1",
         "$PSScriptRoot\Public\Common\ConvertTo-PSYNativeType.ps1",
         "$PSScriptRoot\Public\Common\ConvertFrom-PSYNativeType.ps1",

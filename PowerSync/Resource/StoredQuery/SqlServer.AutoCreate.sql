@@ -1,8 +1,8 @@
 :setvar SchemaTable ""
 :setvar Table "dbo.Test"
 
-DECLARE @SchemaTable TABLE([ColumnName] VARCHAR(128), [ColumnOrdinal] INT, [ColumnSize] INT, [DataType] VARCHAR(100), [AllowDBNull] BIT, [NumericPrecision] INT, [NumericScale] INT, [TransportDataType] VARCHAR(100))
-INSERT INTO @SchemaTable([ColumnName], [ColumnOrdinal], [ColumnSize], [DataType], [AllowDBNull], [NumericPrecision], [NumericScale], [TransportDataType])
+DECLARE @SchemaTable TABLE([ColumnName] VARCHAR(128), [ColumnOrdinal] INT, [ColumnSize] INT, [DataTypeName] VARCHAR(100), [AllowDBNull] BIT, [NumericPrecision] INT, [NumericScale] INT, [TransportDataTypeName] VARCHAR(100))
+INSERT INTO @SchemaTable([ColumnName], [ColumnOrdinal], [ColumnSize], [DataTypeName], [AllowDBNull], [NumericPrecision], [NumericScale], [TransportDataTypeName])
 VALUES $(SchemaTable)
 
 DECLARE @SQL NVARCHAR(MAX)
@@ -12,11 +12,11 @@ SELECT @SQL = COALESCE(@SQL + CHAR(13) + CHAR(10), '') + [Line]
 FROM
 (
 	SELECT
-		'[' + [ColumnName] + '] [' + [DataType] + '] '
+		'[' + [ColumnName] + '] [' + [DataTypeName] + '] '
 		+ CASE 
-			WHEN [DataType] LIKE '%CHAR%' AND [ColumnSize] = -1	THEN '(MAX) '
-			WHEN [DataType] LIKE '%CHAR%'					THEN '(' + CAST([ColumnSize] AS VARCHAR(100)) + ') '
-			WHEN [DataType] LIKE 'DECIMAL'					THEN '(' + CAST([NumericPrecision] AS VARCHAR(100)) + ', ' + CAST([NumericScale] AS VARCHAR(100)) + ') '
+			WHEN [DataTypeName] LIKE '%CHAR%' AND [ColumnSize] = -1	THEN '(MAX) '
+			WHEN [DataTypeName] LIKE '%CHAR%'					THEN '(' + CAST([ColumnSize] AS VARCHAR(100)) + ') '
+			WHEN [DataTypeName] LIKE 'DECIMAL'					THEN '(' + CAST([NumericPrecision] AS VARCHAR(100)) + ', ' + CAST([NumericScale] AS VARCHAR(100)) + ') '
 			ELSE ''
 		END
 		+ CASE

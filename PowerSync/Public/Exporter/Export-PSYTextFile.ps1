@@ -28,6 +28,7 @@ function Export-PSYTextFile {
         }
 
         $reader = New-Object PowerSync.TextFileDataReader($filePath, $Header, $regexParseExpression, $colDelim)
+        Write-PSYInformationLog -Message "Exported $Format text data from [$Connection]:$Path."
 
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer
         # of some basic contextual information, which can be used to make decisions on how best to import.

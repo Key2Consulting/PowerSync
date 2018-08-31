@@ -2,33 +2,39 @@
     "VariableLog":  [
                         {
                             "VariableName":  "Registry.PSYDefaultCommandTimeout",
-                            "CreatedDateTime":  "2018-08-31T13:34:54.735Z",
+                            "CreatedDateTime":  "2018-08-31T17:07:35.499Z",
                             "VariableValue":  3600,
-                            "ID":  "50516593-8bc8-4118-a609-2d6bacc12e86"
+                            "ID":  "87bb2f36-911c-4418-8250-02ac7dfc6dfa"
                         },
                         {
                             "VariableName":  "Registry.PSYDefaultThrottle",
-                            "CreatedDateTime":  "2018-08-31T13:34:54.891Z",
+                            "CreatedDateTime":  "2018-08-31T17:07:35.657Z",
                             "VariableValue":  5,
-                            "ID":  "25a761b6-1478-436c-89eb-27e84ea586c0"
+                            "ID":  "3fc599ae-e71c-4e7a-9581-fc709f759f37"
                         },
                         {
                             "VariableName":  "Connection.TestDbSqlServer",
-                            "CreatedDateTime":  "2018-08-31T13:34:54.928Z",
-                            "VariableValue":  "Provider = SqlServer, ConnectionString = Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncTestDb, Properties = ",
-                            "ID":  "d6eaf0e4-e2bc-4456-8abe-f3081258ed42"
+                            "CreatedDateTime":  "2018-08-31T17:07:35.691Z",
+                            "VariableValue":  "Provider = SqlServer, ConnectionString = Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncTestTarget, Properties = ",
+                            "ID":  "60b12ef3-73f2-4128-9e88-1480309a17ce"
                         },
                         {
                             "VariableName":  "Connection.TestDbOleDb",
-                            "CreatedDateTime":  "2018-08-31T13:34:54.951Z",
-                            "VariableValue":  "Provider = OleDb, ConnectionString = Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSyncTestDB.MDF;Trusted_Connection=yes;, Properties = ",
-                            "ID":  "82d3b03e-0c1c-4d32-862d-3b26a90c3a60"
+                            "CreatedDateTime":  "2018-08-31T17:07:35.717Z",
+                            "VariableValue":  "Provider = OleDb, ConnectionString = Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=PowerSyncTestTarget;Trusted_Connection=yes;, Properties = ",
+                            "ID":  "722a9e26-7fc6-42d7-bd64-403590c62e6d"
                         },
                         {
                             "VariableName":  "Connection.SampleFiles",
-                            "CreatedDateTime":  "2018-08-31T13:34:54.971Z",
+                            "CreatedDateTime":  "2018-08-31T17:07:35.738Z",
                             "VariableValue":  "Provider = TextFile, ConnectionString = D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles, Properties = ",
-                            "ID":  "f3764417-509d-4aac-9731-2635413821b2"
+                            "ID":  "02a6a6ff-4536-4599-8d06-71d8e606d463"
+                        },
+                        {
+                            "VariableName":  "Connection.SampleData",
+                            "CreatedDateTime":  "2018-08-31T17:07:35.759Z",
+                            "VariableValue":  "Provider = SqlServer, ConnectionString = Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncSampleData, Properties = ",
+                            "ID":  "754b8cf9-8add-443b-9ac1-5532f6a67069"
                         }
                     ],
     "Variable":  [
@@ -36,91 +42,720 @@
                  ],
     "ActivityLog":  [
                         {
-                            "ID":  "e71c4744-ec39-4017-9cb8-81ed8ccebd5e",
+                            "ID":  "2445797c-2a83-430f-902b-78493db03eee",
                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                            "EndDateTime":  "2018-08-31T17:07:48.275Z",
                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
                             "Name":  "Test CSV to SQL",
+                            "Status":  "Completed",
+                            "Test":  [
+                                         {
+                                             "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                             "EndDateTime":  "2018-08-31T17:07:48.275Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test CSV to SQL",
+                                             "Status":  "Completed",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test SQL to SQL",
                             "Status":  "Started",
                             "Test":  [
 
                                      ],
-                            "StartDateTime":  "2018-08-31T13:34:55.007Z",
+                            "StartDateTime":  "2018-08-31T17:07:48.370Z",
                             "Server":  "DHARDAN-WS"
                         }
                     ],
     "Connection":  [
                        {
-                           "ID":  "15ba2159-81a3-4741-84ce-de237515eebc",
-                           "ModifiedDateTime":  "2018-08-31T13:34:54.940Z",
+                           "ID":  "5041bd79-d69c-478d-8845-230fed53103c",
+                           "ModifiedDateTime":  "2018-08-31T17:07:35.705Z",
                            "Properties":  null,
-                           "ConnectionString":  "Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncTestDb",
+                           "ConnectionString":  "Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncTestTarget",
                            "Name":  "TestDbSqlServer",
-                           "CreatedDateTime":  "2018-08-31T13:34:54.940Z",
+                           "CreatedDateTime":  "2018-08-31T17:07:35.704Z",
                            "Provider":  3
                        },
                        {
-                           "ID":  "c54e9390-cdf9-476e-afb8-0c3641a1aabe",
-                           "ModifiedDateTime":  "2018-08-31T13:34:54.961Z",
+                           "ID":  "9969fe63-74f9-4709-8911-741d5a720865",
+                           "ModifiedDateTime":  "2018-08-31T17:07:35.727Z",
                            "Properties":  null,
-                           "ConnectionString":  "Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=D:\\Dropbox\\Project\\Key2\\PowerSync\\PowerSyncTestDB.MDF;Trusted_Connection=yes;",
+                           "ConnectionString":  "Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=PowerSyncTestTarget;Trusted_Connection=yes;",
                            "Name":  "TestDbOleDb",
-                           "CreatedDateTime":  "2018-08-31T13:34:54.961Z",
+                           "CreatedDateTime":  "2018-08-31T17:07:35.727Z",
                            "Provider":  1
                        },
                        {
-                           "ID":  "ad298170-8dbc-4ac9-853b-4e81ece47618",
-                           "ModifiedDateTime":  "2018-08-31T13:34:54.981Z",
+                           "ID":  "3a243962-f2b3-4cb7-9b27-76a2473025a7",
+                           "ModifiedDateTime":  "2018-08-31T17:07:35.748Z",
                            "Properties":  null,
                            "ConnectionString":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles",
                            "Name":  "SampleFiles",
-                           "CreatedDateTime":  "2018-08-31T13:34:54.980Z",
+                           "CreatedDateTime":  "2018-08-31T17:07:35.748Z",
                            "Provider":  7
+                       },
+                       {
+                           "ID":  "0333ecc5-404a-4f86-8f98-bd403ec20ee6",
+                           "ModifiedDateTime":  "2018-08-31T17:07:35.801Z",
+                           "Properties":  null,
+                           "ConnectionString":  "Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncSampleData",
+                           "Name":  "SampleData",
+                           "CreatedDateTime":  "2018-08-31T17:07:35.800Z",
+                           "Provider":  3
                        }
                    ],
     "Registry":  [
                      {
-                         "ID":  "b562bf84-1d01-4f90-8eac-cd80fec30d12",
-                         "ModifiedDateTime":  "2018-08-31T13:34:54.856Z",
+                         "ID":  "d9511ea3-9f9e-476b-9174-6ba72ce53440",
+                         "ModifiedDateTime":  "2018-08-31T17:07:35.626Z",
                          "Value":  3600,
                          "Name":  "PSYDefaultCommandTimeout",
-                         "CreatedDateTime":  "2018-08-31T13:34:54.855Z"
+                         "CreatedDateTime":  "2018-08-31T17:07:35.625Z"
                      },
                      {
-                         "ID":  "72e84694-4a34-4c96-93a6-ee2ed2d0ee34",
-                         "ModifiedDateTime":  "2018-08-31T13:34:54.913Z",
+                         "ID":  "20ff5803-761c-4a04-b065-1c396a2ac21e",
+                         "ModifiedDateTime":  "2018-08-31T17:07:35.677Z",
                          "Value":  5,
                          "Name":  "PSYDefaultThrottle",
-                         "CreatedDateTime":  "2018-08-31T13:34:54.912Z"
+                         "CreatedDateTime":  "2018-08-31T17:07:35.677Z"
                      }
                  ],
     "InformationLog":  [
                            {
-                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "Message":  "Activity \u0027Test CSV to SQL\u0027 started",
                                "ActivityID":  {
-                                                  "ID":  "e71c4744-ec39-4017-9cb8-81ed8ccebd5e",
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
                                                   "Name":  "Test CSV to SQL",
                                                   "Status":  "Started",
                                                   "Test":  [
                                                                {
-                                                                   "ID":  "e71c4744-ec39-4017-9cb8-81ed8ccebd5e",
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
                                                                    "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
                                                                    "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
                                                                    "Name":  "Test CSV to SQL",
                                                                    "Status":  "Started",
                                                                    "Test":  "System.Collections.Hashtable",
-                                                                   "StartDateTime":  "2018-08-31T13:34:55.007Z",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
                                                                    "Server":  "DHARDAN-WS"
                                                                }
                                                            ],
-                                                  "StartDateTime":  "2018-08-31T13:34:55.007Z",
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
                                                   "Server":  "DHARDAN-WS"
                                               },
-                               "ID":  "6b967fac-aa4a-4d7b-89a4-d9fd1d2faa89",
+                               "ID":  "14aaee27-490e-4c87-86c1-509a1f48167e",
                                "Type":  "Information",
                                "Category":  "",
-                               "CreatedDateTime":  "2018-08-31T13:34:55.164Z"
+                               "CreatedDateTime":  "2018-08-31T17:07:35.852Z"
+                           },
+                           {
+                               "Message":  "Exported CSV text data from [SampleFiles]:Sample100.csv.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "d34dd9bf-b521-4189-8702-5f6f4236d91c",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:35.960Z"
+                           },
+                           {
+                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "42a32bd2-0b78-4b78-bd3b-b4dd13ea4248",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:38.492Z"
+                           },
+                           {
+                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "5cdb7c84-9b6d-4f97-ab94-19178777200a",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:40.240Z"
+                           },
+                           {
+                               "Message":  "Created table [TestDbSqlServer]:dbo.Sample100.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "f4ece967-3591-4892-8914-57d5a1174fdd",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:40.357Z"
+                           },
+                           {
+                               "Message":  "Imported SqlServer data to [TestDbSqlServer]:dbo.Sample100.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "fb5bead1-e71f-4cc8-afaf-545db36b520d",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:40.489Z"
+                           },
+                           {
+                               "Message":  "Exported CSV text data from [SampleFiles]:Sample1000.csv.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "296590b0-a762-4ed8-a3f0-1abfd5507257",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:40.561Z"
+                           },
+                           {
+                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "c8cf762c-ef97-4fce-9a7f-920a1c1a0feb",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:42.033Z"
+                           },
+                           {
+                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "8c24e1f9-efde-4d60-a737-97589ccdcaa6",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:44.729Z"
+                           },
+                           {
+                               "Message":  "Created table [TestDbSqlServer]:dbo.Sample1000.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "efe4178d-8524-4b12-8010-dffdeb118627",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:44.833Z"
+                           },
+                           {
+                               "Message":  "Imported SqlServer data to [TestDbSqlServer]:dbo.Sample1000.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "4940d2a7-d3d4-423a-9782-a7407ff7cd38",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:44.934Z"
+                           },
+                           {
+                               "Message":  "Exported CSV text data from [SampleFiles]:Sample10000.csv.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "c54466ee-9e28-41f6-b725-b0b82bb5e391",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:45.000Z"
+                           },
+                           {
+                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "cf7f2a4d-cd2b-4bc2-a4e0-590a0c52dcb7",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:46.395Z"
+                           },
+                           {
+                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "75f5e81d-53d1-4d23-abcf-41339d580de9",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:47.623Z"
+                           },
+                           {
+                               "Message":  "Created table [TestDbSqlServer]:dbo.Sample10000.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "c3905068-629e-4f3d-bbcd-e5f9df6f08f7",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:47.844Z"
+                           },
+                           {
+                               "Message":  "Imported SqlServer data to [TestDbSqlServer]:dbo.Sample10000.",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "4d2e0c3d-28ac-444f-94d5-2e8c6f7cb32c",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:48.178Z"
+                           },
+                           {
+                               "Message":  "Test CSV to SQL[0]: Sequential",
+                               "ActivityID":  {
+                                                  "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test CSV to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "2445797c-2a83-430f-902b-78493db03eee",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test CSV to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:35.831Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "60bc579f-a8fd-4d6e-885f-a468b10d393a",
+                               "Type":  "Debug",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:48.233Z"
+                           },
+                           {
+                               "Message":  "Activity \u0027Test CSV to SQL\u0027 completed",
+                               "ID":  "87683299-e682-4f6e-8f45-63fcfa27cf3f",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:48.323Z"
+                           },
+                           {
+                               "Message":  "Activity \u0027Test SQL to SQL\u0027 started",
+                               "ActivityID":  {
+                                                  "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test SQL to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test SQL to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "d95257d7-b0d5-4d48-ac5f-c1e77829791d",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:48.409Z"
+                           },
+                           {
+                               "Message":  "Exported SqlServer data from [SampleData]:.",
+                               "ActivityID":  {
+                                                  "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test SQL to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test SQL to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "30463110-0613-4d67-86be-19c8eea3bc3c",
+                               "Type":  "Information",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:49.360Z"
+                           },
+                           {
+                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "ActivityID":  {
+                                                  "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test SQL to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test SQL to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "211cb247-140e-4836-be62-0cf83bff3f89",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:55.164Z"
+                           },
+                           {
+                               "Message":  "No registry entry found with name \u0027PSYStoredCommandPath\u0027.",
+                               "ActivityID":  {
+                                                  "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test SQL to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test SQL to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "bf15a8b1-bb33-436e-81a7-80b9e8714d3c",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:56.538Z"
+                           },
+                           {
+                               "Message":  "Created table [TestDbSqlServer]:dbo.OddTypes.",
+                               "ActivityID":  {
+                                                  "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                  "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                  "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                  "Name":  "Test SQL to SQL",
+                                                  "Status":  "Started",
+                                                  "Test":  [
+                                                               {
+                                                                   "ID":  "70d18837-5e20-4707-a11a-8934f02ee44e",
+                                                                   "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\r\n                $o = @{\r\n                    ID = $null                          # let the repository assign the surrogate key\r\n                    Name = $Name\r\n                    Server = $env:COMPUTERNAME\r\n                    ScriptFile = $MyInvocation.PSCommandPath\r\n                    Status = $Status\r\n                    ScriptAst = $ScriptBlock.Ast.ToString()\r\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\r\n                    Test = $PSYSession.ActivityStack\r\n                }\r\n                if ($PSYSession.ActivityStack.Count -gt 0) {\r\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\r\n                }\r\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\r\n                return $o\r\n            }",
+                                                                   "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                                   "Name":  "Test SQL to SQL",
+                                                                   "Status":  "Started",
+                                                                   "Test":  "System.Collections.Hashtable",
+                                                                   "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                                   "Server":  "DHARDAN-WS"
+                                                               }
+                                                           ],
+                                                  "StartDateTime":  "2018-08-31T17:07:48.370Z",
+                                                  "Server":  "DHARDAN-WS"
+                                              },
+                               "ID":  "deb440fd-d98c-41a2-93c7-c4d793ed1bc9",
+                               "Type":  "Verbose",
+                               "Category":  "",
+                               "CreatedDateTime":  "2018-08-31T17:07:57.862Z"
                            }
                        ],
     "ExceptionLog":  [

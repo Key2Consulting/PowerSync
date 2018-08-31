@@ -14,7 +14,7 @@ function Get-PSYRegistry {
         return $repo.CriticalSection({            
             $existing = $this.FindEntity('Registry', 'Name', $Name)
             if ($existing.Count -eq 0) {
-                Write-PSYInformationLog -Message "No registry entry found with name '$Name'."
+                Write-PSYVerboseLog -Message "No registry entry found with name '$Name'."
                 return $DefaultValue
             }
             else {

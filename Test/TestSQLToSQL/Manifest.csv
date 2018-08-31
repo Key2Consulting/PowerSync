@@ -1,4 +1,0 @@
-"SourceSchema","SourceTable","TargetSchema","TargetTable","PublishSchema"
-"sys","objects","Load","TestSQLToSQL1","dbo"
-"sys","objects","Load","TestSQLToSQL2","dbo"
-"sys","columns","Load","TestSQLToSQL3","dbo"
