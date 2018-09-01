@@ -40,15 +40,13 @@ Set-PSYConnection -Name "SampleData" -Provider SqlServer -ConnectionString "Serv
 
 # Run required tests
 # TODO: MIGRATE THIS TO PESTER?
-#.\Test\TestGeneral\TestGeneral.ps1
-#.\Test\TestVariables\TestVariables.ps1
-#.\Test\TestConcurrency\TestConcurrency.ps1
+.\Test\TestGeneral.ps1
+.\Test\TestVariables.ps1
+.\Test\TestConcurrency.ps1
 #.\Test\TypeConversion.ps1
-.\Test\TestCSVToSQL\TestCSVToSQL.ps1
-.\Test\TestSQLToSQL\TestSQLToSQL.ps1
-
-#.\Test\TestRepository\TestRepository.ps1
-#.\Test\TestShortcutCLI\TestShortcutCLI.ps1
+.\Test\TestCSVToSQL.ps1
+.\Test\TestSQLToSQL.ps1
+#.\Test\TestQuickSync.ps1
 
 <#
 FUTURE TESTS: 
