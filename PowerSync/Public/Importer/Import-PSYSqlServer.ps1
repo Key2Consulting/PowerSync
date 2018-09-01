@@ -51,9 +51,6 @@ function Import-PSYSqlServer {
         # do, we instantiate our TypeConversionDataReader class and wrap the original data reader to provide the necessary conversion.
         foreach ($col in $targetSchemaTable) {
             if ($col['TransportDataTypeName'] -isnot [System.DBNull]) {
-                foreach ($convertCol in $targetSchemaTable) {
-                    $convertCol['DataTypeName'] = $convertCol['TransportDataTypeName']
-                }
                 $reader = New-Object PowerSync.TypeConversionDataReader($InputObject.DataReader, $targetSchemaTable[0].Table)
                 break
             }

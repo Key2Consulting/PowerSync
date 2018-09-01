@@ -50,7 +50,12 @@ function Write-ActivityLog {
                 $this.UpdateEntity('ActivityLog', $Activity)
             })
             $PSYSession.ActivityStack.Remove($Activity)
-            Write-PSYInformationLog $Title
+            
+            # Log completion, including duration in seconds
+            $startTime = [DateTime]::Parse($Activity.StartDateTime);
+            $endTime = [DateTime]::Parse($Activity.EndDateTime);
+            [TimeSpan] $duration = $endTime.Subtract($startTime)
+            Write-PSYInformationLog "$Title ($($duration.TotalSeconds) sec)"
         }
     }
     catch {

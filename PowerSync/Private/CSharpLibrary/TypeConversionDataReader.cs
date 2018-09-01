@@ -1,5 +1,7 @@
-// A wrapper around another DataReader that provides type conversion using a mapped schema table.
-// TODO: MORE DOCUMENTATION NEEDED
+// A wrapper around another DataReader that provides type conversion using a mapped schema table. Without this 
+// wrapper class, certain runtime types (e.g. Sql Geography) would cause importers to error. For most of those
+// cases, simply retrieving the data as a binary byte stream seems to address the issue. Most functionality of
+// the reader simply calls the psuedo base class functionality.
 using System;
 using System.Data;
 using System.Collections;
@@ -11,18 +13,27 @@ namespace PowerSync
     {
         IDataReader _reader = null;
         DataTable _schemaTable = null;
+        bool[] _getBytes = null;       // if true, the given column requires byte streaming
 
         public TypeConversionDataReader(IDataReader reader, DataTable schemaTable)
         {
             this._reader = reader;
             this._schemaTable = schemaTable;
+
+            // Certain columns require special processing and type conversions. Inspect the schema table to determine
+            // which columns require which processing, and build highly optimized lookups to perform this conversion
+            // during read operations.
+            this._getBytes = new bool[this.FieldCount];
+            for (int i = 0; i < this._schemaTable.Rows.Count; i++)
+            {
+                this._getBytes[i] = (this._schemaTable.Rows[i]["TransportDataTypeName"].ToString().ToUpper() == "BINARY");
+            }
         }
-        
+
         public object this[int i]
         {
             get
             {
-                Console.WriteLine("this");
                 return this._reader[i];
             }
         }
@@ -31,13 +42,13 @@ namespace PowerSync
         {
             get
             {
-                Console.WriteLine("this name");
                 return this._reader[name];
             }
         }
 
-        public int Depth {
-            get 
+        public int Depth
+        {
+            get
             {
                 return this._reader.Depth;
             }
@@ -45,7 +56,7 @@ namespace PowerSync
 
         public bool IsClosed
         {
-            get 
+            get
             {
                 return this._reader.IsClosed;
             }
@@ -84,13 +95,11 @@ namespace PowerSync
 
         public byte GetByte(int i)
         {
-            Console.WriteLine("GetByte");
             return this._reader.GetByte(i);
         }
 
         public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
         {
-            Console.WriteLine("GetBytes");
             return this._reader.GetBytes(i, fieldOffset, buffer, bufferoffset, length);
         }
 
@@ -106,13 +115,11 @@ namespace PowerSync
 
         public IDataReader GetData(int i)
         {
-            Console.WriteLine("GetData");
             return this._reader.GetData(i);
         }
 
         public string GetDataTypeName(int i)
         {
-            Console.WriteLine("GetDataTypeName");
             return this._reader.GetDataTypeName(i);
         }
 
@@ -133,7 +140,6 @@ namespace PowerSync
 
         public Type GetFieldType(int i)
         {
-            Console.WriteLine("GetFieldType");
             return this._reader.GetFieldType(i);
         }
 
@@ -174,8 +180,9 @@ namespace PowerSync
 
         public DataTable GetSchemaTable()
         {
-            return _schemaTable;
-            // return this._reader.GetSchemaTable();
+            // For whatever reason, we haven't needed to pass our converted schema table. Perhaps byte streaming is enough.
+            // return _schemaTable;
+            return this._reader.GetSchemaTable();
         }
 
         public string GetString(int i)
@@ -185,17 +192,22 @@ namespace PowerSync
 
         public object GetValue(int i)
         {
-            var size = this.GetBytes(i, 0, null, 0, 0);
-            var buffer = new byte[size];
-            return this.GetBytes(i, 0, buffer, 0, (int)size);
-
-            // Console.WriteLine("GetValue");
-            // return this._reader.GetValue(i);
+            if (this._getBytes[i])
+            {
+                // Console.WriteLine("Transporting binary for col{0}", i);
+                var size = this.GetBytes(i, 0, null, 0, 0);
+                var buffer = new byte[size];
+                this.GetBytes(i, 0, buffer, 0, (int)size);
+                return buffer;
+            }
+            else
+            {
+                return this._reader.GetValue(i);
+            }
         }
 
         public int GetValues(object[] values)
         {
-            Console.WriteLine("GetValues");
             return this._reader.GetValues(values);
         }
 

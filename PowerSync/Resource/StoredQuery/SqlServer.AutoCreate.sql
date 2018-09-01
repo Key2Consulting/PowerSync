@@ -15,13 +15,15 @@ FROM
 		'[' + [ColumnName] + '] [' + [DataTypeName] + '] '
 		+ CASE 
 			WHEN [DataTypeName] LIKE '%CHAR%' AND [ColumnSize] = -1	THEN '(MAX) '
-			WHEN [DataTypeName] LIKE '%CHAR%'					THEN '(' + CAST([ColumnSize] AS VARCHAR(100)) + ') '
-			WHEN [DataTypeName] LIKE 'DECIMAL'					THEN '(' + CAST([NumericPrecision] AS VARCHAR(100)) + ', ' + CAST([NumericScale] AS VARCHAR(100)) + ') '
+			WHEN [DataTypeName] LIKE '%CHAR%'						THEN '(' + CAST([ColumnSize] AS VARCHAR(100)) + ') '
+			WHEN [DataTypeName] LIKE 'DECIMAL'						THEN '(' + CAST([NumericPrecision] AS VARCHAR(100)) + ', ' + CAST([NumericScale] AS VARCHAR(100)) + ') '
+			WHEN [DataTypeName] LIKE '%BINARY%'						THEN '(' + CAST([ColumnSize] AS VARCHAR(100)) + ') '
+			WHEN [DataTypeName] LIKE '%DATETIME2%'					THEN '(' + CAST([NumericScale] AS VARCHAR(100)) + ') '
 			ELSE ''
 		END
 		+ CASE
-			WHEN [AllowDBNull] = 1							THEN 'NULL'
-			WHEN [AllowDBNull] = 0							THEN 'NOT NULL'
+			WHEN [AllowDBNull] = 1									THEN 'NULL'
+			WHEN [AllowDBNull] = 0									THEN 'NOT NULL'
 		END 
 		+ ',' [Line]
 	FROM @SchemaTable

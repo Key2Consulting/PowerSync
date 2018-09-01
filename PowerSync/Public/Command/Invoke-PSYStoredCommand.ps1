@@ -9,16 +9,16 @@ function Invoke-PSYStoredCommand {
         [hashtable] $Parameters
     )
 
-    $c = $null
+    $conn = $null
     try {
         $cmdText = New-PSYStoredCommand -Name $Name -Parameters $Parameters
         $connDef = Get-PSYConnection -Name $Connection
         $providerName = [Enum]::GetName([PSYDbConnectionProvider], $connDef.Provider)
-        $c = New-FactoryObject -Connection -TypeName $providerName
+        $conn = New-FactoryObject -Connection -TypeName $providerName
 
-        $c.ConnectionString = $connDef.ConnectionString
-        $c.Open()
-        $cmd = $c.CreateCommand()
+        $conn.ConnectionString = $connDef.ConnectionString
+        $conn.Open()
+        $cmd = $conn.CreateCommand()
         $cmd.CommandText = $cmdText
         $cmd.CommandTimeout = (Get-PSYRegistry 'PSYDefaultCommandTimeout')
         $r = $cmd.ExecuteReader()
@@ -40,11 +40,11 @@ function Invoke-PSYStoredCommand {
         }
     }
     catch {
-        if ($c) {
-            if ($c.State -eq "Open") {
-                $c.Close()
+        if ($conn) {
+            if ($conn.State -eq "Open") {
+                $conn.Close()
             }
-            $c.Dispose()
+            $conn.Dispose()
         }
         Write-PSYExceptionLog -ErrorRecord $_ -Message 'Error in Invoke-PSYStoredCommand'
     }

@@ -30,7 +30,17 @@ function Export-PSYSqlServer {
         $cmd.CommandTimeout = (Get-PSYRegistry 'PSYDefaultCommandTimeout')
         $reader = $cmd.ExecuteReader()
 
-        Write-PSYInformationLog -Message "Exported $providerName data from [$Connection]:$Table."
+        # Log
+        if ($Table) {
+            Write-PSYInformationLog -Message "Exported $providerName data from [$Connection]:$Table"
+        }
+        else {
+            $extractSnippet = $ExtractQuery
+            if ($extractSnippet.Length -gt 100) {
+                $extractSnippet = $extractSnippet.SubString(0,100)
+            }
+            Write-PSYInformationLog -Message "Exported $providerName data from [$Connection]:$extractSnippet"
+        }
 
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer
         # of some basic contextual information, which can be used to make decisions on how best to import.

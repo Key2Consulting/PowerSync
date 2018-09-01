@@ -20,6 +20,12 @@ WHERE
 		(TYPE_NAME(user_type_id) = 'VARCHAR' AND max_length = -1)
 		OR (TYPE_NAME(user_type_id) = 'NVARCHAR' AND max_length = -1)
 		OR (TYPE_NAME(user_type_id) = 'VARBINARY' AND max_length = -1)
+		OR (TYPE_NAME(user_type_id) = 'GEOGRAPHY')
+		OR (TYPE_NAME(user_type_id) = 'GEOMETRY')
+		OR (TYPE_NAME(user_type_id) = 'XML')
+		OR (TYPE_NAME(user_type_id) = 'IMAGE')
+		OR (TYPE_NAME(user_type_id) = 'HIERARCHYID')
+		OR (TYPE_NAME(user_type_id) = 'TIMESTAMP')
 	)
 
 -- If all columns are eligible, default to clustered columnstore index
