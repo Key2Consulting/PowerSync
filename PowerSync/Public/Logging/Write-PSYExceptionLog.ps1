@@ -42,7 +42,7 @@ function Write-PSYExceptionLog {
                     CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
-                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
+                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
                 }
                 $this.CreateEntity('ExceptionLog', $o)
             })            
