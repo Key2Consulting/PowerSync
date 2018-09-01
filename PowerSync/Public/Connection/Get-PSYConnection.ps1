@@ -34,6 +34,6 @@ function Get-PSYConnection {
         })
     }
     catch {
-        Write-PSYErrorLog $_ "Error getting connection $Name."
+        Write-PSYErrorLog $_
     }
 }

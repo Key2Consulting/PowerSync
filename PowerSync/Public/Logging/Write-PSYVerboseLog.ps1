@@ -44,6 +44,6 @@ function Write-PSYVerboseLog {
         Write-Verbose -Message "Verbose: $logCategory$Message"
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Write-PSYVerboseLog."
+        Write-PSYErrorLog $_
     }
 }

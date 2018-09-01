@@ -13,6 +13,6 @@ function Import-PSYOleDb {
         # TODO
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Import-PSYDb."
+        Write-PSYErrorLog $_
     }
 }

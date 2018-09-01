@@ -128,6 +128,6 @@ function Resolve-PSYCmd {
         return $template
     }
     catch {
-        Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in Resolve-PSYCmd'
+        Write-PSYErrorLog $_
     }
 }

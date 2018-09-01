@@ -36,6 +36,6 @@ function Connect-PSYJsonRepository {
         $global:PSYSession.Initialized = $true
     }
     catch {
-        Write-PSYErrorLog $_ "Error connecting to JSON repository."
+        Write-PSYErrorLog $_
     }
 }

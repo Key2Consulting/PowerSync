@@ -44,6 +44,6 @@ function Write-PSYInformationLog {
         Write-Host -Message "Information: $logCategory$Message"
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Write-PSYInformationLog."
+        Write-PSYErrorLog $_
     }
 }

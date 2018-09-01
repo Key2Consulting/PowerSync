@@ -14,6 +14,7 @@ Path of the Json file, the repository, to create. If just a filename is specifie
 New-PSYJsonRepository -Path 'MyLocalFile.json'
  #>
 function New-PSYJsonRepository {
+    [CmdletBinding()]
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
@@ -29,6 +30,6 @@ function New-PSYJsonRepository {
         Disconnect-PSYRepository
     }
     catch {
-        Write-PSYErrorLog $_ "Error creating JSON repository."
+        Write-PSYErrorLog $_
     }
 }

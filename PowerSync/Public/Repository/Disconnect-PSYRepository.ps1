@@ -4,6 +4,6 @@ function Disconnect-PSYRepository {
         $global:PSYSession.Initialized = $false
     }
     catch {
-        Write-PSYErrorLog $_ "Error disconnecting to repository."
+        Write-PSYErrorLog $_
     }
 }

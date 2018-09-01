@@ -72,6 +72,6 @@ function Find-PSYLog {
         })
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Find-PSYLog."
+        Write-PSYErrorLog $_
     }
 }

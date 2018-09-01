@@ -82,6 +82,6 @@ function Export-PSYSqlServer {
         }
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Export-PSYSqlServer."
+        Write-PSYErrorLog $_
     }
 }

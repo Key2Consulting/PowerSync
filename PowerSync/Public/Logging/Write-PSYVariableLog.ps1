@@ -47,6 +47,6 @@ The new value of the variable.
         Write-Debug -Message "Variable: $Name = $Value"
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Write-PSYVariableLog."
+        Write-PSYErrorLog $_
     }
 }

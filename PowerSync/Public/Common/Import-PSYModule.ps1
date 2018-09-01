@@ -20,6 +20,6 @@ function Import-PSYModule {
         Import-Module -Name $Name
     }
     catch {
-        Write-PSYErrorLog $_ "Error importing module '$Name'."
+        Write-PSYErrorLog $_
     }
 }

@@ -43,7 +43,7 @@ function Write-PSYDebugLog {
         Write-Debug -Message "Debug: $logCategory$Message"
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Write-PSYDebugLog."
+        Write-PSYErrorLog $_
     }
 
 }

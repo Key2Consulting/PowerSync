@@ -105,6 +105,6 @@ function ConvertTo-TargetSchemaTable {
         return $newSchemaTable
     }
     catch {
-        Write-PSYErrorLog $_ "Error in ConvertTo-TargetSchemaTable."
+        Write-PSYErrorLog $_
     }
 }
