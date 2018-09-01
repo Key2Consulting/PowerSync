@@ -16,7 +16,7 @@ function Set-PSYVariable {
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
         
         # Log the variable state change. If the variable entity was passed, extract the Name/Value from it.     TODO: log Name and ID properties
         $logVarName = $null

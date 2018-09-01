@@ -15,7 +15,7 @@ function Write-ActivityLog {
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
 
         if ($Status -eq 'Started') {
             # Log activity start
@@ -39,7 +39,7 @@ function Write-ActivityLog {
     
             [void] $PSYSession.ActivityStack.Add($Activity)
             
-            Write-Host "$($Title): $Name"
+            Write-PSYInformationLog $Title
             return $Activity
         }
         else {
@@ -50,7 +50,12 @@ function Write-ActivityLog {
                 $this.UpdateEntity('ActivityLog', $Activity)
             })
             $PSYSession.ActivityStack.Remove($Activity)
-            Write-Host "$($Title): $Name"
+            
+            # Log completion, including duration in seconds
+            $startTime = [DateTime]::Parse($Activity.StartDateTime);
+            $endTime = [DateTime]::Parse($Activity.EndDateTime);
+            [TimeSpan] $duration = $endTime.Subtract($startTime)
+            Write-PSYInformationLog "$Title ($($duration.TotalSeconds) sec)"
         }
     }
     catch {

@@ -25,6 +25,16 @@ Trap {"Error: $_"; Break;}
     WorkingFolder = "$(Get-Location)"                           # where the PowerSync module is located
 }
 
+# Import CSharp Library Dependencies
+#
+Add-Type -IgnoreWarnings `
+    -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
+    -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TypeConversionDataReader.cs"))
+
+Add-Type -IgnoreWarnings `
+    -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
+    -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TextFileDataReader.cs"))
+
 # Import Local Module Dependencies
 #Import-Module "$PSScriptRoot\Private\Library\Newtonsoft.Json"
 

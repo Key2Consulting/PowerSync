@@ -6,7 +6,7 @@ function Remove-PSYVariable {
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
 
         # Log
         $repo.LogVariable($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Name, $null)

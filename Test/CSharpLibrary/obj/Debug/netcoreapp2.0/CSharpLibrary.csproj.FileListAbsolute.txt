@@ -1,0 +1,11 @@
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\bin\Debug\netcoreapp2.0\CSharpLibrary.deps.json
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\bin\Debug\netcoreapp2.0\CSharpLibrary.runtimeconfig.json
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\bin\Debug\netcoreapp2.0\CSharpLibrary.runtimeconfig.dev.json
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\bin\Debug\netcoreapp2.0\CSharpLibrary.dll
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\bin\Debug\netcoreapp2.0\CSharpLibrary.pdb
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\obj\Debug\netcoreapp2.0\CSharpLibrary.csprojAssemblyReference.cache
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\obj\Debug\netcoreapp2.0\CSharpLibrary.csproj.CoreCompileInputs.cache
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\obj\Debug\netcoreapp2.0\CSharpLibrary.AssemblyInfoInputs.cache
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\obj\Debug\netcoreapp2.0\CSharpLibrary.AssemblyInfo.cs
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\obj\Debug\netcoreapp2.0\CSharpLibrary.dll
+D:\Dropbox\Project\Key2\PowerSync\Test\CSharpLibrary\obj\Debug\netcoreapp2.0\CSharpLibrary.pdb

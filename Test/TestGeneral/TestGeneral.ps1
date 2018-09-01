@@ -15,12 +15,12 @@ Start-PSYActivity -Name 'Test Registry' -ScriptBlock {
 }
 
 Start-PSYActivity -Name 'Test Connections' -ScriptBlock {
-    Set-PSYDbConnection -Name 'Source' -Provider MySql -ConnectionString 'a valid connectionstring'
-    Set-PSYDbConnection -Name 'Target' -Provider OleDb -ConnectionString 'a valid connectionstring'
-    Set-PSYDbConnection -Name 'Target' -Provider OleDb -ConnectionString 'an updated connectionstring' -AdditionalProperties 'Whatever=I;Want=ToSet'
+    Set-PSYConnection -Name 'Source' -Provider MySql -ConnectionString 'a valid connectionstring'
+    Set-PSYConnection -Name 'Target' -Provider OleDb -ConnectionString 'a valid connectionstring'
+    Set-PSYConnection -Name 'Target' -Provider OleDb -ConnectionString 'an updated connectionstring' -Properties @{Whatever = "I;Want=ToSet"}
     $x = Get-PSYConnection -Name 'Source'
     $y = Get-PSYConnection -Name 'Target'
-    if ($x.ConnectionString -ne 'a valid connectionstring' -or $y.AdditionalProperties -ne 'Whatever=I;Want=ToSet' -or $y.Provider -ne [PSYDbConnectionProvider]::OleDb) {
+    if ($x.ConnectionString -ne 'a valid connectionstring' -or $y.Properties.Whatever -ne 'I;Want=ToSet' -or $y.Provider -ne [PSYDbConnectionProvider]::OleDb) {
         throw "Retrieved connection values are incorrect"
     }
     Remove-PSYConnection -Name 'Abc'

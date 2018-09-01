@@ -15,7 +15,7 @@ class Repository {
     Repository ([hashtable] $State) {
         $this.State = $State
         $this.State.LockTimeout = 5000
-        $this.State.ClassType = $this.GetType().FullName        # needed to support rehydration via New-RepositoryFromFactory
+        $this.State.ClassType = $this.GetType().FullName        # needed to support rehydration via New-FactoryObject
     }
 
     [void] CreateEntity([string] $EntityType, [object] $Entity) {

@@ -9,7 +9,7 @@ function Write-PSYVariableLog {
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
         
         # Write Log and output to screen
         if ($PSYSession.Initialized) {

@@ -1,4 +1,4 @@
-function Set-PSYDbConnection {
+function Set-PSYConnection {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
@@ -8,16 +8,16 @@ function Set-PSYDbConnection {
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
         [string] $ConnectionString,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [string] $AdditionalProperties,
+        [hashtable] $Properties,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [SecureString] $Credentials
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
         
         # Log
-        Write-PSYVariableLog "Connection.$Name" "Provider = $Provider, ConnectionString = $ConnectionString, AdditionalProperties = $AdditionalProperties"
+        Write-PSYVariableLog "Connection.$Name" "Provider = $Provider, ConnectionString = $ConnectionString, Properties = $Properties"
 
         # Set the in the repository.  If it doesn't exist, it will be created.
         [void] $repo.CriticalSection({
@@ -38,7 +38,7 @@ function Set-PSYDbConnection {
                     Name = $Name
                     Provider = $Provider
                     ConnectionString = $ConnectionString
-                    AdditionalProperties = $AdditionalProperties
+                    Properties = $Properties
                     CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
                     ModifiedDateTime = Get-Date | ConvertTo-PSYNativeType
                 }
@@ -48,7 +48,7 @@ function Set-PSYDbConnection {
             else {
                 $existing.Provider = $Provider
                 $existing.ConnectionString = $ConnectionString
-                $existing.AdditionalProperties = $AdditionalProperties
+                $existing.Properties = $Properties
                 $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYNativeType
                 return $this.UpdateEntity('Connection', $existing)
             }

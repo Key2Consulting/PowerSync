@@ -10,7 +10,7 @@ function Lock-PSYVariable {
     )
 
     try {
-        $repo = New-RepositoryFromFactory       # instantiate repository
+        $repo = New-FactoryObject -Repository       # instantiate repository
 
         # Grab an exclusive lock on the variable name
         [object] $mutex = New-Object System.Threading.Mutex($false, "PSY-$Name")
