@@ -17,7 +17,7 @@ function Set-PSYVariable {
 
     try {
         $repo = New-FactoryObject -Repository       # instantiate repository
-        
+
         # Log the variable state change. If the variable entity was passed, extract the Name/Value from it.     TODO: log Name and ID properties
         $logVarName = $null
         if ($Variable) {
@@ -44,13 +44,14 @@ function Set-PSYVariable {
         }
 
         # Set the state in the repository.  If it doesn't exist, it will be created if Overwrite is set.
+        $boundParams = $PSBoundParameters           # need to capture this prior to critical section (and debugger)
         return $repo.CriticalSection({
             
             # Determine if an existing variable
             $existing = $null
             if ($Name) {            # either name was used
                 $existing = $this.FindEntity('Variable', 'Name', $Name)
-                if ($existing.Count -gt 0) {
+                if ($existing.Count -gt 1) {
                     throw "Multiple variables found with name '$logVarName'."
                 }
                 elseif ($existing.Count -eq 1) {
@@ -97,7 +98,7 @@ function Set-PSYVariable {
                     $existing = $Variable
                 }
                 # If a value wasn't explicit passed, assume the caller already updated Value field on the entity itself.
-                if ($PSBoundParameters.ContainsKey('Value')) {
+                if ($boundParams.ContainsKey('Value')) {
                     $existing.Value = $Value
                 }
                 $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYNativeType

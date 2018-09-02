@@ -68,6 +68,10 @@ function Invoke-ForEach {
                 }
 
                 # Invoke a job to handle item processing
+                #$UserModules = @( Get-Module | Where-Object {$_.Path -notmatch 'PowerSync' -and (Test-Path $_.Path -ErrorAction SilentlyContinue)} | Select-Object -ExpandProperty Path )
+                #$UserFunctions = @( Get-ChildItem function:\ | Where-Object { $StandardUserEnv.Functions -notcontains $_.Name } )
+                #$sessionstate.Commands.Add((New-Object System.Management.Automation.Runspaces.SessionStateFunctionEntry -ArgumentList $FunctionDef.Name,$FunctionDef.ScriptBlock))
+
                 $workItem.Job = (Start-Job -ArgumentList $workItem -Verbose -Debug -ScriptBlock {
                     param ($workItem)
                     

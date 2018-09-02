@@ -25,6 +25,7 @@ $stateVarExample = @{
 # Single scalar values
 try {
     $a = Set-PSYVariable -Name 'a' -Value "Hello World" -Overwrite      # create a new scalar value (overrides if already exists)
+
     $b = Set-PSYVariable -Name 'b' -Value " Again!"                     # new scalar with default value
     $x = Set-PSYVariable -Name 'x' -Value 555
     $testScalar = (Get-PSYVariable -Name 'a').Value + (Get-PSYVariable -Name 'b').Value
@@ -117,6 +118,7 @@ catch {
 #>
 
 # Removal of state variables
+<# TODO
 try {
     $allVars = Get-PSYVariable
     if ($allVars.Count -ne 10) {
@@ -139,6 +141,6 @@ try {
 catch {
     Write-P SYExceptionLog -Message "Failed Removal of State Variables Test"
 }
-
+#>
 # TODO: DATETIME AND CONVERTO-PSYNATIVETYPE
 # TODO: HIERARCHY TEST, WITH REPARENTING
