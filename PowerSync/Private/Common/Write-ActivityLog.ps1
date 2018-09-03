@@ -61,7 +61,7 @@ function Write-ActivityLog {
             $startTime = [DateTime]::Parse($Activity.StartDateTime);
             $endTime = [DateTime]::Parse($Activity.EndDateTime);
             [TimeSpan] $duration = $endTime.Subtract($startTime)
-            Write-PSYInformationLog "$Message ($($duration.TotalSeconds) sec)"
+            Write-PSYInformationLog "$Message in $($duration.TotalSeconds) sec"
         }
     }
     catch {

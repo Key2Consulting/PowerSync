@@ -1,4 +1,4 @@
-function Connect-PSYDbRepository {
+function Connect-PSYOleDbRepository {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]

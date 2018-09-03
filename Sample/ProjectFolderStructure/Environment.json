@@ -1,0 +1,3 @@
+{
+    "RepositoryConnectionString": "Provider=SQLNCLI11;Server=MyServer;Database=PSYRepository;Trusted_Connection=yes;"
+}
