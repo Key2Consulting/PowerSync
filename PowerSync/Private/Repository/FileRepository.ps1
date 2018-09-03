@@ -1,4 +1,5 @@
 class FileRepository : Repository {
+    [int] $maxLockAttempts = 20
 
     # The initial construction of the FileRepository
     FileRepository ([int] $LockTimeout, [hashtable] $State) : base([hashtable] $State) {
@@ -109,12 +110,34 @@ class FileRepository : Repository {
         # the repo will read and write the entire file for every operation. It's slower, but ensures consistency.
         # A database repository should be used in process intensive scenarios.
 
+        # The critical section should handle concurrency within our process, but we're still getting runtime errors regarding
+        # the file already being open. This could be VS Code, or perhaps the Set/Get-Content isn't disposing quick enough. In
+        # any case, we attempt to read or write the file maxLockAttempts times before giving up.
+
         return ([Repository]$this).CriticalSection("ae831404-511f-4577-ba63-56a21fd70425", $ScriptBlock, {
             # Reload the repository in case another process made changes
-            $this.LoadRepository()
+            for ($attempts = 0; $attempts -lt $this.maxLockAttempts; $attempts++) {
+                try {
+                    $this.LoadRepository()
+                    return
+                }
+                catch [System.IO.IOException] {
+                    Write-Debug "Load repository locked out for '$($this.State.ClassType)', attempt $attempts of $($this.maxLockAttempts)"
+                    Start-Sleep -Milliseconds 100
+                }
+            }
         }, {
             # Save the repository back to disk
-            $this.SaveRepository()
-            })
+            for ($attempts = 0; $attempts -lt $this.maxLockAttempts; $attempts++) {
+                try {
+                    $this.SaveRepository()
+                    return
+                }
+                catch [System.IO.IOException] {
+                    Write-Debug "Save repository locked out for '$($this.State.ClassType)', attempt $attempts of $($this.maxLockAttempts)"
+                    Start-Sleep -Milliseconds 100
+                }
+            }
+        })
     }
 }
