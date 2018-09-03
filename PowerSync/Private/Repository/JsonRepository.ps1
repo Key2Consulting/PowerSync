@@ -16,7 +16,6 @@ class JsonRepository : FileRepository {
             if ($data) {
                 $this.State.TableList.Variable = [System.Collections.ArrayList] $data.Variable
                 $this.State.TableList.Connection = [System.Collections.ArrayList] $data.Connection
-                $this.State.TableList.Registry = [System.Collections.ArrayList] $data.Registry
                 $this.State.TableList.ActivityLog = [System.Collections.ArrayList] $data.ActivityLog
                 $this.State.TableList.ExceptionLog = [System.Collections.ArrayList] $data.ExceptionLog
                 $this.State.TableList.InformationLog = [System.Collections.ArrayList] $data.InformationLog
@@ -34,7 +33,6 @@ class JsonRepository : FileRepository {
             @{
                 Variable = $this.State.TableList.Variable
                 Connection = $this.State.TableList.Connection
-                Registry = $this.State.TableList.Registry
                 ActivityLog = $this.State.TableList.ActivityLog
                 ExceptionLog = $this.State.TableList.ExceptionLog
                 InformationLog = $this.State.TableList.InformationLog

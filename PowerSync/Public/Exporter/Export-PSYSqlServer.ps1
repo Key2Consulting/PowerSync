@@ -27,7 +27,7 @@ function Export-PSYSqlServer {
         $conn.Open()
         $cmd = $conn.CreateCommand()
         $cmd.CommandText = $ExtractQuery
-        $cmd.CommandTimeout = (Get-PSYRegistry 'PSYDefaultCommandTimeout')
+        $cmd.CommandTimeout = (Get-PSYVariable 'PSYDefaultCommandTimeout')
         $reader = $cmd.ExecuteReader()
 
         # Log

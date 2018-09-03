@@ -1,16 +1,28 @@
-Start-PSYActivity -Name 'Test Registry' -ScriptBlock {
-    Set-PSYRegistry -Name 'Hello' -Value 'World'
-    Set-PSYRegistry -Name 'Hello' -Value 'World Again!'
-    Set-PSYRegistry -Name 'Abc' -Value 123
-    $x = Get-PSYRegistry -Name 'Abc'
-    $y = Get-PSYRegistry -Name 'Hello'
-    if ($x -ne 123 -or $y -ne 'World Again!') {
-        throw "Retrieved registry values are incorrect"
+Start-PSYActivity -Name 'Test Variables CRUD Operations' -ScriptBlock {
+    Set-PSYVariable -Name 'UpdateVar' -Value 'World'
+    Set-PSYVariable -Name 'UpdateVar' -Value 'World Again!'
+    Set-PSYVariable -Name 'NumericVar' -Value 123.456
+    Set-PSYVariable -Name 'ComplexVar' -Value @{Complex="object"; Field1=456}
+    $updateVar = Get-PSYVariable -Name 'UpdateVar'
+    $numericVar = Get-PSYVariable -Name 'NumericVar'
+    $complexVar = Get-PSYVariable -Name 'ComplexVar'
+    if ($updateVar -ne 'World Again!' -or $numericVar -ne 123.456 -or $complexVar.Complex -ne 'object') {
+        throw "Retrieved variables are incorrect"
     }
-    Remove-PSYRegistry -Name 'Abc'
-    Remove-PSYRegistry -Name 'Hello'
 
-    Start-PSYActivity -Name 'Test Registry' -ScriptBlock {
+    $allVars = Get-PSYVariable -Name '*Var' -Extended -Wildcards
+    if ($allVars.Count -ne 3) {
+        throw "Get variable with wildcards failed."
+    }
+    Remove-PSYVariable -Name 'UpdateVar'
+    Remove-PSYVariable -Name 'NumericVar'
+    Remove-PSYVariable -Name 'ComplexVar'
+}
+
+Start-PSYActivity -Name 'Test Variables Locking (Basic Test)' -ScriptBlock {
+    Set-PSYVariable -Name 'LockVar' -Value 'Catch me if you can'
+    Lock-PSYVariable -Name 'LockVar' -ScriptBlock {
+        Write-PSYInformationLog 'Variable locked'
     }
 }
 

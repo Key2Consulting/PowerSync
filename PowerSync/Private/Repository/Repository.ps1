@@ -37,6 +37,10 @@ class Repository {
     }
 
     [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue) {
+        return $this.FindEntity($EntityType, $SearchField, $SearchValue, $false)
+    }
+    
+    [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue, [bool] $Wildcards) {
         throw "The repository FindEntity method should be overridden by derived classes."
     }
 

@@ -4,20 +4,20 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
     Start-PSYActivity -Name 'Test Parallel Race Execution' -Parallel -ScriptBlock ({
         Write-PSYInformationLog 'Parallel nested script 1 is executing'
-        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 1" -Overwrite
+        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 1"
         Start-Sleep -Seconds 5
-        if ((Get-PSYVariable 'TestVariable').Value -ne 'Concurrent update 3') { Write-PSYExceptionLog -Message "Failed test 'Test Parallel Race Execution'"}
+        if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { Write-PSYExceptionLog -Message "Failed test 'Test Parallel Race Execution'"}
     }, {
         Write-PSYInformationLog 'Parallel nested script 2 is executing'
-        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 2" -Overwrite
+        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 2"
         Start-Sleep -Seconds 3
-        if ((Get-PSYVariable 'TestVariable').Value -ne 'Concurrent update 3') { Write-PSYExceptionLog -Message "Failed test 'Test Parallel Race Execution'"}
+        if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { Write-PSYExceptionLog -Message "Failed test 'Test Parallel Race Execution'"}
     }, {
         Write-PSYInformationLog 'Parallel nested script 3 is executing'
-        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 3" -Overwrite
+        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 3"
         Start-Sleep -Seconds 0
         Get-PSYVariable 'TestVariable'
-        if ((Get-PSYVariable 'TestVariable').Value -ne 'Concurrent update 3') { Write-PSYExceptionLog -Message "Failed test 'Test Parallel Race Execution'"}
+        if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { Write-PSYExceptionLog -Message "Failed test 'Test Parallel Race Execution'"}
     })
 
     Set-PSYVariable 'TestVariable' 0
@@ -31,7 +31,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
     Set-PSYVariable 'TestVariable' 0
     Start-PSYForEachActivity -Name 'Test ForEach Correct Concurrency Execution' -InputObject (1..10) -Parallel -ScriptBlock {
-        Lock-PSYStateVar 'TestVariable' {
+        Lock-PSYVariable 'TestVariable' {
             Set-PSYVariable 'TestVariable' ((Get-PSYVariable 'TestVariable') + 1)     # will work as expected since we're locking the variable
         }
     }
@@ -39,5 +39,5 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
         Write-PSYExceptionLog -Message "Failed test 'Test ForEach Correct Concurrency Execution'"
     }
 
-    Remove-PSYStateVar 'TestVariable'
+    Remove-PSYVariable 'TestVariable'
 }

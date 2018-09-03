@@ -8,7 +8,7 @@ function New-PSYStoredCommand {
 
     try {
         # Determine paths to search for stored commands
-        $storedCommandPath = Get-PSYRegistry 'PSYStoredCommandPath'
+        $storedCommandPath = Get-PSYVariable 'PSYStoredCommandPath'
         $searchPaths = New-Object System.Collections.ArrayList
         if ($storedCommandPath) {
             [void] $searchPaths.AddRange($storedCommandPath.Split(';'))

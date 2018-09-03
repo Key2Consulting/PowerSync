@@ -135,7 +135,6 @@ function Invoke-ForEach {
                         $_.Result = $_.Job.ChildJobs[0].Output
                         Write-Progress -Activity ("$($LogTitle)" -f $_.Index) -PercentComplete ($completedJobs.Count / $workItems.Count * 100)
                         Write-PSYDebugLog -Message ("$($LogTitle): Completed (Processed {1} out of {2})" -f $_.Index, $completedJobs.Count, $workItems.Count)
-                        # TODO: WRITE HAD ERRORS, EXCEPTIONS
                     }
                 }
             }
@@ -146,6 +145,10 @@ function Invoke-ForEach {
                     Result = $item.Result
                     HadErrors = [bool] $item.Job.ChildJobs[0].Error.Count
                     Errors = $item.Job.ChildJobs[0].Error
+                }
+                # If errors and the current error action is to stop, we should do just that. Otherwise processing would continue.
+                if ($item.Job.ChildJobs[0].Error.Count -gt 0 -and $ErrorActionPreference -eq "Stop") {
+                    throw $item.Job.ChildJobs[0].Error
                 }
             }
         }

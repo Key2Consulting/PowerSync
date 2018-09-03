@@ -11,14 +11,13 @@ function Lock-PSYVariable {
 
     try {
         $repo = New-FactoryObject -Repository       # instantiate repository
-
+        
         # Grab an exclusive lock on the variable name
         [object] $mutex = New-Object System.Threading.Mutex($false, "PSY-$Name")
         [void] $mutex.WaitOne($Timeout)
         
-        # Retrieve the variable from state and execute the caller's code.
-        $var = $repo.GetState($Name)
-        Invoke-Command -ArgumentList $var -ScriptBlock $ScriptBlock
+        # Lock the variable and execute the caller's code.
+        Invoke-Command -ScriptBlock $ScriptBlock
     }
     catch {
         Write-PSYExceptionLog $_ "Error locking state '$Name'."

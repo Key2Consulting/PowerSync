@@ -10,7 +10,6 @@ class FileRepository : Repository {
             VariableLog = New-Object System.Collections.ArrayList
             Variable = New-Object System.Collections.ArrayList
             Connection = New-Object System.Collections.ArrayList
-            Registry = New-Object System.Collections.ArrayList
         }
     }
 
@@ -76,13 +75,22 @@ class FileRepository : Repository {
 
     [void] DeleteEntity([string] $EntityType, [object] $EntityID) {
         $table = $this.GetEntityTable($EntityType)
-        $table.Remove($table.Where({$_.ID -eq $EntityID}))
+        $match = $table.Where({$_.ID -eq $EntityID})
+        if ($match.Count -eq 0) {
+            throw "Unable to find $EntityType with ID $EntityID."
+        }
+        $table.Remove($match[0])
     }
 
-    [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue) {
+    [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue, [bool] $Wildcards) {
         $entityList = New-Object System.Collections.ArrayList
         $table = $this.GetEntityTable($EntityType)
-        $eQuery = $table.Where({$_."$SearchField" -eq $SearchValue})
+        if ($Wildcards) {
+            $eQuery = $table.Where({$_."$SearchField" -like $SearchValue})
+        }
+        else {
+            $eQuery = $table.Where({$_."$SearchField" -eq $SearchValue})
+        }
         if ($eQuery) {
             foreach ($entity in $eQuery) {
                 # In case the Json contains non-native types, convert to native

@@ -60,8 +60,8 @@ function Import-PSYSqlServer {
         if (-not $UsePolyBase) {
             $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString)
             $blk.DestinationTableName = "$Table"
-            $blk.BulkCopyTimeout = (Get-PSYRegistry 'PSYDefaultCommandTimeout')
-            $blk.BatchSize = (Get-PSYRegistry 'PSYDefaultCommandTimeout' 10000)
+            $blk.BulkCopyTimeout = (Get-PSYVariable 'PSYDefaultCommandTimeout')
+            $blk.BatchSize = (Get-PSYVariable -Name 'PSYDefaultCommandTimeout' -DefaultValue 10000)
             $blk.WriteToServer($reader)
         }
         else {

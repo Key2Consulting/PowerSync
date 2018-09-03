@@ -1,22 +1,32 @@
 function Remove-PSYVariable {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $Name
     )
 
     try {
         $repo = New-FactoryObject -Repository       # instantiate repository
-
-        # Log
-        $repo.LogVariable($PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1], $Name, $null)
-
-        throw "Remove-PSYVariable not implemented"
         
-        # Remove the state from the repository
-        $repo.DeleteState($Name)
+        # Log
+        Write-PSYVariableLog "Variable.$Name" $null
+
+        # Set the in the repository.  If it doesn't exist, it will be created.
+        return $repo.CriticalSection({
+            
+            # Determine if existing
+            $existing = $this.FindEntity('Variable', 'Name', $Name)
+            if ($existing.Count -eq 0) {
+                return
+            }
+            else {
+                $existing = $existing[0]
+            }
+
+            $this.DeleteEntity('Variable', $existing.ID)
+        })
     }
     catch {
-        Write-PSYExceptionLog $_ "Error removing state '$Name'."
+        Write-PSYExceptionLog $_ "Error removing variable '$Name'."
     }
 }

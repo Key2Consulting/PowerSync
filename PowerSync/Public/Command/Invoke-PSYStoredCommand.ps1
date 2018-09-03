@@ -20,7 +20,7 @@ function Invoke-PSYStoredCommand {
         $conn.Open()
         $cmd = $conn.CreateCommand()
         $cmd.CommandText = $cmdText
-        $cmd.CommandTimeout = (Get-PSYRegistry 'PSYDefaultCommandTimeout')
+        $cmd.CommandTimeout = (Get-PSYVariable -Name 'PSYDefaultCommandTimeout')
         $r = $cmd.ExecuteReader()
         
         # Copy results into arraylist of hashtables
