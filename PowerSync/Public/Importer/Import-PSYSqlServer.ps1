@@ -30,20 +30,20 @@ function Import-PSYSqlServer {
         # If AutoCreate, read the schema of the input stream and use that information to create a target table.
         if ($AutoCreate) {
             # If the table exists and the overwrite flag isn't set, it's an error condition.
-            $exists = Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.CheckIfTableExists" -Parameters @{Table = $Table}
+            $exists = Invoke-PSYCmd -Connection $Connection -Name "$providerName.CheckIfTableExists" -Param @{Table = $Table}
             if ($exists.TableExists) {
                 if (-not $Overwrite) {
                     throw "Target table '$Table' already exists, and Overwrite not set. Aborting import operation."
                 }
                 else {
                     # Otherwise, if it's set, drop the target table.
-                    Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.DropTable" -Parameters @{Table = $Table}
+                    Invoke-PSYCmd -Connection $Connection -Name "$providerName.DropTable" -Param @{Table = $Table}
                     Write-PSYVerboseLog -Message "Dropped existing table [$Connection]:$Table."
                 }
             }
 
             # Create the target table now
-            Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.AutoCreate" -Parameters @{Table = $Table; SchemaTable = $targetSchemaTable}
+            Invoke-PSYCmd -Connection $Connection -Name "$providerName.AutoCreate" -Param @{Table = $Table; SchemaTable = $targetSchemaTable}
             Write-PSYVerboseLog -Message "Created table [$Connection]:$Table."
         }
 
@@ -72,7 +72,7 @@ function Import-PSYSqlServer {
 
         # If AutoIndex is set, execute AutoIndex script
         if ($AutoIndex) {
-            Invoke-PSYStoredCommand -Connection $Connection -Name "$providerName.AutoIndex" -Parameters @{Table = $Table}
+            Invoke-PSYCmd -Connection $Connection -Name "$providerName.AutoIndex" -Param @{Table = $Table}
             Write-PSYVerboseLog -Message "Autocreated index for [$Connection]:$Table."
         }
         #if ($this.GetConfigSetting("AutoIndex", $true) -eq $true) {

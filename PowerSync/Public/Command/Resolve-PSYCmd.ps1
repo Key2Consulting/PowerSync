@@ -1,14 +1,14 @@
-function New-PSYStoredCommand {
+function Resolve-PSYCmd {
     param (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
         [string] $Name,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [hashtable] $Parameters
+        [hashtable] $Param
     )
 
     try {
         # Determine paths to search for stored commands
-        $storedCommandPath = Get-PSYVariable 'PSYStoredCommandPath'
+        $storedCommandPath = Get-PSYVariable 'PSYCmdPath'
         $searchPaths = New-Object System.Collections.ArrayList
         if ($storedCommandPath) {
             [void] $searchPaths.AddRange($storedCommandPath.Split(';'))
@@ -25,9 +25,11 @@ function New-PSYStoredCommand {
             }
         }
 
+        # TODO: SHOULD AUTOMATICALLY PASS CERTAIN CONTEXTUAL VARIABLES (E.G. ActivityID FOR LOGGING PURPOSES)
+
         # Compile the template using the given parameters. Compilation uses a SQLCMD Mode syntax of :setvar and $(MyVariable).
         #
-        if (-not $Parameters) {     # if no parameters, perhaps the template is ready to go
+        if (-not $Param) {     # if no parameters, perhaps the template is ready to go
             return $template
         }
         
@@ -46,8 +48,8 @@ function New-PSYStoredCommand {
                 $name = $match.Groups[1].Value
                 $value = $match.Groups[2].Value
                 # If we have a parameter with that name
-                if ($Parameters.ContainsKey($name) -eq $true) {
-                    $value = $Parameters."$name"
+                if ($Param.ContainsKey($name) -eq $true) {
+                    $value = $Param."$name"
                     # Perform conversion of the parameter to account for specific scenarios.
                     if ($value -is [bool]) {
                         # Manually convert bools to numeric (0 or 1) since they are native to database systems.
@@ -103,6 +105,6 @@ function New-PSYStoredCommand {
         return $template
     }
     catch {
-        Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in New-PSYStoredCommand'
+        Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in Resolve-PSYCmd'
     }
 }

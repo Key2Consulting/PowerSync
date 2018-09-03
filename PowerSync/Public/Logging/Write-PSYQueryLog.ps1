@@ -4,6 +4,8 @@ function Write-PSYQueryLog {
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
         [string] $Name,
+        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [string] $Connection,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $Query,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -16,17 +18,17 @@ function Write-PSYQueryLog {
         # Write Log and output to screen
         if ($PSYSession.Initialized) {
             [void] $repo.CriticalSection({
-                $logValue = ConvertTo-Json $Value
-                if ($logValue) {
-                    $logValue = $Value
-                }
                 $o = @{
                     ID = $null                          # let the repository assign the surrogate key
                     Type = 'Query'
                     Name = $Name
+                    Connection = $Connection
                     Query = $Query
-                    Param = ConvertTo-Json -InputObject $Param -Depth 5 -Compress
+                    Param = ConvertTo-Json -InputObject $Param -Depth 3 -Compress
                     CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
+                }
+                if ($o.Param.Length -gt 2000) {
+                    $o.Param = $o.Param.Substring(0, 2000);
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID

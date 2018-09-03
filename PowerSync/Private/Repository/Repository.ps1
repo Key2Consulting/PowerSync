@@ -14,7 +14,7 @@ class Repository {
 
     Repository ([hashtable] $State) {
         $this.State = $State
-        $this.State.LockTimeout = 5000
+        $this.State.LockTimeout = 30000                         # max time to hold the mutex (cross process synchronization) in milliseconds
         $this.State.ClassType = $this.GetType().FullName        # needed to support rehydration via New-FactoryObject
     }
 
@@ -65,14 +65,17 @@ class Repository {
     [object] CriticalSection([string] $LockName, [scriptblock] $ScriptBlock, [scriptblock] $PreScriptBlock, [scriptblock] $PostScriptBlock) {
         try {
             # Grab an exclusive lock using a Mutex, which works across process spaces.
-            $mutex = New-Object System.Threading.Mutex($false, $LockName)
+            $mutex = New-Object System.Threading.Mutex($false, "Global\$LockName")
             [void] $mutex.WaitOne($this.State.LockTimeout)
+            Write-Debug "Acquired mutex Global\PSY-$LockName"       # can't use Write-PSYDebugLog since it writes to the repo and acquires a lock
             
             # Execute the scriptblock
             if ($PreScriptBlock) {
                 Invoke-Command -ScriptBlock $PreScriptBlock    
             }
+
             $r = Invoke-Command -ScriptBlock $ScriptBlock
+            
             if ($PostScriptBlock) {
                 Invoke-Command -ScriptBlock $PostScriptBlock
             }
@@ -89,6 +92,7 @@ class Repository {
         }
         finally {
             $mutex.ReleaseMutex()
+            Write-Debug "Released mutex Global\PSY-$LockName"       # can't use Write-PSYDebugLog since it writes to the repo and acquires a lock
         }
     }
 }

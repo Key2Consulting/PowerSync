@@ -1,4 +1,4 @@
-function Invoke-PSYStoredCommand {
+function Invoke-PSYCmd {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -6,12 +6,12 @@ function Invoke-PSYStoredCommand {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [string] $Name,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [hashtable] $Parameters
+        [hashtable] $Param
     )
 
     $conn = $null
     try {
-        $cmdText = New-PSYStoredCommand -Name $Name -Parameters $Parameters
+        $cmdText = Resolve-PSYCmd -Name $Name -Param $Param
         $connDef = Get-PSYConnection -Name $Connection
         $providerName = [Enum]::GetName([PSYDbConnectionProvider], $connDef.Provider)
         $conn = New-FactoryObject -Connection -TypeName $providerName
@@ -22,7 +22,8 @@ function Invoke-PSYStoredCommand {
         $cmd.CommandText = $cmdText
         $cmd.CommandTimeout = (Get-PSYVariable -Name 'PSYDefaultCommandTimeout')
         $r = $cmd.ExecuteReader()
-        
+        Write-PSYQueryLog -Name $Name -Connection $Connection -Query $cmdText -Param $Param
+
         # Copy results into arraylist of hashtables
         $results = New-Object System.Collections.ArrayList
         if ($r.HasRows) {
@@ -46,6 +47,6 @@ function Invoke-PSYStoredCommand {
             }
             $conn.Dispose()
         }
-        Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in Invoke-PSYStoredCommand'
+        Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in Invoke-PSYCmd'
     }
 }

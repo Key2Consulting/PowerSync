@@ -14,7 +14,7 @@ function Write-PSYVariableLog {
         # Write Log and output to screen
         if ($PSYSession.Initialized) {
             [void] $repo.CriticalSection({
-                $logValue = ConvertTo-Json $Value
+                $logValue = ConvertTo-Json -InputObject $Value -Compress
                 if ($logValue) {
                     $logValue = $Value
                 }

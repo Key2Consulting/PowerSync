@@ -10,7 +10,7 @@ function New-PSYJsonRepository {
         Connect-PSYJsonRepository -Path $Path
         Set-PSYVariable -Name 'PSYDefaultCommandTimeout' -Value 3600 -UserType 'Environment'
         Set-PSYVariable -Name 'PSYDefaultThrottle' -Value 5 -UserType 'Environment'
-        Set-PSYVariable -Name 'PSYStoredCommandPath' -Value '' -UserType 'Environment'
+        Set-PSYVariable -Name 'PSYCmdPath' -Value '' -UserType 'Environment'
         Disconnect-PSYRepository
     }
     catch {

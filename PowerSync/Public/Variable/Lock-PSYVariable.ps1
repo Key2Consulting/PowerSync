@@ -13,8 +13,9 @@ function Lock-PSYVariable {
         $repo = New-FactoryObject -Repository       # instantiate repository
         
         # Grab an exclusive lock on the variable name
-        [object] $mutex = New-Object System.Threading.Mutex($false, "PSY-$Name")
+        [object] $mutex = New-Object System.Threading.Mutex($false, "Global\PSY-$Name")
         [void] $mutex.WaitOne($Timeout)
+        Write-PSYDebugLog -Message "Acquired mutex Global\PSY-$Name"
         
         # Lock the variable and execute the caller's code.
         Invoke-Command -ScriptBlock $ScriptBlock
@@ -24,5 +25,6 @@ function Lock-PSYVariable {
     }
     finally {
         $mutex.ReleaseMutex()
+        Write-PSYDebugLog -Message "Released mutex Global\PSY-$Name"
     }
 }

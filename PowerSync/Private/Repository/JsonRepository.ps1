@@ -39,7 +39,7 @@ class JsonRepository : FileRepository {
                 MsgLog = $this.State.TableList.MsgLog
                 VariableLog = $this.State.TableList.VariableLog
                 QueryLog = $this.State.TableList.QueryLog
-            } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.State.Path
+            } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.State.Path -Force
         }
         catch {
             throw "Json SaveRepository failed. $($_.Exception.Message)"
