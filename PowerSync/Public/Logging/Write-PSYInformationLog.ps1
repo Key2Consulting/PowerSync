@@ -24,7 +24,7 @@ function Write-PSYInformationLog {
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
                 }
-                $this.CreateEntity('MsgLog', $o)
+                $this.CreateEntity('MessageLog', $o)
             })
         }
         $logCategory = if ($Category) {"($Category) "} else {""}

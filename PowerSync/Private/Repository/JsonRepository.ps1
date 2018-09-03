@@ -18,7 +18,7 @@ class JsonRepository : FileRepository {
                 $this.State.TableList.Connection = [System.Collections.ArrayList] $data.Connection
                 $this.State.TableList.ActivityLog = [System.Collections.ArrayList] $data.ActivityLog
                 $this.State.TableList.ErrorLog = [System.Collections.ArrayList] $data.ErrorLog
-                $this.State.TableList.MsgLog = [System.Collections.ArrayList] $data.MsgLog
+                $this.State.TableList.MessageLog = [System.Collections.ArrayList] $data.MessageLog
                 $this.State.TableList.VariableLog = [System.Collections.ArrayList] $data.VariableLog
                 $this.State.TableList.QueryLog = [System.Collections.ArrayList] $data.QueryLog
             }
@@ -36,7 +36,7 @@ class JsonRepository : FileRepository {
                 Connection = $this.State.TableList.Connection
                 ActivityLog = $this.State.TableList.ActivityLog
                 ErrorLog = $this.State.TableList.ErrorLog
-                MsgLog = $this.State.TableList.MsgLog
+                MessageLog = $this.State.TableList.MessageLog
                 VariableLog = $this.State.TableList.VariableLog
                 QueryLog = $this.State.TableList.QueryLog
             } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.State.Path -Force

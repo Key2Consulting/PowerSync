@@ -13,13 +13,13 @@ function Start-PSYForEachActivity {
 
     try {
         # Log activity start
-        $a = Write-ActivityLog -ScriptBlock $ScriptBlock -Name $Name -Title "ForEach Activity '$Name' started" -Status 'Started'
+        $a = Write-ActivityLog -ScriptAst $ScriptBlock.Ast.ToString() -Name $Name -Message "ForEach Activity '$Name' started" -Status 'Started'
 
         # Execute foreach (in parallel if specified)
-        $jobs = ($InputObject | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -LogTitle "$Name[{0}]")
+        $jobs = ($InputObject | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Name "$Name[{0}]" -ParentActivity $a)
         
         # Log activity end
-        Write-ActivityLog -ScriptBlock $ScriptBlock[0] -Name $Name -Title "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a
+        Write-ActivityLog -Name $Name -Message "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a
     }
     catch {
         Write-PSYErrorLog $_ "Error in Start-PSYForEachActivity '$Name'."

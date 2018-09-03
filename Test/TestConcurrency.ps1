@@ -32,7 +32,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     Set-PSYVariable 'TestVariable' 0
     Start-PSYForEachActivity -Name 'Test ForEach Correct Concurrency Execution' -InputObject (1..10) -Parallel -ScriptBlock {
         Lock-PSYVariable 'TestVariable' {
-            Set-PSYVariable 'TestVariable' ((Get-PSYVariable 'TestVariable') + 1)     # will work as expected since we're locking the variable
+            Set-PSYVariable 'TestVariable' ((Get-PSYVariable 'TestVariable') + 1)     # will work as expected since we're locking the variable prior to updating it
         }
     }
     if ((Get-PSYVariable 'TestVariable') -ne 10) {

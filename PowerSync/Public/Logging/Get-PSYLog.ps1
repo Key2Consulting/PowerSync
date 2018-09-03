@@ -14,7 +14,7 @@ function Get-PSYLog {
         # Search all logs in the repository and return any that match
         return $repo.CriticalSection({
             if (-not $Type -or $Type -eq 'Debug' -or $Type -eq 'Information' -or $Type -eq 'Verbose') {
-                $msgLog = $this.FindEntity('MsgLog', 'Message', $Search, $true)
+                $messageLog = $this.FindEntity('MessageLog', 'Message', $Search, $true)
             }
             if (-not $Type -or $Type -eq 'Error') {
                 $errorLog1 = $this.FindEntity('ErrorLog', 'Message', $Search, $true)
@@ -28,7 +28,7 @@ function Get-PSYLog {
                 $queryLog = $this.FindEntity('QueryLog', 'Query', $Search, $true)
             }
 
-            $allLogs = $msgLog + $errorLog1 + $errorLog2 + $errorLog3 + $variableLog + $queryLog
+            $allLogs = $messageLog + $errorLog1 + $errorLog2 + $errorLog3 + $variableLog + $queryLog
             
             # Some log entries can be found multiple times, remove the duplicates
             # TODO: CAN'T USE SELECT-OBJECT -UNQIUE AS IT DOESN'T WORK WITH OBJECT TYPES. INSTEAD, BUILD A NEW ARRAY AND ONLY ADD UNIQUE ITEMS TO IT.

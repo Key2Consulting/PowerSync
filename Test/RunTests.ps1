@@ -37,7 +37,7 @@ Set-PSYConnection -Name "TestDbSqlServer" -Provider SqlServer -ConnectionString 
 Set-PSYConnection -Name "TestDbOleDb" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=$testDBServer;Database=PowerSyncTestTarget;Trusted_Connection=yes;"
 Set-PSYConnection -Name "SampleFiles" -Provider TextFile -ConnectionString "$($rootPath)Test\SampleFiles"
 Set-PSYConnection -Name "SampleData" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncSampleData"
-Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot
+Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot     # needed so Stored Command finds our custom scripts
 
 # Run required tests
 Write-Host "RUNNING Test Scripts"

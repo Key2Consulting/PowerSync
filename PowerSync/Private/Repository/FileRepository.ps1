@@ -6,7 +6,7 @@ class FileRepository : Repository {
         $this.State.TableList = @{                  # a list of lists, simulating in-memory tables of a database
             ActivityLog = New-Object System.Collections.ArrayList
             ErrorLog = New-Object System.Collections.ArrayList
-            MsgLog = New-Object System.Collections.ArrayList
+            MessageLog = New-Object System.Collections.ArrayList
             VariableLog = New-Object System.Collections.ArrayList
             QueryLog = New-Object System.Collections.ArrayList
             Variable = New-Object System.Collections.ArrayList

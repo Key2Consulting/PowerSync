@@ -71,7 +71,7 @@ class Repository {
             
             # Execute the scriptblock
             if ($PreScriptBlock) {
-                Invoke-Command -ScriptBlock $PreScriptBlock    
+                Invoke-Command -ScriptBlock $PreScriptBlock
             }
 
             $r = Invoke-Command -ScriptBlock $ScriptBlock

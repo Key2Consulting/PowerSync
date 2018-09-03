@@ -7,7 +7,9 @@ function Invoke-ForEach {
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
         [object] $ScriptBlock,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [string] $LogTitle = 'Invoke-ForEach {0}',
+        [string] $Name = 'Invoke-ForEach {0}',
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [object] $ParentActivity,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [int] $Throttle = 5,        # $env:NUMBER_OF_PROCESSORS + 1
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -92,7 +94,11 @@ function Invoke-ForEach {
                     $scriptBlock = [Scriptblock]::Create($workItem.ScriptBlock)     # only the text was serialized, not the object, so reconstruct
                     Invoke-Command -ScriptBlock $scriptBlock -InputObject $workItem.InputObject     # run client code
                 })
-                Write-PSYDebugLog ("$($LogTitle): Job Running {1}" -f $workItem.Index, $workItem.Job.InstanceId)
+                Write-PSYDebugLog ("$($Name): Job Running {1}" -f $workItem.Index, $workItem.Job.InstanceId)
+                # If this is being run as part of an activity, log each invocation as a separate activity
+                if ($ParentActivity) {
+                    $workItem.Activity = Write-ActivityLog -ScriptAst $workItem.ScriptBlock.Ast.ToString() -Name ($Name -f $workItem.Index) -Message ("Activity '$Name' started" -f $workItem.Index) -Status 'Started' -ParentActivity $ParentActivity
+                }
             }
             else {      # Else not parallel
                 # Else, we're running sequentially. The primary reason for this is to make debugging client scripts
@@ -108,7 +114,7 @@ function Invoke-ForEach {
                     $workItem.Errors = $_
                     Write-PSYErrorLog $_
                 }
-                Write-PSYDebugLog ("$($LogTitle): Sequential" -f $workItem.Index)
+                Write-PSYDebugLog ("$($Name): Sequential" -f $workItem.Index)
             }
 
             if ($workItem.ForceDebug -and $Parallel) {
@@ -133,8 +139,12 @@ function Invoke-ForEach {
                     elseif (-not $completedJobs.Contains($_.Job.InstanceId)) {
                         [void] $completedJobs.Add($_.Job.InstanceId)
                         $_.Result = $_.Job.ChildJobs[0].Output
-                        Write-Progress -Activity ("$($LogTitle)" -f $_.Index) -PercentComplete ($completedJobs.Count / $workItems.Count * 100)
-                        Write-PSYDebugLog -Message ("$($LogTitle): Completed (Processed {1} out of {2})" -f $_.Index, $completedJobs.Count, $workItems.Count)
+                        Write-Progress -Activity ("$($Name)" -f $_.Index) -PercentComplete ($completedJobs.Count / $workItems.Count * 100)
+                        Write-PSYDebugLog -Message ("$($Name): Completed (Processed {1} out of {2})" -f $_.Index, $completedJobs.Count, $workItems.Count)
+                        # If this is being run as part of an activity, complete activity log
+                        if ($ParentActivity) {
+                            Write-ActivityLog -Name ($Name -f $_.Index) -Message ("Activity '$Name' completed" -f $_.Index) -Status 'Completed' -Activity $_.Activity
+                        }        
                     }
                 }
             }
