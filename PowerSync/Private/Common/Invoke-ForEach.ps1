@@ -106,7 +106,7 @@ function Invoke-ForEach {
                 catch {
                     $workItem.HadErrors = $true
                     $workItem.Errors = $_
-                    Write-PSYExceptionLog $_
+                    Write-PSYErrorLog $_
                 }
                 Write-PSYDebugLog ("$($LogTitle): Sequential" -f $workItem.Index)
             }
@@ -117,7 +117,7 @@ function Invoke-ForEach {
             }
         }
         catch {
-            Write-PSYExceptionLog $_
+            Write-PSYErrorLog $_
         }
     }
 

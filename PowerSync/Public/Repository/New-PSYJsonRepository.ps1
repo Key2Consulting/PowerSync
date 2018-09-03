@@ -14,6 +14,6 @@ function New-PSYJsonRepository {
         Disconnect-PSYRepository
     }
     catch {
-        Write-PSYExceptionLog $_ "Error creating JSON repository."
+        Write-PSYErrorLog $_ "Error creating JSON repository."
     }
 }

@@ -27,6 +27,6 @@ function Remove-PSYVariable {
         })
     }
     catch {
-        Write-PSYExceptionLog $_ "Error removing variable '$Name'."
+        Write-PSYErrorLog $_ "Error removing variable '$Name'."
     }
 }

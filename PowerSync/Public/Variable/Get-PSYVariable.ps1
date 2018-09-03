@@ -41,6 +41,6 @@ function Get-PSYVariable {
         })
     }
     catch {
-        Write-PSYExceptionLog $_ "Error getting variable $Name."
+        Write-PSYErrorLog $_ "Error getting variable $Name."
     }
 }

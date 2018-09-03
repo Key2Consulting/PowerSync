@@ -20,6 +20,7 @@ function Write-PSYVariableLog {
                 }
                 $o = @{
                     ID = $null                          # let the repository assign the surrogate key
+                    Type = 'Variable'
                     VariableName = $Name
                     VariableValue = $logValue
                     CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
@@ -29,10 +30,10 @@ function Write-PSYVariableLog {
                 }
                 $this.CreateEntity('VariableLog', $o)
             })
-    }
+        }
         Write-Verbose -Message "Variable: $Name = $Value"
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Write-PSYVariableLog."
+        Write-PSYErrorLog $_ "Error in Write-PSYVariableLog."
     }
 }

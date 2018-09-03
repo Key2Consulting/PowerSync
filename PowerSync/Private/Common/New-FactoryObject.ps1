@@ -38,7 +38,7 @@ function New-FactoryObject {
     }
     catch {
         if (-not $NoLogError) {
-            Write-PSYExceptionLog -ErrorRecord $_ -Message "Unable to generate factory object."
+            Write-PSYErrorLog -ErrorRecord $_ -Message "Unable to generate factory object."
         }
     }
 }

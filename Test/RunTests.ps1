@@ -42,6 +42,7 @@ Set-PSYVariable -Name 'PSYStoredCommandPath' -Value $PSScriptRoot
 # Run required tests
 Write-Host "RUNNING Test Scripts"
 .\Test\TestGeneral.ps1
+$x = Get-PSYLog -Search '*test*'
 .\Test\TestConcurrency.ps1
 .\Test\TestCSVToSQL.ps1
 .\Test\TestSQLToSQL.ps1

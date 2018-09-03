@@ -27,6 +27,6 @@ function Remove-PSYConnection {
         })
     }
     catch {
-        Write-PSYExceptionLog $_ "Error removing connection '$Name'."
+        Write-PSYErrorLog $_ "Error removing connection '$Name'."
     }
 }

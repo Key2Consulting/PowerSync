@@ -59,6 +59,6 @@ function Write-ActivityLog {
         }
     }
     catch {
-        Write-PSYExceptionLog $_ "Error logging activity '$Name'." 
+        Write-PSYErrorLog $_ "Error logging activity '$Name'." 
     }
 }

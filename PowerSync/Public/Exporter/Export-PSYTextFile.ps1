@@ -41,6 +41,6 @@ function Export-PSYTextFile {
         }
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Export-PSYTextFile."
+        Write-PSYErrorLog $_ "Error in Export-PSYTextFile."
     }
 }

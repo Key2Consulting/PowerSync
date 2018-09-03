@@ -21,6 +21,6 @@ function Get-PSYConnection {
         })
     }
     catch {
-        Write-PSYExceptionLog $_ "Error getting connection $Name."
+        Write-PSYErrorLog $_ "Error getting connection $Name."
     }
 }

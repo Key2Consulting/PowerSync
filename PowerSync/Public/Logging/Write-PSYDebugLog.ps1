@@ -24,13 +24,14 @@ function Write-PSYDebugLog {
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
                 }
-                $this.CreateEntity('InformationLog', $o)
+                $this.CreateEntity('MsgLog', $o)
             })
         }
-        Write-Debug -Message "Debug: $Category $Message"
+        $logCategory = if ($Category) {"($Category) "} else {""}
+        Write-Debug -Message "Debug: $logCategory$Message"
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Write-PSYDebugLog."
+        Write-PSYErrorLog $_ "Error in Write-PSYDebugLog."
     }
 
 }

@@ -46,6 +46,6 @@ function Invoke-PSYStoredCommand {
             }
             $conn.Dispose()
         }
-        Write-PSYExceptionLog -ErrorRecord $_ -Message 'Error in Invoke-PSYStoredCommand'
+        Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in Invoke-PSYStoredCommand'
     }
 }

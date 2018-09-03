@@ -1,4 +1,4 @@
-function Write-PSYExceptionLog {
+function Write-PSYErrorLog {
     [CmdletBinding()]
     param
     (
@@ -36,6 +36,7 @@ function Write-PSYExceptionLog {
             [void] $repo.CriticalSection({
                 $o = @{
                     ID = $null                          # let the repository assign the surrogate key
+                    Type = 'Error'
                     Message = $Message
                     Exception = $exception
                     StackTrace = $stackTrace
@@ -44,7 +45,7 @@ function Write-PSYExceptionLog {
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
                 }
-                $this.CreateEntity('ExceptionLog', $o)
+                $this.CreateEntity('ErrorLog', $o)
             })            
         }
         # Print to console

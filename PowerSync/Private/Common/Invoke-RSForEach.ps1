@@ -154,7 +154,7 @@ function Invoke-RSForEach {
             }
             catch {
                 $job.Exception = $_
-                Write-PSYExceptionLog -ErrorRecord $_ -Message 'Error in Invoke-ForEach'
+                Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in Invoke-ForEach'
             }
             finally {
                 $job.PowerShell.Dispose()
@@ -193,7 +193,7 @@ function Invoke-RSForEach {
 <#
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Invoke-ForEach."
+        Write-PSYErrorLog $_ "Error in Invoke-ForEach."
     }
 #>
 }

@@ -1,0 +1,1871 @@
+{
+    "ErrorLog":  [
+
+                 ],
+    "Variable":  [
+                     {
+                         "UserType":  "Environment",
+                         "ID":  "77d8cf5e-a2c2-4701-9af9-203b58fcc60f",
+                         "ModifiedDateTime":  "2018-09-02T21:34:07.889Z",
+                         "Value":  3600,
+                         "Name":  "PSYDefaultCommandTimeout",
+                         "CreatedDateTime":  "2018-09-02T21:34:07.880Z",
+                         "ReadDateTime":  "2018-09-02T21:35:19.407Z"
+                     },
+                     {
+                         "ID":  "291b01fb-f9b5-4921-b1bf-f7cb13b15dfc",
+                         "ModifiedDateTime":  "2018-09-02T21:34:08.016Z",
+                         "UserType":  "Environment",
+                         "ReadDateTime":  "2018-09-02T21:34:08.016Z",
+                         "CreatedDateTime":  "2018-09-02T21:34:08.016Z",
+                         "Name":  "PSYDefaultThrottle",
+                         "Value":  5
+                     },
+                     {
+                         "UserType":  "Environment",
+                         "ID":  "9097cad1-2fc8-4e27-9e38-0b6c3faa5b47",
+                         "ModifiedDateTime":  "2018-09-02T21:34:08.171Z",
+                         "Value":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test",
+                         "Name":  "PSYStoredCommandPath",
+                         "CreatedDateTime":  "2018-09-02T21:34:08.035Z",
+                         "ReadDateTime":  "2018-09-02T21:35:18.919Z"
+                     },
+                     {
+                         "ID":  "3d5098b9-e510-450a-ba5f-e92ba890d211",
+                         "ModifiedDateTime":  "2018-09-02T21:34:09.056Z",
+                         "UserType":  "",
+                         "ReadDateTime":  "2018-09-02T21:34:09.057Z",
+                         "CreatedDateTime":  "2018-09-02T21:34:09.056Z",
+                         "Name":  "LockVar",
+                         "Value":  "Catch me if you can"
+                     }
+                 ],
+    "ActivityLog":  [
+                        {
+                            "ID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:34:08.945Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test Variables CRUD Operations",
+                            "Status":  "Completed",
+                            "Test":  [
+                                         {
+                                             "ID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:34:08.945Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Variables CRUD Operations",
+                                             "Status":  "Completed",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:08.332Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:34:08.332Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "c5939b1d-2083-4df9-8018-5b55a5cd8ca9",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:34:09.159Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test Variables Locking (Basic Test)",
+                            "Status":  "Completed",
+                            "Test":  [
+                                         {
+                                             "ID":  "c5939b1d-2083-4df9-8018-5b55a5cd8ca9",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:34:09.159Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Variables Locking (Basic Test)",
+                                             "Status":  "Completed",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:09.000Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:34:09.000Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:34:09.660Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test Connections",
+                            "Status":  "Completed",
+                            "Test":  [
+                                         {
+                                             "ID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:34:09.660Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Connections",
+                                             "Status":  "Completed",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:09.200Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:34:09.200Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:35:10.473Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test Concurrency",
+                            "Status":  "Completed",
+                            "Test":  [
+                                         {
+                                             "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:35:10.473Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Concurrency",
+                                             "Status":  "Completed",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:34:57.479Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test Parallel Race Execution",
+                            "Status":  "Completed",
+                            "ParentID":  {
+                                             "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Concurrency",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          {
+                                                              "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test Concurrency",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                                          {
+                                                              "ID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "EndDateTime":  "2018-09-02T21:34:57.479Z",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test Parallel Race Execution",
+                                                              "Status":  "Completed",
+                                                              "ParentID":  "System.Collections.Hashtable",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:34:50.023Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          }
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                            "Test":  [
+                                         {
+                                             "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Concurrency",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                                         {
+                                             "ID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:34:57.479Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Parallel Race Execution",
+                                             "Status":  "Completed",
+                                             "ParentID":  {
+                                                              "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test Concurrency",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:50.023Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:34:50.023Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:35:03.751Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test ForEach Incorrect Concurrency Execution",
+                            "Status":  "Completed",
+                            "ParentID":  {
+                                             "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Concurrency",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          {
+                                                              "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test Concurrency",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                                          {
+                                                              "ID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "EndDateTime":  "2018-09-02T21:35:03.751Z",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test ForEach Incorrect Concurrency Execution",
+                                                              "Status":  "Completed",
+                                                              "ParentID":  "System.Collections.Hashtable",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:34:57.603Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          }
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                            "Test":  [
+                                         {
+                                             "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Concurrency",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                                         {
+                                             "ID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:35:03.751Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test ForEach Incorrect Concurrency Execution",
+                                             "Status":  "Completed",
+                                             "ParentID":  {
+                                                              "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test Concurrency",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:57.603Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:34:57.603Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:35:10.095Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test ForEach Correct Concurrency Execution",
+                            "Status":  "Completed",
+                            "ParentID":  {
+                                             "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Concurrency",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          {
+                                                              "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test Concurrency",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                                          {
+                                                              "ID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "EndDateTime":  "2018-09-02T21:35:10.095Z",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test ForEach Correct Concurrency Execution",
+                                                              "Status":  "Completed",
+                                                              "ParentID":  "System.Collections.Hashtable",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:35:03.966Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          }
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                            "Test":  [
+                                         {
+                                             "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Concurrency",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                                         {
+                                             "ID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:35:10.095Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test ForEach Correct Concurrency Execution",
+                                             "Status":  "Completed",
+                                             "ParentID":  {
+                                                              "ID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test Concurrency",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:34:49.853Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:03.966Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:35:03.966Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:35:14.028Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test CSV to SQL",
+                            "Status":  "Completed",
+                            "Test":  [
+                                         {
+                                             "ID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:35:14.028Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test CSV to SQL",
+                                             "Status":  "Completed",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:10.638Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:35:10.638Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test SQL to SQL",
+                            "Status":  "Started",
+                            "Test":  [
+
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:35:16.032Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Test Odd Types",
+                            "Status":  "Completed",
+                            "ParentID":  {
+                                             "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test SQL to SQL",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          {
+                                                              "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test SQL to SQL",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                                          {
+                                                              "ID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "EndDateTime":  "2018-09-02T21:35:16.032Z",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test Odd Types",
+                                                              "Status":  "Completed",
+                                                              "ParentID":  "System.Collections.Hashtable",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:35:14.257Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          }
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                            "Test":  [
+                                         {
+                                             "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test SQL to SQL",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                                         {
+                                             "ID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:35:16.032Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test Odd Types",
+                                             "Status":  "Completed",
+                                             "ParentID":  {
+                                                              "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test SQL to SQL",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:14.257Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:35:14.257Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "EndDateTime":  "2018-09-02T21:35:18.118Z",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Large Types",
+                            "Status":  "Completed",
+                            "ParentID":  {
+                                             "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test SQL to SQL",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          {
+                                                              "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test SQL to SQL",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                                          {
+                                                              "ID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "EndDateTime":  "2018-09-02T21:35:18.118Z",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Large Types",
+                                                              "Status":  "Completed",
+                                                              "ParentID":  "System.Collections.Hashtable",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:35:16.147Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          }
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                            "Test":  [
+                                         {
+                                             "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test SQL to SQL",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                                         {
+                                             "ID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "EndDateTime":  "2018-09-02T21:35:18.118Z",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Large Types",
+                                             "Status":  "Completed",
+                                             "ParentID":  {
+                                                              "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test SQL to SQL",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          },
+                                             "Test":  [
+                                                          "System.Collections.Hashtable",
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:16.147Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:35:16.147Z",
+                            "Server":  "DHARDAN-WS"
+                        },
+                        {
+                            "ID":  "6433ac9f-9819-493b-b277-41f05bf7335c",
+                            "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                            "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                            "Name":  "Big Table",
+                            "Status":  "Started",
+                            "ParentID":  {
+                                             "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test SQL to SQL",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          {
+                                                              "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                                              "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                                              "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                                              "Name":  "Test SQL to SQL",
+                                                              "Status":  "Started",
+                                                              "Test":  "System.Collections.Hashtable",
+                                                              "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                                              "Server":  "DHARDAN-WS"
+                                                          }
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                             "Server":  "DHARDAN-WS"
+                                         },
+                            "Test":  [
+                                         {
+                                             "ID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                                             "ScriptAst":  "{        # execute the operation as a critical section to ensure proper concurrency\n                $o = @{\n                    ID = $null                          # let the repository assign the surrogate key\n                    Name = $Name\n                    Server = $env:COMPUTERNAME\n                    ScriptFile = $MyInvocation.PSCommandPath\n                    Status = $Status\n                    ScriptAst = $ScriptBlock.Ast.ToString()\n                    StartDateTime = Get-Date | ConvertTo-PSYNativeType\n                    Test = $PSYSession.ActivityStack\n                }\n                if ($PSYSession.ActivityStack.Count -gt 0) {\n                    $o.ParentID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]\n                }\n                $this.CreateEntity(\u0027ActivityLog\u0027, $o)\n                return $o\n            }",
+                                             "ScriptFile":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\RunTests.ps1",
+                                             "Name":  "Test SQL to SQL",
+                                             "Status":  "Started",
+                                             "Test":  [
+                                                          "System.Collections.Hashtable"
+                                                      ],
+                                             "StartDateTime":  "2018-09-02T21:35:14.141Z",
+                                             "Server":  "DHARDAN-WS"
+                                         }
+                                     ],
+                            "StartDateTime":  "2018-09-02T21:35:18.248Z",
+                            "Server":  "DHARDAN-WS"
+                        }
+                    ],
+    "Connection":  [
+                       {
+                           "ID":  "9273fc3a-9166-4dc4-b87b-c2ad21cae977",
+                           "ModifiedDateTime":  "2018-09-02T21:34:08.074Z",
+                           "Properties":  null,
+                           "ConnectionString":  "Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncTestTarget",
+                           "Name":  "TestDbSqlServer",
+                           "CreatedDateTime":  "2018-09-02T21:34:08.073Z",
+                           "Provider":  3
+                       },
+                       {
+                           "ID":  "4c5db49d-afeb-487b-86ff-25d7fe60abde",
+                           "ModifiedDateTime":  "2018-09-02T21:34:08.094Z",
+                           "Properties":  null,
+                           "ConnectionString":  "Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=PowerSyncTestTarget;Trusted_Connection=yes;",
+                           "Name":  "TestDbOleDb",
+                           "CreatedDateTime":  "2018-09-02T21:34:08.093Z",
+                           "Provider":  1
+                       },
+                       {
+                           "ID":  "83bf9597-664a-4d6d-b30a-3089e8170732",
+                           "ModifiedDateTime":  "2018-09-02T21:34:08.115Z",
+                           "Properties":  null,
+                           "ConnectionString":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles",
+                           "Name":  "SampleFiles",
+                           "CreatedDateTime":  "2018-09-02T21:34:08.114Z",
+                           "Provider":  7
+                       },
+                       {
+                           "ID":  "a4686eab-94be-451d-bf5b-317f644517b8",
+                           "ModifiedDateTime":  "2018-09-02T21:34:08.136Z",
+                           "Properties":  null,
+                           "ConnectionString":  "Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncSampleData",
+                           "Name":  "SampleData",
+                           "CreatedDateTime":  "2018-09-02T21:34:08.136Z",
+                           "Provider":  3
+                       },
+                       {
+                           "ID":  "279ae004-cc34-4d5d-b2ad-d8d8494c4462",
+                           "ModifiedDateTime":  "2018-09-02T21:34:09.282Z",
+                           "Properties":  null,
+                           "ConnectionString":  "a valid connectionstring",
+                           "Name":  "Source",
+                           "CreatedDateTime":  "2018-09-02T21:34:09.282Z",
+                           "Provider":  4
+                       },
+                       {
+                           "ID":  "40808b96-f997-4cf1-b8f0-ce5fe71f894a",
+                           "ModifiedDateTime":  "2018-09-02T21:34:09.395Z",
+                           "CreatedDateTime":  "2018-09-02T21:34:09.334Z",
+                           "Name":  "Target",
+                           "ConnectionString":  "an updated connectionstring",
+                           "Properties":  {
+                                              "Whatever":  "I;Want=ToSet"
+                                          },
+                           "Provider":  1
+                       }
+                   ],
+    "VariableLog":  [
+                        {
+                            "VariableValue":  3600,
+                            "ID":  "b9149561-4a45-45f1-b211-d5fb18a22ef0",
+                            "Type":  "Variable",
+                            "VariableName":  "PSYDefaultCommandTimeout",
+                            "CreatedDateTime":  "2018-09-02T21:34:07.965Z"
+                        },
+                        {
+                            "VariableValue":  5,
+                            "ID":  "02a87e29-1da8-43d6-b05c-c67497ee0e59",
+                            "Type":  "Variable",
+                            "VariableName":  "PSYDefaultThrottle",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.025Z"
+                        },
+                        {
+                            "VariableValue":  "",
+                            "ID":  "d0d259d8-f4ef-42c0-8b7a-564234d1100b",
+                            "Type":  "Variable",
+                            "VariableName":  "PSYStoredCommandPath",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.044Z"
+                        },
+                        {
+                            "VariableValue":  "Provider = SqlServer, ConnectionString = Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncTestTarget, Properties = ",
+                            "ID":  "addd442d-6748-4442-b946-92d5b477c36e",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.TestDbSqlServer",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.059Z"
+                        },
+                        {
+                            "VariableValue":  "Provider = OleDb, ConnectionString = Provider=SQLNCLI11;Server=(LocalDb)\\MSSQLLocalDB;Database=PowerSyncTestTarget;Trusted_Connection=yes;, Properties = ",
+                            "ID":  "706f82cc-9e0c-4c17-a64d-6544f2bfe2ba",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.TestDbOleDb",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.084Z"
+                        },
+                        {
+                            "VariableValue":  "Provider = TextFile, ConnectionString = D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles, Properties = ",
+                            "ID":  "7a6dbf2e-70e8-4029-ade1-7b974e70b197",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.SampleFiles",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.104Z"
+                        },
+                        {
+                            "VariableValue":  "Provider = SqlServer, ConnectionString = Server=(LocalDb)\\MSSQLLocalDB;Integrated Security=true;Database=PowerSyncSampleData, Properties = ",
+                            "ID":  "b66d295c-aec5-41c9-aef5-b6511a5288e8",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.SampleData",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.126Z"
+                        },
+                        {
+                            "VariableValue":  "D:\\Dropbox\\Project\\Key2\\PowerSync\\Test",
+                            "ID":  "d1a37649-d223-42bb-a89b-1eca0cdf64c5",
+                            "Type":  "Variable",
+                            "VariableName":  "PSYStoredCommandPath",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.284Z"
+                        },
+                        {
+                            "VariableValue":  "World",
+                            "ID":  "0ea113b4-d65f-4c68-a8e0-3cc376eb0f0f",
+                            "Type":  "Variable",
+                            "VariableName":  "UpdateVar",
+                            "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.423Z"
+                        },
+                        {
+                            "VariableValue":  "World Again!",
+                            "ID":  "2eb8ee32-8ae9-439e-9cde-2d59cdb7c2fd",
+                            "Type":  "Variable",
+                            "VariableName":  "UpdateVar",
+                            "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.457Z"
+                        },
+                        {
+                            "VariableValue":  123.456,
+                            "ID":  "e4ccb6d6-219f-4a20-9992-701fa7187ce3",
+                            "Type":  "Variable",
+                            "VariableName":  "NumericVar",
+                            "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.489Z"
+                        },
+                        {
+                            "VariableValue":  {
+                                                  "Complex":  "object",
+                                                  "Field1":  456
+                                              },
+                            "ID":  "12573d75-1585-45f4-b574-975ca6160680",
+                            "Type":  "Variable",
+                            "VariableName":  "ComplexVar",
+                            "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.522Z"
+                        },
+                        {
+                            "VariableValue":  {
+
+                                              },
+                            "ID":  "62d9c73a-f6f4-4321-b84f-6829ee8ed521",
+                            "Type":  "Variable",
+                            "VariableName":  "Variable.UpdateVar",
+                            "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.681Z"
+                        },
+                        {
+                            "VariableValue":  {
+
+                                              },
+                            "ID":  "da1edf9f-e991-4d62-be00-1e18fe37712f",
+                            "Type":  "Variable",
+                            "VariableName":  "Variable.NumericVar",
+                            "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.763Z"
+                        },
+                        {
+                            "VariableValue":  {
+
+                                              },
+                            "ID":  "3b1862e5-137b-4717-8cf0-1e752b98e1a2",
+                            "Type":  "Variable",
+                            "VariableName":  "Variable.ComplexVar",
+                            "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                            "CreatedDateTime":  "2018-09-02T21:34:08.867Z"
+                        },
+                        {
+                            "VariableValue":  "Catch me if you can",
+                            "ID":  "670283d2-15f3-470c-b5a6-ca4c4867a4f0",
+                            "Type":  "Variable",
+                            "VariableName":  "LockVar",
+                            "ActivityID":  "c5939b1d-2083-4df9-8018-5b55a5cd8ca9",
+                            "CreatedDateTime":  "2018-09-02T21:34:09.088Z"
+                        },
+                        {
+                            "VariableValue":  "Provider = MySql, ConnectionString = a valid connectionstring, Properties = ",
+                            "ID":  "54318efd-8b0c-40a6-a775-614c75740152",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.Source",
+                            "ActivityID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                            "CreatedDateTime":  "2018-09-02T21:34:09.250Z"
+                        },
+                        {
+                            "VariableValue":  "Provider = OleDb, ConnectionString = a valid connectionstring, Properties = ",
+                            "ID":  "4edff0cb-49db-401d-bd06-99e12d6b9ad6",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.Target",
+                            "ActivityID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                            "CreatedDateTime":  "2018-09-02T21:34:09.308Z"
+                        },
+                        {
+                            "VariableValue":  "Provider = OleDb, ConnectionString = an updated connectionstring, Properties = System.Collections.Hashtable",
+                            "ID":  "1b967a42-fd6c-4859-8082-a53d33af470d",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.Target",
+                            "ActivityID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                            "CreatedDateTime":  "2018-09-02T21:34:09.359Z"
+                        },
+                        {
+                            "VariableValue":  {
+
+                                              },
+                            "ID":  "fcfe409b-1974-4095-a96e-27e225d36ffa",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.Abc",
+                            "ActivityID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                            "CreatedDateTime":  "2018-09-02T21:34:09.521Z"
+                        },
+                        {
+                            "VariableValue":  {
+
+                                              },
+                            "ID":  "4f01d00b-14be-41f0-b91b-f2c9e519090a",
+                            "Type":  "Variable",
+                            "VariableName":  "Connection.Hello",
+                            "ActivityID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                            "CreatedDateTime":  "2018-09-02T21:34:09.596Z"
+                        },
+                        {
+                            "VariableValue":  "Initial value",
+                            "ID":  "575e5641-0bd1-4c72-9fd3-ea1f4de7786e",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                            "CreatedDateTime":  "2018-09-02T21:34:49.984Z"
+                        },
+                        {
+                            "VariableValue":  "Concurrent update 1",
+                            "ID":  "5082bb3b-9aa5-4053-87d9-878121b93673",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                            "CreatedDateTime":  "2018-09-02T21:34:52.312Z"
+                        },
+                        {
+                            "VariableValue":  "Concurrent update 2",
+                            "ID":  "e2a63f22-419c-48da-82eb-1bfdb105db68",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                            "CreatedDateTime":  "2018-09-02T21:34:52.431Z"
+                        },
+                        {
+                            "VariableValue":  "Concurrent update 3",
+                            "ID":  "c00dc05f-e0e9-4e67-9775-16b7c79e95fa",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                            "CreatedDateTime":  "2018-09-02T21:34:52.470Z"
+                        },
+                        {
+                            "VariableValue":  0,
+                            "ID":  "1e83fb62-29c1-4d5b-98bd-19679f2a901c",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                            "CreatedDateTime":  "2018-09-02T21:34:57.568Z"
+                        },
+                        {
+                            "VariableValue":  1,
+                            "ID":  "dda52f7e-faa4-4af8-831c-1df051f9a625",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:34:59.652Z"
+                        },
+                        {
+                            "VariableValue":  1,
+                            "ID":  "f8ec3a45-4349-4d07-ad84-3cddcc18df8e",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:34:59.726Z"
+                        },
+                        {
+                            "VariableValue":  2,
+                            "ID":  "23309171-d42d-4660-8cb4-4678e4cdc47b",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:35:00.494Z"
+                        },
+                        {
+                            "VariableValue":  2,
+                            "ID":  "c3e6fc51-27a3-44d0-ade0-f1cbc8ecf599",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:35:00.595Z"
+                        },
+                        {
+                            "VariableValue":  3,
+                            "ID":  "9c2569e3-ba47-43c1-b345-68a5a21fa92c",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:35:00.655Z"
+                        },
+                        {
+                            "VariableValue":  4,
+                            "ID":  "1568d9ba-28b5-4858-9ff2-949c393f51c4",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:35:01.378Z"
+                        },
+                        {
+                            "VariableValue":  5,
+                            "ID":  "86041e84-ec8b-49b4-95da-2ceb6dbf6a83",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:35:02.169Z"
+                        },
+                        {
+                            "VariableValue":  6,
+                            "ID":  "e3d96eb4-6665-4c50-9048-a3c1eb71738d",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:35:03.190Z"
+                        },
+                        {
+                            "VariableValue":  6,
+                            "ID":  "ca655eb8-e8b6-4167-8068-ecf2335cd417",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:35:03.431Z"
+                        },
+                        {
+                            "VariableValue":  7,
+                            "ID":  "ba8d1fdd-8a16-49b5-a8a7-b7ad758f5367",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                            "CreatedDateTime":  "2018-09-02T21:35:03.561Z"
+                        },
+                        {
+                            "VariableValue":  0,
+                            "ID":  "16b63ef6-e4f1-4bbc-83b0-ae4358bf1d98",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                            "CreatedDateTime":  "2018-09-02T21:35:03.931Z"
+                        },
+                        {
+                            "VariableValue":  1,
+                            "ID":  "1ad0e108-2e4c-4214-a6f7-2f338ca2c4e8",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:05.701Z"
+                        },
+                        {
+                            "VariableValue":  2,
+                            "ID":  "50e763f5-5bbb-499d-a331-58ae5e5450cc",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:06.121Z"
+                        },
+                        {
+                            "VariableValue":  3,
+                            "ID":  "462c3b93-3fce-4324-a144-40d108e9926c",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:06.513Z"
+                        },
+                        {
+                            "VariableValue":  4,
+                            "ID":  "19649a63-140e-4bdd-aef7-f33dafd6ff16",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:06.950Z"
+                        },
+                        {
+                            "VariableValue":  5,
+                            "ID":  "00b5ea57-522d-404d-bfb6-971fc8547e08",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:07.377Z"
+                        },
+                        {
+                            "VariableValue":  6,
+                            "ID":  "421fdfd1-f663-4802-b64f-e5919700068b",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:07.797Z"
+                        },
+                        {
+                            "VariableValue":  7,
+                            "ID":  "bf115e63-de5e-434c-9119-94ec462e7b91",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:08.245Z"
+                        },
+                        {
+                            "VariableValue":  8,
+                            "ID":  "cdd14caa-5b4a-42e9-8f6b-9aedef375d03",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:08.781Z"
+                        },
+                        {
+                            "VariableValue":  9,
+                            "ID":  "b0a2423d-485f-45c6-933d-ef1530f9754f",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:09.375Z"
+                        },
+                        {
+                            "VariableValue":  10,
+                            "ID":  "cf48bfe9-b8ca-4965-bb76-6bb9542d3ba3",
+                            "Type":  "Variable",
+                            "VariableName":  "TestVariable",
+                            "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                            "CreatedDateTime":  "2018-09-02T21:35:09.948Z"
+                        },
+                        {
+                            "VariableValue":  {
+
+                                              },
+                            "ID":  "5c079c18-9905-4d04-ada0-c3293c1b9754",
+                            "Type":  "Variable",
+                            "VariableName":  "Variable.TestVariable",
+                            "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                            "CreatedDateTime":  "2018-09-02T21:35:10.295Z"
+                        }
+                    ],
+    "MsgLog":  [
+                   {
+                       "Message":  "Activity \u0027Test Variables CRUD Operations\u0027 started",
+                       "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                       "ID":  "ee174dd5-1db3-4c04-8eb6-9c635ebb468a",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:08.356Z"
+                   },
+                   {
+                       "Message":  "Test Variables CRUD Operations[0]: Sequential",
+                       "ActivityID":  "b4cc4f47-d926-4cbd-8af2-75514436ddfe",
+                       "ID":  "d3cb3344-5a1a-49c2-9e74-2f18bf2eda96",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:08.909Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Variables CRUD Operations\u0027 completed (0.613 sec)",
+                       "ID":  "874abbfd-d27f-4627-b222-a3c4fda49a38",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:08.982Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Variables Locking (Basic Test)\u0027 started",
+                       "ActivityID":  "c5939b1d-2083-4df9-8018-5b55a5cd8ca9",
+                       "ID":  "11ba934e-b5b8-4d96-adff-bef3b8ea3067",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:09.017Z"
+                   },
+                   {
+                       "Message":  "Variable locked",
+                       "ActivityID":  "c5939b1d-2083-4df9-8018-5b55a5cd8ca9",
+                       "ID":  "d98eae2d-f151-4e54-988b-069927c2ab00",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:09.115Z"
+                   },
+                   {
+                       "Message":  "Test Variables Locking (Basic Test)[0]: Sequential",
+                       "ActivityID":  "c5939b1d-2083-4df9-8018-5b55a5cd8ca9",
+                       "ID":  "6ef9978f-90d1-46ee-946b-7dc35ecbda92",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:09.138Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Variables Locking (Basic Test)\u0027 completed (0.159 sec)",
+                       "ID":  "b0a1452f-6d0d-4ad4-9c9b-bfb1dd2e8d2a",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:09.179Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Connections\u0027 started",
+                       "ActivityID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                       "ID":  "28139568-b1c0-4f41-8004-9b1c0e03af7b",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:09.222Z"
+                   },
+                   {
+                       "Message":  "Test Connections[0]: Sequential",
+                       "ActivityID":  "b059aaf0-0625-4097-9c48-e485593c48cd",
+                       "ID":  "f98307ad-28e2-4749-b75b-8e36986f90a5",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:09.640Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Connections\u0027 completed (0.46 sec)",
+                       "ID":  "4df5d037-5023-40ec-8eed-b7d05bb8667a",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:09.680Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Concurrency\u0027 started",
+                       "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                       "ID":  "0e0fd4e6-d2c4-48b6-a7dc-1ce4ac3073fb",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:49.894Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Parallel Race Execution\u0027 started",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "ba291e80-bf8b-4164-8080-ef6a0ad02cc2",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:50.055Z"
+                   },
+                   {
+                       "Message":  "Test Parallel Race Execution[0]: Job Running 909d69a4-6390-409e-b7b7-d8bce0e75951",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "43de483d-83c8-4ec4-860a-bf72743fc4e2",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:50.541Z"
+                   },
+                   {
+                       "Message":  "Test Parallel Race Execution[1]: Job Running 4d353279-f133-4e65-9631-d7c09144adef",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "de8f3bc1-aba2-4ef5-b47e-151d5dbdcbbe",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:50.775Z"
+                   },
+                   {
+                       "Message":  "Test Parallel Race Execution[2]: Job Running fc82771c-65c1-4b31-9b21-c9e6913b3b1c",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "ed3bc504-ef77-4ca2-a9c7-9541258de53a",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:51.005Z"
+                   },
+                   {
+                       "Message":  "Parallel nested script 1 is executing",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "36eb7d88-626a-4850-9faf-cc833a4434a3",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:51.678Z"
+                   },
+                   {
+                       "Message":  "Parallel nested script 2 is executing",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "d324a716-7a50-4ac8-8dd1-dcc5f20d47c4",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:51.830Z"
+                   },
+                   {
+                       "Message":  "Parallel nested script 3 is executing",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "455e467c-008e-402d-a086-465ba7b5e694",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:52.114Z"
+                   },
+                   {
+                       "Message":  "Test Parallel Race Execution[2]: Completed (Processed 1 out of 3)",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "95cbb68a-38d0-41d3-95e7-733c4de42b67",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:52.602Z"
+                   },
+                   {
+                       "Message":  "Test Parallel Race Execution[1]: Completed (Processed 2 out of 3)",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "7fd59196-9a4c-42e1-aab5-66bb88c21241",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:55.536Z"
+                   },
+                   {
+                       "Message":  "Test Parallel Race Execution[0]: Completed (Processed 3 out of 3)",
+                       "ActivityID":  "eccea1fa-9f14-4672-a8b6-16ff6f888331",
+                       "ID":  "290a5ee3-c478-4913-894a-2996cc3c57d9",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:57.445Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Parallel Race Execution\u0027 completed (7.456 sec)",
+                       "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                       "ID":  "54fd08c4-dbd0-4e10-a6ee-cd779a35d1fb",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:57.505Z"
+                   },
+                   {
+                       "Message":  "ForEach Activity \u0027Test ForEach Incorrect Concurrency Execution\u0027 started",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "bb7108ef-4ffd-4116-a5be-fa5e4736ac0e",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:57.646Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[0]: Job Running e59b696d-f4ae-422d-b59f-f4f8cda841d6",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "dc6e6fb9-b7df-4b78-ae19-10a228a8e78a",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:57.914Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[1]: Job Running 2fce5de1-addb-4ad1-800e-08775cfcab0b",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "c1ff148f-6f81-4ba3-bcf9-af2c61a9c225",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:58.148Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[2]: Job Running c289312b-b01c-4b41-95d1-3327319c2a11",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "7374260c-d275-4c7d-8fdf-e0aee1de029b",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:58.360Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[3]: Job Running eca29c9b-ef56-4551-9fee-2acc11de4f9b",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "db159ea6-fbd4-4838-adcc-2b5cb1c01da7",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:58.627Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[4]: Job Running 718ccf01-f6c9-4f49-9cce-e30180cbde91",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "0695b64f-6e28-4d3e-9108-4bf94ac52072",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:34:58.832Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[5]: Job Running b3880fe7-75af-4c1e-ae9a-70c80dd927a9",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "8a47f02c-2742-43c6-9c5c-104056d70531",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:00.449Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[6]: Job Running bbba4dfa-19b3-4667-baaa-4f5005920fee",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "341420aa-37c4-4b0c-99ad-8eedb9238892",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:00.708Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[7]: Job Running 7a76e58b-68a7-4a39-b6b2-4e4d23a23ae1",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "1f6607f4-af8c-4f52-9474-cebbeada6d46",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:00.927Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[8]: Job Running 6ba59d44-940d-4202-a834-74a442fefd4c",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "01dd0b6d-fdf9-4101-b69d-c75ba2d2e119",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:01.294Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[9]: Job Running ede2fd06-5612-412e-885d-1b475008f840",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "78726619-fea6-4f46-9a79-7aed17723105",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:01.516Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[0]: Completed (Processed 1 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "66c9b091-0b30-4e05-9a52-a3aa824d67fc",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:01.546Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[1]: Completed (Processed 2 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "be682a7d-1dad-4a1b-9dbc-06e261847e67",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:01.573Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[2]: Completed (Processed 3 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "d3a224d6-1e24-4961-a1a1-d72399665739",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:01.803Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[3]: Completed (Processed 4 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "de893c1c-d116-4b67-8803-c04e61f7cb6d",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:01.879Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[4]: Completed (Processed 5 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "354a9c67-2726-4056-a2fe-144056194b43",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:02.264Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[5]: Completed (Processed 6 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "a4fc9a54-e5de-4efa-ac7b-6495811aa6ef",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:02.701Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[6]: Completed (Processed 7 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "225835ce-8daf-4a86-b5fe-10ffa28b882e",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:03.277Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[7]: Completed (Processed 8 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "fbc8f78f-6003-44d3-ae0f-f31407af6541",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:03.519Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[8]: Completed (Processed 9 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "22d3be38-50d3-48c1-a9f5-3f5123e1f5fe",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:03.669Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Incorrect Concurrency Execution[9]: Completed (Processed 10 out of 10)",
+                       "ActivityID":  "9940e663-3887-45d2-8ffa-548b281c62bb",
+                       "ID":  "85ea9b7a-7ea3-42bd-8296-e6135eca990a",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:03.715Z"
+                   },
+                   {
+                       "Message":  "ForEach Activity \u0027Test ForEach Incorrect Concurrency Execution\u0027 completed (6.148 sec)",
+                       "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                       "ID":  "8a8905ae-2bff-4aae-97a3-fdef569584cf",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:03.792Z"
+                   },
+                   {
+                       "Message":  "ForEach Activity \u0027Test ForEach Correct Concurrency Execution\u0027 started",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "de49a6e7-baa2-43da-9816-6bc22b19a79d",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:04.020Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[0]: Job Running cb5c6e57-eb83-4a05-b536-81589686d842",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "2bf42b9d-1424-4db0-bd5a-1c477d99ed19",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:04.333Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[1]: Job Running 6949b5cf-1807-4d2d-a13a-023546d468cb",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "65dc445b-04ec-4641-a0ec-4f8b809c836c",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:04.583Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[2]: Job Running cd58ca46-9f2d-4111-8081-82239afab552",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "38708839-337f-48d6-9a54-f06a4259d097",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:04.828Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[3]: Job Running 22468b38-72de-4d40-9e4f-09a7d47bd1f0",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "9cd5cf60-6bef-47ca-87a2-47ef0e7f2c9e",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:05.119Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[4]: Job Running ab688a41-bf3f-4e6b-932a-488cf01b1c98",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "6cd5d6c3-5dfd-4126-8307-a948ca3a794a",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:05.343Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[5]: Job Running e561e459-7737-46c4-83ae-3b94c9a47da1",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "a7980321-5d28-441f-94ae-a2b9861dd946",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:06.087Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[6]: Job Running c41eb97e-39d4-40bf-8706-14d93da7df5c",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "d714cd38-6e5f-4090-8dfe-948cd51be764",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:06.851Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[7]: Job Running 322a6112-ea06-46c5-96d0-54db150ee5a0",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "03bec3e3-b9e0-4b25-bc5c-dab5f36a534d",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:07.278Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[8]: Job Running a3d242e6-fff1-4fe8-a18c-9ddd7abe7dc6",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "9b83a331-21f2-457b-8907-e75bddef219a",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:07.708Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[9]: Job Running dd935a95-0dea-4579-9ef2-91879ac9c474",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "8d5c300b-115f-47d2-90d0-56445ea8dd6c",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:08.092Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[0]: Completed (Processed 1 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "4551dc89-68d7-4e86-821a-9cf526696679",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:08.209Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[1]: Completed (Processed 2 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "bb5d92d0-0b99-4359-965f-6953f77bd146",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:08.303Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[2]: Completed (Processed 3 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "2fbdcb33-8afd-44be-b49e-f3bd437a9dd7",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:08.622Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[3]: Completed (Processed 4 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "7bb267fb-b4ff-427a-b0b1-743ec3be25c6",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:08.742Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[4]: Completed (Processed 5 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "b9dd4ef1-c4d6-4597-b837-d4a72183c3c3",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:08.861Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[5]: Completed (Processed 6 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "b17e4441-6c0a-44b5-96a0-e1b616f281c5",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:09.194Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[6]: Completed (Processed 7 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "6213fa5e-1a62-4c18-a4fc-ee1078970a4c",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:09.313Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[7]: Completed (Processed 8 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "ac09de4f-0e26-4087-a7d1-e5ab02cc7de2",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:09.479Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[8]: Completed (Processed 9 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "277e14e5-ffe2-43b6-a2fd-db45ff6f6490",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:09.822Z"
+                   },
+                   {
+                       "Message":  "Test ForEach Correct Concurrency Execution[9]: Completed (Processed 10 out of 10)",
+                       "ActivityID":  "2db27535-8829-4c9b-a874-a3324136814c",
+                       "ID":  "c9cf2d35-f528-4621-af76-d670f8b19466",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:10.042Z"
+                   },
+                   {
+                       "Message":  "ForEach Activity \u0027Test ForEach Correct Concurrency Execution\u0027 completed (6.129 sec)",
+                       "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                       "ID":  "73ae9269-19a8-4bd6-a93e-25b908ff78dc",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:10.203Z"
+                   },
+                   {
+                       "Message":  "Test Concurrency[0]: Sequential",
+                       "ActivityID":  "14643adc-0e99-4ed4-88d4-4caea2ecb985",
+                       "ID":  "ea745fce-fae1-4e2d-9836-28e0a5d84743",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:10.420Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Concurrency\u0027 completed (20.62 sec)",
+                       "ID":  "0453ec4d-0e86-488c-84c8-e4ef6ddff452",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:10.555Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test CSV to SQL\u0027 started",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "6432fc61-8257-4724-b53d-8da16b3d6970",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:10.696Z"
+                   },
+                   {
+                       "Message":  "Exported CSV text data from [SampleFiles]:Sample100.csv.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "999e6405-b9aa-44fe-95bb-999744d766cd",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:10.869Z"
+                   },
+                   {
+                       "Message":  "Created table [TestDbSqlServer]:dbo.Sample100.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "5554c257-5957-40eb-b5af-27c71951ee4a",
+                       "Type":  "Verbose",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:11.563Z"
+                   },
+                   {
+                       "Message":  "Imported SqlServer data to [TestDbSqlServer]:dbo.Sample100.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "109f4ef5-b831-4150-9a47-eab7a796b05d",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:11.839Z"
+                   },
+                   {
+                       "Message":  "Exported CSV text data from [SampleFiles]:Sample1000.csv.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "38330387-fdb9-48b7-b965-bd9550fdda0a",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:12.073Z"
+                   },
+                   {
+                       "Message":  "Created table [TestDbSqlServer]:dbo.Sample1000.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "83617388-238d-427d-8261-3cc4fb8c13e6",
+                       "Type":  "Verbose",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:12.584Z"
+                   },
+                   {
+                       "Message":  "Imported SqlServer data to [TestDbSqlServer]:dbo.Sample1000.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "78d0c11c-dcde-46a0-9e24-1f143b01b51b",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:12.780Z"
+                   },
+                   {
+                       "Message":  "Exported CSV text data from [SampleFiles]:Sample10000.csv.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "8b3b4706-f686-4923-96c8-83ad85d15441",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:12.920Z"
+                   },
+                   {
+                       "Message":  "Created table [TestDbSqlServer]:dbo.Sample10000.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "f3986ab5-183a-4e1e-8252-ead5534e9f46",
+                       "Type":  "Verbose",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:13.380Z"
+                   },
+                   {
+                       "Message":  "Imported SqlServer data to [TestDbSqlServer]:dbo.Sample10000.",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "5b7facbb-9d95-461e-b3ad-f28f6aad7579",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:13.884Z"
+                   },
+                   {
+                       "Message":  "Test CSV to SQL[0]: Sequential",
+                       "ActivityID":  "8ccec944-8a40-4472-bc8f-ad996e9c273d",
+                       "ID":  "d95fb3ce-b10c-4d28-ab12-2d2b547bc492",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:13.971Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test CSV to SQL\u0027 completed (3.39 sec)",
+                       "ID":  "cc992c6f-57c4-4387-bd5c-75c177adcebe",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:14.086Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test SQL to SQL\u0027 started",
+                       "ActivityID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                       "ID":  "48bd2051-9ef9-4f02-8a7f-83472bd95b5d",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:14.194Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Odd Types\u0027 started",
+                       "ActivityID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                       "ID":  "239c9a5d-d2ac-4a36-96ce-f0de483b71f1",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:14.318Z"
+                   },
+                   {
+                       "Message":  "Exported SqlServer data from [SampleData]:dbo.OddTypes",
+                       "ActivityID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                       "ID":  "c7fea2d0-d8ad-4b1b-8f4d-ab0bc6e26256",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:14.502Z"
+                   },
+                   {
+                       "Message":  "Created table [TestDbSqlServer]:dbo.OddTypes.",
+                       "ActivityID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                       "ID":  "869cec84-9991-422e-8736-784c1ec65d6e",
+                       "Type":  "Verbose",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:15.187Z"
+                   },
+                   {
+                       "Message":  "Autocreated index for [TestDbSqlServer]:dbo.OddTypes.",
+                       "ActivityID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                       "ID":  "732ff85b-04d9-44aa-ae86-fcd953175638",
+                       "Type":  "Verbose",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:15.840Z"
+                   },
+                   {
+                       "Message":  "Imported SqlServer data to [TestDbSqlServer]:dbo.OddTypes.",
+                       "ActivityID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                       "ID":  "d70751a6-11fb-4f50-8e84-cf73c23fac2a",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:15.906Z"
+                   },
+                   {
+                       "Message":  "Test Odd Types[0]: Sequential",
+                       "ActivityID":  "fe7830cb-e9f4-45a4-9c78-69fb98ae9e71",
+                       "ID":  "24c5ce5a-85fd-45b6-b006-5cec2407f211",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:15.967Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Test Odd Types\u0027 completed (1.775 sec)",
+                       "ActivityID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                       "ID":  "152511d9-002a-46f7-af08-91647c2d5db5",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:16.085Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Large Types\u0027 started",
+                       "ActivityID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                       "ID":  "f1ee2f12-ad78-4f05-aa60-df2094215c61",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:16.209Z"
+                   },
+                   {
+                       "Message":  "Exported SqlServer data from [SampleData]:SELECT TOP 10 object_id, REPLICATE(CAST(\u0027Hello World\u0027 AS VARCHAR(MAX)), 20000) LargeText FROM sys.ob",
+                       "ActivityID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                       "ID":  "22ca5e65-119d-4354-b800-6c9584692378",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:16.409Z"
+                   },
+                   {
+                       "Message":  "Created table [TestDbSqlServer]:dbo.LargeTypes.",
+                       "ActivityID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                       "ID":  "ec684f86-0c3f-4173-ac8c-14f2906303e0",
+                       "Type":  "Verbose",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:17.147Z"
+                   },
+                   {
+                       "Message":  "Autocreated index for [TestDbSqlServer]:dbo.LargeTypes.",
+                       "ActivityID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                       "ID":  "8044c3e3-9efe-448d-a3a9-b73f4cc12ff0",
+                       "Type":  "Verbose",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:17.848Z"
+                   },
+                   {
+                       "Message":  "Imported SqlServer data to [TestDbSqlServer]:dbo.LargeTypes.",
+                       "ActivityID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                       "ID":  "2be972ae-4541-4c2e-85e1-1e121b30cc62",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:17.932Z"
+                   },
+                   {
+                       "Message":  "Large Types[0]: Sequential",
+                       "ActivityID":  "f6dcaac9-4713-4640-9313-069b4961acff",
+                       "ID":  "f18ccce0-7b68-4050-828d-e4c0ea5bc10b",
+                       "Type":  "Debug",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:18.030Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Large Types\u0027 completed (1.971 sec)",
+                       "ActivityID":  "cd43fd24-2ce3-47a9-87af-db04e736b69b",
+                       "ID":  "f0159d32-c58c-47d3-9948-2ac13366e9f2",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:18.189Z"
+                   },
+                   {
+                       "Message":  "Activity \u0027Big Table\u0027 started",
+                       "ActivityID":  "6433ac9f-9819-493b-b277-41f05bf7335c",
+                       "ID":  "46757876-5f59-46e7-8896-f8ec54c1b024",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:18.311Z"
+                   },
+                   {
+                       "Message":  "Exported SqlServer data from [SampleData]:SELECT A.* FROM sys.columns A CROSS APPLY sys.columns B",
+                       "ActivityID":  "6433ac9f-9819-493b-b277-41f05bf7335c",
+                       "ID":  "43f15a37-285a-43c7-b5e2-7a57d6bf94bf",
+                       "Type":  "Information",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:18.554Z"
+                   },
+                   {
+                       "Message":  "Created table [TestDbSqlServer]:dbo.BigTable.",
+                       "ActivityID":  "6433ac9f-9819-493b-b277-41f05bf7335c",
+                       "ID":  "db30a187-b459-4eb6-9070-c77caf74239c",
+                       "Type":  "Verbose",
+                       "Category":  "",
+                       "CreatedDateTime":  "2018-09-02T21:35:19.249Z"
+                   }
+               ],
+    "QueryLog":  [
+
+                 ]
+}

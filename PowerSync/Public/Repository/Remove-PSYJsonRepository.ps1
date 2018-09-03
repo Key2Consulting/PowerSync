@@ -9,6 +9,6 @@ function Remove-PSYJsonRepository {
         Remove-Item $Path -ErrorAction SilentlyContinue
     }
     catch {
-        Write-PSYExceptionLog $_ "Error removing to JSON repository."
+        Write-PSYErrorLog $_ "Error removing to JSON repository."
     }
 }

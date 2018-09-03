@@ -82,6 +82,6 @@ function Import-PSYSqlServer {
         Write-PSYInformationLog -Message "Imported $providerName data to [$Connection]:$Table."
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Import-PSYSqlServer."
+        Write-PSYErrorLog $_ "Error in Import-PSYSqlServer."
     }
 }

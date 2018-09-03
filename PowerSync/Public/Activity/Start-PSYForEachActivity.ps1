@@ -22,6 +22,6 @@ function Start-PSYForEachActivity {
         Write-ActivityLog -ScriptBlock $ScriptBlock[0] -Name $Name -Title "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Start-PSYForEachActivity '$Name'."
+        Write-PSYErrorLog $_ "Error in Start-PSYForEachActivity '$Name'."
     }
 }

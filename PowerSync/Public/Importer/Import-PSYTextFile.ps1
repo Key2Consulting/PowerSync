@@ -15,6 +15,6 @@ function Import-PSYTextFile {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Import-PSYTextFile."
+        Write-PSYErrorLog $_ "Error in Import-PSYTextFile."
     }
 }

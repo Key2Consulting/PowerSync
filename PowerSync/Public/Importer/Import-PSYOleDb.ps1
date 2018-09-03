@@ -15,6 +15,6 @@ function Import-PSYOleDb {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Import-PSYDb."
+        Write-PSYErrorLog $_ "Error in Import-PSYDb."
     }
 }

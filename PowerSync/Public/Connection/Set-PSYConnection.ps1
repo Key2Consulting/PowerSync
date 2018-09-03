@@ -55,6 +55,6 @@ function Set-PSYConnection {
         })
     }
     catch {
-        Write-PSYExceptionLog $_ "Error setting connection '$Name'."
+        Write-PSYErrorLog $_ "Error setting connection '$Name'."
     }
 }

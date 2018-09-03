@@ -43,7 +43,7 @@ function ConvertTo-PSYNativeType {
             }
         }
         catch {
-            Write-PSYExceptionLog $_ "Error in ConvertTo-Type $($InputObject.ToString())."
+            Write-PSYErrorLog $_ "Error in ConvertTo-Type $($InputObject.ToString())."
         }
     }
 

@@ -17,6 +17,6 @@ function Export-PSYOleDb {
         
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Export-PSYDb."
+        Write-PSYErrorLog $_ "Error in Export-PSYDb."
     }
 }

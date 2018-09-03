@@ -11,6 +11,6 @@ function ConvertFrom-PSYNativeType {
         #if ()
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in ConvertFrom-Type $($Object.ToString()) $($Type.ToString())."
+        Write-PSYErrorLog $_ "Error in ConvertFrom-Type $($Object.ToString()) $($Type.ToString())."
     }
 }

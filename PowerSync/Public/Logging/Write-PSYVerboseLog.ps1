@@ -24,12 +24,13 @@ function Write-PSYVerboseLog {
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
                 }
-                $this.CreateEntity('InformationLog', $o)
+                $this.CreateEntity('MsgLog', $o)
             })
         }
-        Write-Verbose -Message "Information Verbose: ($Category) $Message"
+        $logCategory = if ($Category) {"($Category) "} else {""}
+        Write-Verbose -Message "Verbose: $logCategory$Message"
     }
     catch {
-        Write-PSYExceptionLog $_ "Error in Write-PSYVerboseLog."
+        Write-PSYErrorLog $_ "Error in Write-PSYVerboseLog."
     }
 }

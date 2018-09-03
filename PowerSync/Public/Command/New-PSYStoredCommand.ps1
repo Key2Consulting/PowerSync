@@ -103,6 +103,6 @@ function New-PSYStoredCommand {
         return $template
     }
     catch {
-        Write-PSYExceptionLog -ErrorRecord $_ -Message 'Error in New-PSYStoredCommand'
+        Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in New-PSYStoredCommand'
     }
 }

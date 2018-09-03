@@ -37,7 +37,7 @@ try {
     }
 }
 catch {
-    Write-PSYExceptionLog -Message "Failed Single Scalar Values Test"
+    Write-PSYErrorLog -Message "Failed Single Scalar Values Test"
 }
 
 # Atomic complex types. These can be hashtables/dictionaries, but since it's a single state var
@@ -50,7 +50,7 @@ try {
     }
 }
 catch {
-    Write-PSYExceptionLog -Message "Failed Atomic hashtable test"
+    Write-PSYErrorLog -Message "Failed Atomic hashtable test"
 }
 
 # Lists of scalar values
@@ -67,7 +67,7 @@ try {
     }
 }
 catch {
-    Write-PSYExceptionLog -Message "Failed List of Scalar Values"
+    Write-PSYErrorLog -Message "Failed List of Scalar Values"
 }
 
 # List of complex types
@@ -83,7 +83,7 @@ try {
     }
 }
 catch {
-    Write-PSYExceptionLog -Message "Failed List of complex types Test"
+    Write-PSYErrorLog -Message "Failed List of complex types Test"
 }
 
 # TODO: IMPLEMENT REMAINDER
@@ -113,7 +113,7 @@ try {
     $findRecord = Get-PSYVariable -Name "I'm optional, but unique 1"
 }
 catch {
-    Write-PSYExceptionLog -Message "Failed List of User Types Test"
+    Write-PSYErrorLog -Message "Failed List of User Types Test"
 }
 #>
 
