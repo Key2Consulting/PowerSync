@@ -1,10 +1,23 @@
+<#
+.SYNOPSIS
+Write to the message log, and displays in the console.
+
+.DESCRIPTION
+The information log should be to narrate the work being performed at a high level.
+
+.PARAMETER Message
+The primary text describing something useful regarding the log.
+
+.PARAMETER Category
+An optional category to help organize different messages.
+#>
 function Write-PSYInformationLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true)]
         [string] $Message,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "An optional category to help organize different messages.", Mandatory = $false)]
         [string] $Category
     )
 

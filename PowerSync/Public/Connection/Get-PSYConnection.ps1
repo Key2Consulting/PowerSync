@@ -1,3 +1,16 @@
+<#
+.SYNOPSIS
+Gets a PowerSync connection.
+
+.DESCRIPTION
+Retrieves a connection from the currently connected repository. See Set-PSYConnection for more information.
+
+.PARAMETER Name
+The name of the connection.
+
+.EXAMPLE
+Get-PSYConnection -Name 'MySource'
+#>
 function Get-PSYConnection {
     param
     (

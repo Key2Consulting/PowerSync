@@ -1,10 +1,9 @@
 <#
 .SYNOPSIS
-Sets (or creates) a PowerSync connection.
+Sets (or creates) a PowerSync connection in the connected repository.
 
 .DESCRIPTION
-Connections define all of the required information required to establish a connection to a source or target system. All importers/exporters require connections
-to perform their work. The specific properties required depend on the provider of a connection, but most providers support a Connection String.
+Connections define all of the required information required to establish a connection to a source or target system. All importers/exporters require connections to perform their work. The specific properties required depend on the provider of a connection, but most providers support a Connection String.
 
 .PARAMETER Name
 The name of the connection.
@@ -22,12 +21,7 @@ Additional properties used by the provider. These vary from provider to provider
 The credentials to use when establishing the connection. If no credentials are defined, the credentials of the current user are used.
 
 .EXAMPLE
-Invoke-PSYCmd -Connection 'MyConnection' -Name "PublishMyDataSets" -Param @{ProcessingMode = 'Full'; AllowNulls = $true}
-
-.NOTES
- - This function will recursively search for files matching the Name parameter within all folders defined by the PSYCmdPath variable. 
- - The following example sets the path: Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot
- - It's recommended to set the path to your root project folder so that any Stored Command is recursively found.
+Set-PSYConnection -Name 'MySource' -Provider SqlServer -ConnectionString 'Server=MyServer;Integrated Security=true;Database=MyDatabase'
 #>
 function Set-PSYConnection {
     param

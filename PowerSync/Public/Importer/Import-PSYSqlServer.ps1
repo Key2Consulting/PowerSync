@@ -1,10 +1,55 @@
+<#
+.SYNOPSIS
+Imports data into a Sql Server database.
+
+.DESCRIPTION
+Imports data from an exporter into a Sql Server database defined by the supplied connection and table. Importers are intended to be paired with Exporters via the pipe command.
+
+.PARAMETER InputObject
+Piped data from Exporter (containing data reader and export provider information)
+
+.PARAMETER Connection
+Name of the connection to import into.
+
+.PARAMETER Table
+The table to import into.
+
+.PARAMETER Create
+Automatically creates the target table, if it doesn't exist, based on the exported data's schema.
+
+.PARAMETER Overwrite
+Overwrites the target data, oppose to appending it. If Create is set, the entire table is recreated. Use this option if new columns may appear in source data.
+
+.PARAMETER Index
+Automatically creates a clustered or nonclustered columnstore index. Used in conjunction with Create flag.
+
+.PARAMETER Compress
+Adds compression to the target table. Used in conjunction with Create flag.
+
+.PARAMETER Consistent
+Performs the append or overwrite in a transactionally consistent manner by first importing into a new table and then publishing from there within a transaction.
+
+.PARAMETER Timeout
+Timeout before aborting the import operation. If no Timeout is specified, uses value of PSYDefaultCommandTimeout environment variable.
+
+.PARAMETER PolyBase
+Determines whether PolyBase should be used to execute the import. Only applicable against file exporters since PolyBase only works against files. Will cancel the exported data reader, and use the file information identified during the export process to configure PolyBase.
+
+.EXAMPLE
+Export-PSYSqlServer -Connection "TestSource" -Table "MySchema.MyTable" `
+| Import-PSYSqlServer -Connection "TestTarget" -Table "MySchema.MyTable" -Create -Index
+
+.EXAMPLE
+Export-PSYTextFile -Connection "TestSource" -Path "Sample100.csv" -Format CSV -Header `
+| Import-PSYSqlServer -Connection "TestTarget" -Table "dbo.Sample100" -Create -Index -Concurrent
+ #>
 function Import-PSYSqlServer {
     param (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(HelpMessage = "Piped data from Exporter (containing data reader and export provider information)", Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "Name of the connection to import into.", Mandatory = $false)]
         [string] $Connection,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "The table to import into.", Mandatory = $false)]
         [string] $Table,
         [Parameter(HelpMessage = "Automatically creates the target table, if it doesn't exist, based on the exported data's schema.", Mandatory = $false)]
         [switch] $Create,
@@ -90,7 +135,7 @@ function Import-PSYSqlServer {
         if (-not $PolyBase) {
             $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString)
             $blk.DestinationTableName = if ($Consistent) { $loadTableFQN } else { $finalTableFQN }
-            $blk.BulkCopyTimeout = (Get-PSYVariable 'PSYDefaultCommandTimeout')
+            $blk.BulkCopyTimeout = Select-Coalesce @(($Timeout), (Get-PSYVariable 'PSYDefaultCommandTimeout'))
             $blk.BatchSize = (Get-PSYVariable -Name 'PSYDefaultCommandTimeout' -DefaultValue 10000)
             $blk.WriteToServer($reader)
         }

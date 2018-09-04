@@ -36,8 +36,7 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
     Write-PSYInformationLog 'Parallel nested script 3 is executing'
 })
 .NOTES
- - Since remote jobs are used for parallel execution, any enumerated object must support PowerShell serialization. Changes to those objects during parallel execution will not
-affect the instance in the caller's process space. If state needs to be shared, it is recommended to use PowerSync variables.
+ - Since remote jobs are used for parallel execution, any enumerated object must support PowerShell serialization. Changes to those objects during parallel execution will not affect the instance in the caller's process space. If state needs to be shared, it is recommended to use PowerSync variables.
  - Enabling Parallel disables breakpoints in most IDEs, so consider disabling parallel execution when debugging an issue.
 #>
 function Start-PSYForEachActivity {

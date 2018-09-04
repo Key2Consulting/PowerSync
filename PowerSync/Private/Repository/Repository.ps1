@@ -18,12 +18,12 @@ class Repository {
         $this.State.ClassType = $this.GetType().FullName        # needed to support rehydration via New-FactoryObject
     }
 
+    # CRUD operations. Note that deserializers like JSON convert into a PSObject, so we can't use strong typing. Instead, we
+    # use a simple string representing the type.
     [void] CreateEntity([string] $EntityType, [object] $Entity) {
         throw "The repository CreateEntity method should be overridden by derived classes."
     }
-
-    # CRUD operations. Note that deserializers like JSON convert into a PSObject, so we can't use strong typing. Instead, we
-    # use a simple string representing the type.
+    
     [object] ReadEntity([string] $EntityType, [object] $EntityID) {
         throw "The repository ReadEntity method should be overridden by derived classes."
     }

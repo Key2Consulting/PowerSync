@@ -3,11 +3,9 @@
 Compiles a Stored Command.
 
 .DESCRIPTION
-Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. This function compiles
-a Stored Command with the given parameters and returns the script, but does not execute it. See Invoke-PSYCmd for more information.
+Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. This function compiles a Stored Command with the given parameters and returns the script, but does not execute it. See Invoke-PSYCmd for more information.
 
-Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored 
-Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value (i.e. a default).
+Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value (i.e. a default).
 
 .PARAMETER Name
 The name of the Stored Command used to find the SQL file. The extension can be omitted.
@@ -38,7 +36,7 @@ function Resolve-PSYCmd {
         if ($storedCommandPath) {
             [void] $searchPaths.AddRange($storedCommandPath.Split(';'))
         }
-        [void] $searchPaths.Add($PSYSession.Module + '\Resource\*.*')      # always add our current module location as a the final default
+        [void] $searchPaths.Add($PSYSession.Module + '\Asset\*.*')      # always add our current module location as a the final default
         
         # Find the stored command along the path in order they're entered
         $template = ""
