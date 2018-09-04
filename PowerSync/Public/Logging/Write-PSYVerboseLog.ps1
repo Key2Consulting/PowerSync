@@ -1,10 +1,23 @@
+<#
+.SYNOPSIS
+Write to the message log, and displays in the console if -Verbose is set.
+
+.DESCRIPTION
+Similar to the information log, the verbose log should narrate the work being performed, but at a more detailed level. The verbose log provides an extra level of detail the information log does not.
+
+.PARAMETER Message
+The primary text describing something useful regarding the log.
+
+.PARAMETER Category
+An optional category to help organize different messages.
+#>
 function Write-PSYVerboseLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true)]
         [string] $Message,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "An optional category to help organize different messages.", Mandatory = $false)]
         [string] $Category
     )
 

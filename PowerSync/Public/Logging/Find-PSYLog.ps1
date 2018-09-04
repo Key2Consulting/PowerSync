@@ -1,10 +1,39 @@
-function Get-PSYLog {
+<#
+.SYNOPSIS
+Returns a list of logs across all log types matching a given criteria.
+
+.DESCRIPTION
+This function will search all PowerSync logs and return the ones which meet the given criteria. Supports wildcards. Searches key attributes of each log.
+
+.PARAMETER Type
+Restricts search to a specific log type. The available types are:
+ - InformationLog
+ - VerboseLog
+ - DebugLog
+ - ErrorLog
+ - VariableLog
+ - QueryLog
+ - DebugLog
+ 
+ .PARAMETER Search
+The term to search for. Supports wildcards (i.e. *, ?).
+
+.EXAMPLE
+Find-PSYLog -Type 'QueryLog' -Search 'MySchema.MyTable'
+
+.EXAMPLE
+Find-PSYLog -Type 'ErrorLog' -Search 'MySchema.MyTable'
+
+.NOTES
+See https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/string-wildcard-syntax for information on wildcards.
+ #>
+function Find-PSYLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "Restricts search to a specific log type.", Mandatory = $false)]
         [string] $Type,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "The term to search for. Supports wildcards (i.e. *, ?).", Mandatory = $false)]
         [string] $Search
     )
 
@@ -44,6 +73,6 @@ function Get-PSYLog {
         })
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Get-PSYLog."
+        Write-PSYErrorLog $_ "Error in Find-PSYLog."
     }
 }

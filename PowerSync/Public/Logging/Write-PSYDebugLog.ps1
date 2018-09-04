@@ -1,10 +1,23 @@
+<#
+.SYNOPSIS
+Write to the debug log, and displays in the console if -Debug is set.
+
+.DESCRIPTION
+The debug log should be used to log technical operations internal to the system, and useful for debugging purposes.
+
+.PARAMETER Message
+The primary text describing something useful regarding the log.
+
+.PARAMETER Category
+An optional category to help organize different messages.
+ #>
 function Write-PSYDebugLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true)]
         [string] $Message,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "An optional category to help organize different messages.", Mandatory = $false)]
         [string] $Category
     )
 

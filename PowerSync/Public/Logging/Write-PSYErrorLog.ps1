@@ -1,10 +1,23 @@
+<#
+.SYNOPSIS
+Write to the error log, and displays in the console.
+
+.DESCRIPTION
+The error log should be used to log all unhandled exceptions, and handled exceptions when useful.
+
+.PARAMETER ErrorRecord
+The thrown error caught by PowerShell (i.e. the $_ variable).
+
+.PARAMETER Message
+An additional message of information further describing the error or attempted operation.
+ #>
 function Write-PSYErrorLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = 'The thrown error caught by PowerShell (i.e. the $_ variable).', Mandatory = $false)]
         [System.Management.Automation.ErrorRecord] $ErrorRecord,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = 'An additional message of information further describing the error or attempted operation.', Mandatory = $false)]
         [object] $Message
     )
     

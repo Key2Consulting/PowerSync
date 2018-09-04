@@ -2,7 +2,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     
     Set-PSYVariable -Name 'TestVariable' -Value "Initial value"
 
-    Start-PSYActivity -Name 'Test Parallel Race Execution' -Parallel -Throttle 5 -ScriptBlock ({
+    Start-PSYActivity -Name 'Test Parallel Race Execution' -Parallel -ScriptBlock ({
         Write-PSYInformationLog 'Parallel nested script 1 is executing'
         Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 1"
         Start-Sleep -Seconds 5

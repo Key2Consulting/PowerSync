@@ -1,14 +1,33 @@
+<#
+.SYNOPSIS
+Write to the query log, but never displays the query in the console since queries are too verbose to be useful.
+
+.DESCRIPTION
+The query log is used to capture TSQL commands and parameters issued against a database. It is recommended to log prior to query execution since queries can error during execution.
+
+.PARAMETER Name
+The name of the Stored Query.
+
+.PARAMETER Connection
+The name of the connection the query executed against.
+
+.PARAMETER Query
+The TSQL text executed against the database.
+
+.PARAMETER Param
+Any parameters passed into the Stored Command.
+ #>
 function Write-PSYQueryLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The name of the Stored Query.", Mandatory = $true)]
         [string] $Name,
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The name of the connection the query executed against.", Mandatory = $true)]
         [string] $Connection,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "The TSQL text executed against the database.", Mandatory = $false)]
         [string] $Query,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "Any parameters passed into the Stored Command.", Mandatory = $false)]
         [object] $Param
     )
 

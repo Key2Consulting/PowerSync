@@ -5,8 +5,8 @@ Invokes a Stored Command.
 .DESCRIPTION
 Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. 
 
-Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored 
-Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value (i.e. a default).
+Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value (i.e. a default).
+
 If the Stored Command returns a resultset, it is converted into an ArrayList of hashtables and returned to the caller.
 
 .PARAMETER Connection

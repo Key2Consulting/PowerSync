@@ -1,3 +1,29 @@
+<#
+.SYNOPSIS
+Exports data from text file.
+
+.DESCRIPTION
+Exports data from a text file defined by the supplied connection. Exporters are intended to be paired with Importers via the pipe command.
+
+.PARAMETER Connection
+Name of the connection to extract from.
+
+.PARAMETER Path
+Path of the file to export. A TextFile connection can supply the root path, which is then prefixed with this path parameter.
+
+.PARAMETER Format
+The format of the file (CSV, Tab).
+
+.PARAMETER Header
+Whether the first row of the text file contains header information.
+
+.EXAMPLE
+Export-PSYTextFile -Connection "TestSource" -Path "Sample100.csv" -Format CSV -Header `
+| Import-PSYSqlServer -Connection "TestTarget" -Table "dbo.Sample100" -Create -Index -Concurrent
+
+.NOTES
+If the file is a compressed as a ZIP file, it will be decompressed prior to the export operation. All files contained within the ZIP archive are exported as a single stream.
+ #>
 function Export-PSYTextFile {
     param (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]

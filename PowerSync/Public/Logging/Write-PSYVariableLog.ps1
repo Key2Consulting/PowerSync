@@ -1,10 +1,23 @@
-function Write-PSYVariableLog {
+<#
+.SYNOPSIS
+Write to the variable log, and displays in the console if -Debug is set.
+
+.DESCRIPTION
+The variable log is used to capture state changes for all variables managed by PowerSync.
+
+.PARAMETER Name
+The variable name.
+
+.PARAMETER Value
+The new value of the variable.
+ #>
+ function Write-PSYVariableLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The variable name.", Mandatory = $true)]
         [string] $Name,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "The new value of the variable.", Mandatory = $false)]
         [object] $Value
     )
 
@@ -31,7 +44,7 @@ function Write-PSYVariableLog {
                 $this.CreateEntity('VariableLog', $o)
             })
         }
-        Write-Verbose -Message "Variable: $Name = $Value"
+        Write-Debug -Message "Variable: $Name = $Value"
     }
     catch {
         Write-PSYErrorLog $_ "Error in Write-PSYVariableLog."
