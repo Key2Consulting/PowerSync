@@ -71,3 +71,11 @@ CREATE TABLE [dbo].[Manifest](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
+CREATE TABLE [dbo].[Geo](
+	[ID] [int] NULL,
+	[Location] [geography] NULL
+)
+GO
+INSERT INTO [dbo].[Geo](ID, Location) VALUES (1, geography::STGeomFromText('LINESTRING(-122.360 47.656, -122.343 47.656 )', 4326));
+INSERT INTO [dbo].[Geo](ID, Location) VALUES (2, geography::STGeomFromText('LINESTRING(-122.360 47.656, -122.343 47.656 )', 4326));

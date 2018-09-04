@@ -1,0 +1,5 @@
+Import-Module 'PowerSync'                                                       # first import PowerSync so we can configure everything else
+$env = Get-Content -Path '..\Environment.json' | ConvertFrom-Json               # our environment configuration, replaced during deployment to target environment (i.e. Dev, Test, Prod)
+Connect-PSYOleDbRepository -ConnectionString $env.RepositoryConnectionString    # initialize connection to repository, if using json repo probably don't need an Environment.json file
+Import-PSYModule 'GlobalFunctions.ps1'                                          # functions shared by all packages, need to register with PowerSync so it's loaded during parallel operations
+Set-PSYVariable -Name 'PSYCmdPath' -Value (Resolve-Path "$PSScriptRoot\..\")    # set Stored Command path to root, it's recursive so it will find them for all packages
