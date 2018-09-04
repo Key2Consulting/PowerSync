@@ -11,7 +11,7 @@ function Invoke-ForEach {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [object] $ParentActivity,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [int] $Throttle = 5,        # $env:NUMBER_OF_PROCESSORS + 1
+        [int] $Throttle = 3,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [int] $Timeout = 0,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]

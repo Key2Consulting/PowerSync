@@ -1,3 +1,28 @@
+<#
+.SYNOPSIS
+Compiles a Stored Command.
+
+.DESCRIPTION
+Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. This function compiles
+a Stored Command with the given parameters and returns the script, but does not execute it. See Invoke-PSYCmd for more information.
+
+Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored 
+Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value (i.e. a default).
+
+.PARAMETER Name
+The name of the Stored Command used to find the SQL file. The extension can be omitted.
+
+.PARAMETER Param
+Hashtable of SQLCMD Mode parameters to pass into the script. If a hash field is an array list, it is converted into a SQL statement in the INSERT VALUES format i.e. ('A', B), ('C', D).
+
+.EXAMPLE
+Invoke-PSYCmd -Connection 'MyConnection' -Name "PublishMyDataSets" -Param @{ProcessingMode = 'Full'; AllowNulls = $true}
+
+.NOTES
+ - This function will recursively search for files matching the Name parameter within all folders defined by the PSYCmdPath variable. 
+ - The following example sets the path: Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot
+ - It's recommended to set the path to your root project folder so that any Stored Command is recursively found.
+#>
 function Resolve-PSYCmd {
     param (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]

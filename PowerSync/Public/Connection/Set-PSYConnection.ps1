@@ -1,9 +1,40 @@
+<#
+.SYNOPSIS
+Sets (or creates) a PowerSync connection.
+
+.DESCRIPTION
+Connections define all of the required information required to establish a connection to a source or target system. All importers/exporters require connections
+to perform their work. The specific properties required depend on the provider of a connection, but most providers support a Connection String.
+
+.PARAMETER Name
+The name of the connection.
+
+.PARAMETER Provider
+The provider of the connection (e.g. SQLServer, TextFile, Json, MySql). Controls what class is instantiated to establish the connection.
+
+.PARAMETER ConnectionString
+A Connection String used by the given provider.
+
+.PARAMETER Properties
+Additional properties used by the provider. These vary from provider to provider. See online examples for more information.
+
+.PARAMETER Credentials
+The credentials to use when establishing the connection. If no credentials are defined, the credentials of the current user are used.
+
+.EXAMPLE
+Invoke-PSYCmd -Connection 'MyConnection' -Name "PublishMyDataSets" -Param @{ProcessingMode = 'Full'; AllowNulls = $true}
+
+.NOTES
+ - This function will recursively search for files matching the Name parameter within all folders defined by the PSYCmdPath variable. 
+ - The following example sets the path: Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot
+ - It's recommended to set the path to your root project folder so that any Stored Command is recursively found.
+#>
 function Set-PSYConnection {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The name of the connection.", Mandatory = $true)]
         [string] $Name,
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The provider of the connection (e.g. SQLServer, TextFile, Json, MySql).", Mandatory = $true)]
         [PSYDbConnectionProvider] $Provider,
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
         [string] $ConnectionString,

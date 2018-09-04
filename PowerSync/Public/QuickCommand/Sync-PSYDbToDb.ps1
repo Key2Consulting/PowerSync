@@ -18,7 +18,11 @@ function Sync-PSYDbToDb {
         [parameter(HelpMessage = "TODO", Mandatory = $false)]
         [switch] $Index,
         [parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $Overwrite
+        [switch] $Compress,
+        [parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [switch] $Overwrite,
+        [parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [int] $Throttle = 3
     )
 
     try {
@@ -53,23 +57,9 @@ function Sync-PSYDbToDb {
             $sourceProviderName = [Enum]::GetName([PSYDbConnectionProvider], $workItems.SourceProvider)
             $targetProviderName = [Enum]::GetName([PSYDbConnectionProvider], $workItems.TargetProvider)
 
-            # We must always update data in a transactionally consistent manner. We can't just truncate and re-insert 
-            # since that leaves the table in an inconsistent state. In all cases, we load into a Load table first then 
-            # swap it with the current table later (AutoCreate with Overwrite) or Truncate & Re-Insert (no AutoCreate).
-            $fqTableName = $Input.TargetTable
-            # Prefix the table name with Load_
-            $schemaName = (Select-TablePart -Table $Input.TargetTable -Part 'Schema' -Clean)
-            $tableName = (Select-TablePart -Table $Input.TargetTable -Part 'Table' -Clean)
-            $loadTableName = "Load_$tableName"
-            $fqTableName = "[$schemaName].[$loadTableName]"
-            
-            # If autocreating, the table exists, and the overwrite flag isn't set, it's an error condition.
-            if (-not $Input.Overwrite -and $Input.AutoCreate) {
-                $exists = Invoke-PSYCmd -Connection 'Target' -Name "$targetProviderName.CheckIfTableExists" -Param @{Table = $Input.TargetTable}
-                if ($exists.TableExists) {
-                    throw "Target table '$($Input.TargetTable)' already exists, and Overwrite not set. Aborting sync operation."
-                }
-            }
+            # TODO: REFACTOR WITH NEW IMPORT
+            # Always use Create, Consistent
+            # Overwrite only useful when we support incrementals.
 
             # Export Data (depending on source provider)
             if ($Input.SourceProvider -eq [PSYDbConnectionProvider]::SqlServer) {

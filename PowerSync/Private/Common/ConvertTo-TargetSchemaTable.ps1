@@ -1,3 +1,24 @@
+<#
+.SYNOPSIS
+.DESCRIPTION
+
+.PARAMETER Manifest
+
+.EXAMPLE
+PowerSync `
+    -Source @{
+        ConnectionString = "PSProvider=TextDataProvider;FilePath=$C:\Temp\TestCSVToSQL\Sample100.csv;Header=False;Format=CSV;Quoted=True";
+    } `
+    -Target @{
+        ConnectionString = "PSProvider=MSSQLDataProvider;Server=$sqlServerInstance;Integrated Security=true;Database=$testDBPath;";
+        Schema = "dbo"
+        Table = "TestCSVToSQL100"
+        AutoCreate = $true;
+        Overwrite = $true;
+    }
+.NOTES
+ #>
+
 # Conversions based on the following
 # https://www.postgresql.org/docs/9.5/static/datatype.html
 # https://docs.oracle.com/cd/B14117_01/server.101/b10758/sqlqr06.htm

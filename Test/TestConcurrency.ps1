@@ -2,7 +2,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     
     Set-PSYVariable -Name 'TestVariable' -Value "Initial value"
 
-    Start-PSYActivity -Name 'Test Parallel Race Execution' -Parallel -ScriptBlock ({
+    Start-PSYActivity -Name 'Test Parallel Race Execution' -Parallel -Throttle 5 -ScriptBlock ({
         Write-PSYInformationLog 'Parallel nested script 1 is executing'
         Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 1"
         Start-Sleep -Seconds 5
@@ -21,7 +21,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     })
 
     Set-PSYVariable 'TestVariable' 0
-    Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -InputObject (1..10) -Parallel -ScriptBlock {
+    Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -InputObject (1..10) -Parallel -Throttle 5 -ScriptBlock {
         Set-PSYVariable 'TestVariable' ((Get-PSYVariable 'TestVariable') + 1)     # will not work as expected
     }
 
@@ -30,7 +30,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     }
 
     Set-PSYVariable 'TestVariable' 0
-    Start-PSYForEachActivity -Name 'Test ForEach Correct Concurrency Execution' -InputObject (1..10) -Parallel -ScriptBlock {
+    Start-PSYForEachActivity -Name 'Test ForEach Correct Concurrency Execution' -InputObject (1..10) -Parallel -Throttle 5 -ScriptBlock {
         Lock-PSYVariable 'TestVariable' {
             Set-PSYVariable 'TestVariable' ((Get-PSYVariable 'TestVariable') + 1)     # will work as expected since we're locking the variable prior to updating it
         }

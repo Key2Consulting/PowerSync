@@ -12,7 +12,6 @@
     # Use the following command to get the list of functions to export:  
     # Get-ChildItem '.\PowerSync\Public\' -File -Recurse | ForEach-Object { Write-Host "'$($_.BaseName)'," }
     FunctionsToExport = 
-        'Get-PSYActivity',
         'Start-PSYActivity',
         'Start-PSYForEachActivity',
         'Invoke-PSYCmd',

@@ -1,3 +1,7 @@
+<#
+.DESCRIPTION
+Global enumeration types defined by PowerSync.
+#>
 Enum PSYDbConnectionProvider {
     None = 0
     OleDb = 1
