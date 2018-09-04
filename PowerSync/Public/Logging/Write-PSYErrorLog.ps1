@@ -12,7 +12,7 @@ function Write-PSYErrorLog {
     # be caused by connectivity issues with the repository. If so, we disconnect before proceeding.
     $repo = $null
     try {
-        $repo = New-FactoryObject -Repository -NoLockError       # instantiate repository
+        $repo = New-FactoryObject -Repository -NoLogError       # instantiate repository
     }
     catch {
         Disconnect-PSYRepository

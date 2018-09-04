@@ -42,11 +42,10 @@ Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot     # needed so Stored C
 # Run required tests
 Write-Host "RUNNING Test Scripts"
 .\Test\TestGeneral.ps1
-$x = Get-PSYLog -Search '*test*'
 .\Test\TestConcurrency.ps1
 .\Test\TestCSVToSQL.ps1
 .\Test\TestSQLToSQL.ps1
-#.\Test\TestQuickSync.ps1
+#.\Test\TestQuickCommand.ps1
 Write-Host "FINISHED Runing Test Scripts"
 
 <#

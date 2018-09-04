@@ -21,9 +21,9 @@ function Invoke-PSYCmd {
         $cmd = $conn.CreateCommand()
         $cmd.CommandText = $cmdText
         $cmd.CommandTimeout = (Get-PSYVariable -Name 'PSYDefaultCommandTimeout')
-        $r = $cmd.ExecuteReader()
         Write-PSYQueryLog -Name $Name -Connection $Connection -Query $cmdText -Param $Param
-
+        $r = $cmd.ExecuteReader()
+        
         # Copy results into arraylist of hashtables
         $results = New-Object System.Collections.ArrayList
         if ($r.HasRows) {

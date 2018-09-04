@@ -45,15 +45,19 @@
         'Get-PSYVariable',
         'Lock-PSYVariable',
         'Remove-PSYVariable',
-        'Set-PSYVariable'
+        'Set-PSYVariable',
+        'Sync-PSYDbToDb',
+        'Sync-PSYDbToText',
+        'Sync-PSYTextToDb'
 
     NestedModules = @(
         "$PSScriptRoot\Public\Common\Enums.ps1",
         "$PSScriptRoot\Private\Common\Select-Coalesce.ps1",
-        "$PSScriptRoot\Private\Common\Get-EnumName.ps1",        
+        "$PSScriptRoot\Private\Common\Get-EnumName.ps1",
         "$PSScriptRoot\Private\Common\ConvertTo-TargetSchemaTable.ps1",
         "$PSScriptRoot\Public\Common\ConvertTo-PSYNativeType.ps1",
         "$PSScriptRoot\Public\Common\ConvertFrom-PSYNativeType.ps1",
+        "$PSScriptRoot\Private\Common\Select-PSYTablePart.ps1",
         "$PSScriptRoot\Private\Common\Copy-Object.ps1",
         "$PSScriptRoot\Private\Repository\Repository.ps1",
         "$PSScriptRoot\Private\Common\New-FactoryObject.ps1",
@@ -91,6 +95,10 @@
         "$PSScriptRoot\Public\Exporter\Export-PSYTextFile.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYOleDb.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYSqlServer.ps1",
-        "$PSScriptRoot\Public\Importer\Import-PSYTextFile.ps1"
+        "$PSScriptRoot\Public\Importer\Import-PSYTextFile.ps1",
+        "$PSScriptRoot\Public\QuickCommand\Sync-PSYDbToDb.ps1",
+        "$PSScriptRoot\Public\QuickCommand\Sync-PSYDbToText.ps1",
+        "$PSScriptRoot\Public\QuickCommand\Sync-PSYTextToDb.ps1"
+        
     )
 }
