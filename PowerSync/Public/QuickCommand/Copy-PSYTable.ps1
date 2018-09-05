@@ -56,6 +56,9 @@ Whether the first row of the text file contains header information.
 .PARAMETER TTable
 The table to copy to.
 
+.PARAMETER Compress
+Compresses the table or the text file.
+
 .PARAMETER Timeout
 Timeout before aborting the copy operation. If no Timeout is specified, uses value of PSYDefaultCommandTimeout environment variable.
 
@@ -93,6 +96,8 @@ function Copy-PSYTable {
         [switch] $THeader,
         [parameter(HelpMessage = "The table to copy to.", Mandatory = $false)]
         [string] $TTable,
+        [parameter(HelpMessage = "Compresses the table or the text file.", Mandatory = $false)]
+        [switch] $TCompress,
         [Parameter(HelpMessage = "Timeout before aborting the copy operation.", Mandatory = $false)]
         [int] $Timeout
     )
@@ -134,14 +139,14 @@ function Copy-PSYTable {
             # Import Data (depending on target provider)
             if ($TProvider -eq [PSYDbConnectionProvider]::SqlServer) {
                 $autoCreate = -not (Invoke-PSYCmd -Connection 'Target' -Name "$tProviderName.CheckIfTableExists" -Param @{Table = $TTable}).TableExists
-                $exportedData | Import-PSYSqlServer -Connection 'Target' -Table $TTable -Timeout $Timeout -Create:$autoCreate -Index:$autoIndex -Overwrite
+                $exportedData | Import-PSYSqlServer -Connection 'Target' -Table $TTable -Timeout $Timeout -Create:$autoCreate -Index:$autoIndex -Overwrite -Compress:$TCompress
             }
             elseif ($TProvider -eq [PSYDbConnectionProvider]::OleDb) {
                 $autoCreate = -not (Invoke-PSYCmd -Connection 'Target' -Name "$tProviderName.CheckIfTableExists" -Param @{Table = $TTable}).TableExists
-                $exportedData | Import-PSYOleDbServer -Connection 'Target' -Table $TTable -Timeout $Timeout -Create:$autoCreate -Index:$autoIndex -Overwrite
+                $exportedData | Import-PSYOleDbServer -Connection 'Target' -Table $TTable -Timeout $Timeout -Create:$autoCreate -Index:$autoIndex -Overwrite -Compress:$TCompress
             }
             elseif ($TProvider -eq [PSYDbConnectionProvider]::TextFile) {
-                $exportedData | Import-PSYTextFile -Connection 'Target' -Path '' -Header:$THeader -Format $TFormat     # assumes connection includes the file path
+                $exportedData | Import-PSYTextFile -Connection 'Target' -Path '' -Header:$THeader -Format $TFormat -Compress:$TCompress     # assumes connection includes the file path
             }
         }
     }

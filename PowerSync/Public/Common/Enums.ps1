@@ -20,6 +20,6 @@ Enum PSYDbConnectionProvider {
 
 Enum PSYTextFileFormat {
     None = 0
-    CSV = 1
-    Tab = 2
+    CSV = 1     # comma separated values
+    TSV = 2     # tab separated values
 }

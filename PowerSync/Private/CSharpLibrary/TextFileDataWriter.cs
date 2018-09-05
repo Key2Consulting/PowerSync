@@ -10,6 +10,7 @@ namespace PowerSync
     public class TextFileDataWriter
     {
         string _filePath;
+        int _format;
         string _delimeter;
         string _quote;
         string _quoteEscape;
@@ -17,71 +18,83 @@ namespace PowerSync
         bool _isClosed = true;
         System.Collections.ArrayList _columnName;
         System.Collections.ArrayList _readBuffer;
-        IDataReader _reader;
-        StreamWriter _writer;
 
-        public TextFileDataWriter(IDataReader reader, string filePath, bool header, string delimeter)
+        public TextFileDataWriter(string filePath, int format, bool header)
         {
-            this._reader = reader;
             this._filePath = filePath;
+            this._format = format;
             this._header = header;
-            this._delimeter = delimeter;
-            this._quote = "\"";
-            this._quoteEscape = "\"\"";
-
-            // Open the target file, overwriting if exists
-            this._writer = new StreamWriter(filePath);
+            
+            // Set parsing information based on format
+            if (format == 1)        // CSV
+            {
+                this._delimeter = ",";
+                this._quote = "\"";
+                this._quoteEscape = "\"\"";
+            }
+            else if (format == 2)   // TSV
+            {
+                this._delimeter = "\t";
+            }
         }
 
-        public void Write()
+        public void Write(IDataReader reader)
         {
-            // If writing the header
-            if (this._header)
+            StreamWriter writer = null;
+            try
             {
-                // For each column
-                for (int i = 0; i < this._reader.FieldCount; i++)
-                {
-                    // If not the first column, write the delimeter
-                    if (i > 0)
-                    {
-                        this._writer.Write(this._delimeter);
-                    }                    
-                    this._writer.Write(this._reader.GetName(i));
-                }
-                // Next line
-                this._writer.Write("\r\n");
-            }
+                // Open the target file, overwriting if exists
+                writer = new StreamWriter(this._filePath);
 
-            // For each data row
-            while (this._reader.Read())
+                // If writing the header
+                if (this._header)
+                {
+                    // For each column
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        // If not the first column, write the delimeter
+                        if (i > 0)
+                        {
+                            writer.Write(this._delimeter);
+                        }                    
+                        writer.Write(reader.GetName(i));
+                    }
+                    // Next line
+                    writer.Write("\r\n");
+                }
+
+                // For each data row
+                while (reader.Read())
+                {
+                    // For each data column
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        // If not the first column, write the delimeter
+                        if (i > 0)
+                        {
+                            writer.Write(this._delimeter);
+                        }
+
+                        // If the column requires quotes
+                        if (reader.GetFieldType(i) == typeof(string) && this._quote != null)
+                        {
+                            var val = this._quote + reader.GetValue(i).ToString().Replace(this._quote, this._quoteEscape) + this._quote;
+                            writer.Write(val);
+                        }
+                        else
+                        {
+                            writer.Write(reader.GetValue(i));
+                        }
+                    }
+                    // Next line
+                    writer.Write("\r\n");
+                }
+            }
+            finally 
             {
-                // For each data column
-                for (int i = 0; i < this._reader.FieldCount; i++)
-                {
-                    // If not the first column, write the delimeter
-                    if (i > 0)
-                    {
-                        this._writer.Write(this._delimeter);
-                    }
-
-                    // If the column requires quotes
-                    // this._writer.Write(this._reader.GetFieldType(i).Name);
-                    if (this._reader.GetFieldType(i) == typeof(string))
-                    {
-                        var val = this._quote + this._reader.GetValue(i).ToString().Replace(this._quote, this._quoteEscape) + this._quote;
-                        this._writer.Write(val);
-                    }
-                    else
-                    {
-                        this._writer.Write(this._reader.GetValue(i));
-                    }
-                }
-                // Next line
-                this._writer.Write("\r\n");
+                // Clean up
+                writer.Dispose();
             }
-
-            // Clean up
-            this._writer.Dispose();
         }
     }
 }

@@ -54,19 +54,7 @@ function Export-PSYTextFile {
             $filePath = $connDef.ConnectionString
         }
 
-        # Initialize parsing
-        [string] $regexParseExpression = ""
-        [string] $colDelim = ""
-        if ($Format -eq "CSV") {
-            $regexParseExpression = '(?:^|,)(?=[^"]|(")?)"?((?(1)[^"]*|[^,"]*))"?(?=,|$)'      # from https://stackoverflow.com/questions/18144431/regex-to-split-a-csv
-            $colDelim = ','
-        }
-        else {      # assume tab
-            $regexParseExpression = '(?:^|\t)(?=[^"]|(")?)"?((?(1)[^"]*|[^\t"]*))"?(?=\t|$)'
-            $colDelim = '`t'
-        }
-
-        $reader = New-Object PowerSync.TextFileDataReader($filePath, $Header, $regexParseExpression, $colDelim)
+        $reader = New-Object PowerSync.TextFileDataReader($filePath, $Format, $Header)
         Write-PSYInformationLog -Message "Exported $Format text data from $filePath."
 
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer

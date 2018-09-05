@@ -35,7 +35,7 @@ function Import-PSYTextFile {
         [Parameter(HelpMessage = "Path of the file to import. A TextFile connection can supply the root path, which is then prefixed with this path parameter.", Mandatory = $false)]
         [string] $Path,
         [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $true)]
-        [string] $Format,
+        [PSYTextFileFormat] $Format,
         [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
         [switch] $Header,
         [Parameter(HelpMessage = "Adds compression to the target file via zip format.", Mandatory = $false)]
@@ -59,23 +59,22 @@ function Import-PSYTextFile {
         }
 
         # Prepare file for use
-        Remove-Item -Path $filePath -Force -ErrorAction SilentlyContinue
+        if ((Test-Path $filePath -PathType Leaf)) {
+            Remove-Item -Path $filePath -Force
+        }
         $filePath = (New-Item $filePath).FullName
 
-        # Initialize parsing
-        [string] $colDelim = ""
-        if ($Format -eq "CSV") {
-            $colDelim = ','
-        }
-        else {      # assume tab
-            $colDelim = '`t'
-        }
-
         # Write the file
-        $writer = New-Object PowerSync.TextFileDataWriter($InputObject.DataReader, $filePath, $Header, $colDelim)
-        $writer.Write()
-        Write-PSYInformationLog -Message "Imported $Format text data into $filePath."
+        $writer = New-Object PowerSync.TextFileDataWriter($filePath, $Format, $Header)
+        $writer.Write($InputObject.DataReader)
 
+        # If compression is enabled, compress the file.
+        if ($Compress) {
+            $archivePath = [System.IO.Path]::ChangeExtension($filePath, "zip")
+            Compress-Archive -Path $filePath -CompressionLevel Optimal -DestinationPath $archivePath
+            Remove-Item -Path $filePath -Force
+        }
+        Write-PSYInformationLog -Message "Imported $Format text data into $filePath."
     }
     catch {
         Write-PSYErrorLog $_ "Error in Import-PSYTextFile."
