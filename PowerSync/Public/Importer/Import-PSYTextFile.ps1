@@ -27,14 +27,16 @@ Export-PSYTextFile -Connection "TestSource" -Path "Sample100.csv" -Format CSV -H
 function Import-PSYTextFile {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "Name of the connection to import into.", Mandatory = $true)]
         [string] $Connection,
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "Path of the file to import. A TextFile connection can supply the root path, which is then prefixed with this path parameter.", Mandatory = $true)]
         [string] $Path,
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $true)]
         [string] $Format,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $Header
+        [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
+        [switch] $Header,
+        [Parameter(HelpMessage = "Adds compression to the target file via zip format.", Mandatory = $false)]
+        [switch] $Compress
     )
 
     try {
