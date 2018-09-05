@@ -2,7 +2,7 @@
 # Test Configuration
 ######################################################
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\"
-$jsonRepo = "$($rootPath)Repository.json"
+$jsonRepo = "$($rootPath)TempRepository.json"
 $testDBServer = "(LocalDb)\MSSQLLocalDB"
 $testDBPath = "$($rootPath)PowerSyncTestDB.MDF"
 

@@ -25,13 +25,13 @@ namespace PowerSync
         {
             this._filePath = filePath;
             this._format = format;
-            this._header = header;            
+            this._header = header;
             
             // Set parsing information based on format
             if (format == 1)        // CSV
             {
                 // REGEX from https://stackoverflow.com/questions/18144431/regex-to-split-a-csv
-                this._regexParseExpression = @"(?:^|,)(?=[^""]|("")?)""?((?(1)[^""]*|[^,""]*))""?(?=,|$)";      // (?:^|,)(?=[^"]|(")?)"?((?(1)[^"]*|[^,"]*))"?(?=,|$)
+                this._regexParseExpression = @"(?:,""|^"")(""""|[\w\W]*?)(?="",|""$)|(?:,(?!"")|^(?!""))([^,]*?)(?=$|,)|(\r\n|\n)";      // (?:,"|^")(""|[\w\W]*?)(?=",|"$)|(?:,(?!")|^(?!"))([^,]*?)(?=$|,)|(\r\n|\n)
                 this._delimeter = ",";
                 this._quote = "\"";
                 this._quoteEscape = "\"\"";
@@ -63,13 +63,9 @@ namespace PowerSync
                 // Foreach of the extract columns from the first row
                 for (var i = 0; i < matches.Count; i++)
                 {
-                    this._columnName.Add(matches[i].Value.ToString());
+                    var val = matches[i].Groups[2].Value;
+                    this._columnName.Add(val.ToString());
                     this._readBuffer.Add(null);
-                    // If this column has the delimeter as the first character, remove it (TODO: THE REGEX EXPRESSION SHOULD ELIMINATE THIS FOR US)
-                    if (matches[i].Value[0].ToString() == this._delimeter)
-                    {
-                        this._columnName[i] = this._columnName[i].ToString().Substring(this._delimeter.Length, this._columnName[i].ToString().Length - this._delimeter.Length);
-                    }
                     // If we don't have a header, use the column number as the name
                     if (!this._header) 
                     {
@@ -336,13 +332,15 @@ namespace PowerSync
                 // Foreach of the extract columns
                 for (var i = 0; i < matches.Count; i++)
                 {
-                    this._readBuffer[i] = matches[i].Value;
-                    
-                    // If this column has the delimeter as the first character, remove it (TODO: THE REGEX EXPRESSION SHOULD ELIMINATE THIS FOR US)
-                    if (matches[i].Value[0].ToString() == this._delimeter)
+                    // Most times the clean value is found in group 2, but when quoted, it's found in group 1.
+                    var val = matches[i].Groups[2].Value;
+                    if (val.Length == 0)
                     {
-                        //this._readBuffer[i] = this._readBuffer[i].ToString().Substring(this._delimeter.Length, this._readBuffer[i].ToString().Length - this._delimeter.Length);
+                        val = matches[i].Groups[1].Value;
                     }
+                    // Our regex doesn't unescape the double quotes, so do that manually.
+                    val = val.Replace(this._quoteEscape, this._quote);
+                    this._readBuffer[i] = val;
                 }
             }
             else

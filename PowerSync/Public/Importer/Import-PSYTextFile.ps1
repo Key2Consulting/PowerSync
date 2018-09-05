@@ -71,6 +71,9 @@ function Import-PSYTextFile {
         # If compression is enabled, compress the file.
         if ($Compress) {
             $archivePath = [System.IO.Path]::ChangeExtension($filePath, "zip")
+            if ((Test-Path $archivePath -PathType Leaf)) {
+                Remove-Item -Path $archivePath -Force
+            }    
             Compress-Archive -Path $filePath -CompressionLevel Optimal -DestinationPath $archivePath
             Remove-Item -Path $filePath -Force
         }

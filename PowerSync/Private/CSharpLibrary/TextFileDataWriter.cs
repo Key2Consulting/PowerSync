@@ -15,9 +15,6 @@ namespace PowerSync
         string _quote;
         string _quoteEscape;
         bool _header;
-        bool _isClosed = true;
-        System.Collections.ArrayList _columnName;
-        System.Collections.ArrayList _readBuffer;
 
         public TextFileDataWriter(string filePath, int format, bool header)
         {

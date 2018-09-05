@@ -105,9 +105,9 @@ function Copy-PSYTable {
     try {
         # If we're not already connected, use a local JSON repository
         if (-not $PSYSession.Initialized) {
-            Remove-PSYJsonRepository -Path 'TempRepository.json'            # remove if already exists
-            New-PSYJsonRepository -Path 'TempRepository.json'
-            Connect-PSYJsonRepository -Path 'TempRepository.json'
+            Remove-PSYJsonRepository -Path 'TempQuickRepository.json'            # remove if already exists
+            New-PSYJsonRepository -Path 'TempQuickRepository.json'
+            Connect-PSYJsonRepository -Path 'TempQuickRepository.json'
         }
 
         # Register source and target connections
