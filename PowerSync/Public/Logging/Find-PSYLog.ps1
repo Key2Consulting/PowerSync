@@ -29,8 +29,7 @@ See https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/string-wi
  #>
 function Find-PSYLog {
     [CmdletBinding()]
-    param
-    (
+    param (
         [Parameter(HelpMessage = "Restricts search to a specific log type.", Mandatory = $false)]
         [string] $Type,
         [Parameter(HelpMessage = "The term to search for. Supports wildcards (i.e. *, ?).", Mandatory = $false)]

@@ -14,6 +14,12 @@ The provider of the connection (e.g. SQLServer, TextFile, Json, MySql). Controls
 .PARAMETER ConnectionString
 A Connection String used by the given provider.
 
+.PARAMETER Server
+If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.
+
+.PARAMETER Database
+If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.
+
 .PARAMETER Properties
 Additional properties used by the provider. These vary from provider to provider. See online examples for more information.
 
@@ -24,14 +30,17 @@ The credentials to use when establishing the connection. If no credentials are d
 Set-PSYConnection -Name 'MySource' -Provider SqlServer -ConnectionString 'Server=MyServer;Integrated Security=true;Database=MyDatabase'
 #>
 function Set-PSYConnection {
-    param
-    (
+    param (
         [Parameter(HelpMessage = "The name of the connection.", Mandatory = $true)]
         [string] $Name,
         [Parameter(HelpMessage = "The provider of the connection (e.g. SQLServer, TextFile, Json, MySql).", Mandatory = $true)]
         [PSYDbConnectionProvider] $Provider,
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "A Connection String used by the given provider.", Mandatory = $false)]
         [string] $ConnectionString,
+        [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
+        [string] $Server,
+        [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
+        [string] $Database,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [hashtable] $Properties,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -43,6 +52,16 @@ function Set-PSYConnection {
         
         # Log
         Write-PSYVariableLog "Connection.$Name" "Provider = $Provider, ConnectionString = $ConnectionString, Properties = $Properties"
+
+        # If ConnectionString is omitted, attempt to create a default connection string. Can only perform this for databases which support trusted connections.
+        if (-not $ConnectionString) {
+            if ($Provider -eq [PSYDbConnectionProvider]::SqlServer) {
+                $ConnectionString = "Server=$Server;Integrated Security=true;Database=$Database"
+            }
+            else {
+                throw "Unable to infer ConnectionString."
+            }
+        }
 
         # Set the in the repository.  If it doesn't exist, it will be created.
         [void] $repo.CriticalSection({

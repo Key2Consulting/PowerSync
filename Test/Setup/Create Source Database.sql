@@ -1,3 +1,7 @@
+CREATE DATABASE [PowerSyncTestSource]
+GO
+USE [PowerSyncTestSource]
+GO
 CREATE TABLE [dbo].[OddTypes](
 	[ID] [int] NULL,
 	[Geography] [geography] NULL,

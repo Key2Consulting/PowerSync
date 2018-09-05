@@ -19,8 +19,7 @@ Any parameters passed into the Stored Command.
  #>
 function Write-PSYQueryLog {
     [CmdletBinding()]
-    param
-    (
+    param (
         [Parameter(HelpMessage = "The name of the Stored Query.", Mandatory = $true)]
         [string] $Name,
         [Parameter(HelpMessage = "The name of the connection the query executed against.", Mandatory = $true)]
@@ -46,7 +45,7 @@ function Write-PSYQueryLog {
                     Param = ConvertTo-Json -InputObject $Param -Depth 3 -Compress
                     CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
                 }
-                if ($o.Param.Length -gt 2000) {
+                if ($o.Param -and $o.Param.Length -gt 2000) {
                     $o.Param = $o.Param.Substring(0, 2000);
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {

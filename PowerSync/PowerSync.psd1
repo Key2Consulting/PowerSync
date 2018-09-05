@@ -45,9 +45,7 @@
         'Lock-PSYVariable',
         'Remove-PSYVariable',
         'Set-PSYVariable',
-        'Sync-PSYDbToDb',
-        'Sync-PSYDbToText',
-        'Sync-PSYTextToDb'
+        'Copy-PSYTable'
 
     NestedModules = @(
         "$PSScriptRoot\Public\Common\Enums.ps1",
@@ -95,9 +93,7 @@
         "$PSScriptRoot\Public\Importer\Import-PSYOleDb.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYSqlServer.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYTextFile.ps1",
-        "$PSScriptRoot\Public\QuickCommand\Sync-PSYDbToDb.ps1",
-        "$PSScriptRoot\Public\QuickCommand\Sync-PSYDbToText.ps1",
-        "$PSScriptRoot\Public\QuickCommand\Sync-PSYTextToDb.ps1"
+        "$PSScriptRoot\Public\QuickCommand\Copy-PSYTable.ps1"
         
     )
 }

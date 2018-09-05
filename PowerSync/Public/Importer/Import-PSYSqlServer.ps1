@@ -191,4 +191,7 @@ function Import-PSYSqlServer {
     catch {
         Write-PSYErrorLog $_ "Error in Import-PSYSqlServer."
     }
+    finally {
+        $InputObject.DataReader.Dispose()
+    }
 }

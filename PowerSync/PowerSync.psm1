@@ -35,6 +35,10 @@ Add-Type -IgnoreWarnings `
     -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
     -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TextFileDataReader.cs"))
 
+Add-Type -IgnoreWarnings `
+    -ReferencedAssemblies ('System.IO', 'System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
+    -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TextFileDataWriter.cs"))
+
 # Import Local Module Dependencies
 #Import-Module "$PSScriptRoot\Private\Library\Newtonsoft.Json"
 

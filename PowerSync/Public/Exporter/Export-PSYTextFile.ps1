@@ -5,6 +5,8 @@ Exports data from text file.
 .DESCRIPTION
 Exports data from a text file defined by the supplied connection. Exporters are intended to be paired with Importers via the pipe command.
 
+The full path to the file is a combination of the base ConnectionString and the Path. Either of those could be omitted, as long as the other supplies the full path.
+
 .PARAMETER Connection
 Name of the connection to extract from.
 
@@ -26,9 +28,9 @@ If the file is a compressed as a ZIP file, it will be decompressed prior to the 
  #>
 function Export-PSYTextFile {
     param (
-        [Parameter(HelpMessage = "Name of the connection to extract from.", Mandatory = $true)]
+        [Parameter(HelpMessage = "Name of the connection to extract from.", Mandatory = $false)]
         [string] $Connection,
-        [Parameter(HelpMessage = "Path of the file to export. A TextFile connection can supply the root path, which is then prefixed with this path parameter.", Mandatory = $true)]
+        [Parameter(HelpMessage = "Path of the file to export. A TextFile connection can supply the root path, which is then prefixed with this path parameter.", Mandatory = $false)]
         [string] $Path,
         [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $true)]
         [PSYTextFileFormat] $Format,
@@ -38,8 +40,19 @@ function Export-PSYTextFile {
 
     try {
         # Initialize source connection
-        $c = Get-PSYConnection -Name $Connection
-        $filePath = $c.ConnectionString.Trim('\') + '\' + $Path.TrimStart('\')
+        $connDef = Get-PSYConnection -Name $Connection
+        
+        # Construct the full path to the file, which for files is a combination of the base ConnectionString and the Path. Either
+        # of those could be omitted.
+        if ($connDef.ConnectionString -and $Path) {
+            $filePath = $connDef.ConnectionString.Trim('\') + '\' + $Path.TrimStart('\')
+        }
+        elseif ($Path) {
+            $filePath = $Path
+        }
+        elseif ($connDef.ConnectionString) {
+            $filePath = $connDef.ConnectionString
+        }
 
         # Initialize parsing
         [string] $regexParseExpression = ""
@@ -54,7 +67,7 @@ function Export-PSYTextFile {
         }
 
         $reader = New-Object PowerSync.TextFileDataReader($filePath, $Header, $regexParseExpression, $colDelim)
-        Write-PSYInformationLog -Message "Exported $Format text data from [$Connection]:$Path."
+        Write-PSYInformationLog -Message "Exported $Format text data from $filePath."
 
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer
         # of some basic contextual information, which can be used to make decisions on how best to import.
