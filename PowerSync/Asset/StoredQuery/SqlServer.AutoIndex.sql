@@ -44,8 +44,37 @@ BEGIN
 	EXEC sp_executesql @SQL
 END
 ELSE
--- Otherwise, leave as heap
+-- Otherwise, attempt to create a standard index on the first column (assuming it's a surrogate key).
 BEGIN
-	PRINT 'Automatic index not possible due to incompatible data types.';
-	THROW 51000, 'Automatic index not possible due to incompatible data types.', 20;
+	-- Get the first column where it's a compatible type.
+	DECLARE @FirstColumn VARCHAR(128) = NULL
+	SELECT @FirstColumn = [Name]
+	FROM sys.columns
+	WHERE
+		object_id = OBJECT_ID('[$(Schema)].[$(Table)]')
+		AND column_id = 1
+		AND NOT
+		(
+			(TYPE_NAME(user_type_id) = 'VARCHAR' AND max_length = -1)
+			OR (TYPE_NAME(user_type_id) = 'NVARCHAR' AND max_length = -1)
+			OR (TYPE_NAME(user_type_id) = 'VARBINARY' AND max_length = -1)
+			OR (TYPE_NAME(user_type_id) = 'GEOGRAPHY')
+			OR (TYPE_NAME(user_type_id) = 'GEOMETRY')
+			OR (TYPE_NAME(user_type_id) = 'XML')
+			OR (TYPE_NAME(user_type_id) = 'IMAGE')
+			OR (TYPE_NAME(user_type_id) = 'HIERARCHYID')
+			OR (TYPE_NAME(user_type_id) = 'TIMESTAMP')
+		)
+	
+	-- If it's compatible, create it. Otherwise, it's an error condition.
+	IF @FirstColumn IS NOT NULL
+	BEGIN
+		SET @SQL = 'CREATE CLUSTERED INDEX [CIX_$(Schema)_$(IndexSuffix)] ON [$(Schema)].[$(Table)] ([' + @FirstColumn + '] ASC) WITH (DROP_EXISTING = OFF)'
+		EXEC sp_executesql @SQL
+	END
+	ELSE
+	BEGIN
+		PRINT 'Automatic index not possible due to incompatible data types.'; 
+		THROW 51000, 'Automatic index not possible due to incompatible data types.', 20;
+	END
 END

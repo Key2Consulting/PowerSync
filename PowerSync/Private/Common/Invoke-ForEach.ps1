@@ -1,7 +1,6 @@
 function Invoke-ForEach {
     [CmdletBinding()]
-    param
-    (
+    param (
         [parameter(HelpMessage = "TODO", Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]

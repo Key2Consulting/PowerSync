@@ -31,8 +31,7 @@ Exporters return a hashtable of two distinct variables:
  - Provider: The provider used for the export to inform downstream importers of where the data originated.
  #>
 function Export-PSYSqlServer {
-    param
-    (
+    param (
         [Parameter(HelpMessage = "Name of the connection to extract from.", Mandatory = $true)]
         [string] $Connection,
         [Parameter(HelpMessage = "Query which extracts data from the database.", Mandatory = $false)]

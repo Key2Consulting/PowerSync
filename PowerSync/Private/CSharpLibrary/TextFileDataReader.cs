@@ -9,21 +9,42 @@ namespace PowerSync
     public class TextFileDataReader : System.Data.IDataReader
     {
         string _filePath;
+        int _format;
         string _regexParseExpression;
         string _delimeter;
+        string[] _splitDelimeter;
+        string _quote;
+        string _quoteEscape;
         bool _header;
         bool _isClosed = true;
         System.Collections.ArrayList _columnName;
         System.Collections.ArrayList _readBuffer;
         System.IO.StreamReader _reader;
 
-        public TextFileDataReader(string filePath, bool header, string regexParseExpression, string delimeter)
+        public TextFileDataReader(string filePath, int format, bool header)
         {
             this._filePath = filePath;
+            this._format = format;
             this._header = header;
-            this._regexParseExpression = regexParseExpression;
-            this._delimeter = delimeter;
             
+            // Set parsing information based on format
+            if (format == 1)        // CSV
+            {
+                // REGEX from https://stackoverflow.com/questions/18144431/regex-to-split-a-csv
+                this._regexParseExpression = @"(?:,""|^"")(""""|[\w\W]*?)(?="",|""$)|(?:,(?!"")|^(?!""))([^,]*?)(?=$|,)|(\r\n|\n)";      // (?:,"|^")(""|[\w\W]*?)(?=",|"$)|(?:,(?!")|^(?!"))([^,]*?)(?=$|,)|(\r\n|\n)
+                this._delimeter = ",";
+                this._quote = "\"";
+                this._quoteEscape = "\"\"";
+            }
+            else if (format == 2)   // TSV
+            {
+                // we don't use regex for TSV since it's simpler (and faster)       (?:^|\t)(?=[^"]|(")?)"?((?(1)[^"]*|[^\t"]*))"?(?=\t|$)
+                this._delimeter = "\t";
+                this._splitDelimeter = new string[] { this._delimeter };
+                this._quote = "";
+                this._quoteEscape = "";
+            }
+
             // Open target file, and extract schema information. Note that we only support
             // text data types since the text files don't come with data type information.
             this._reader = new System.IO.StreamReader(this._filePath);
@@ -31,24 +52,45 @@ namespace PowerSync
             // Read the first line to extract column information. Even if no header is set, we
             // still need to know how many columns there are.
             var line = this._reader.ReadLine();
-            var matches = Regex.Matches(line, this._regexParseExpression, RegexOptions.IgnoreCase | RegexOptions.Multiline);
-            this._columnName = new System.Collections.ArrayList(matches.Count);
-            this._readBuffer = new System.Collections.ArrayList(matches.Count);           // preallocate once and only once for performance            
 
-            // Foreach of the extract columns from the first row
-            for (var i = 0; i < matches.Count; i++)
+            // If we're using regular expression to parse text file
+            if (this._regexParseExpression != null)
             {
-                this._columnName.Add(matches[i].Value.ToString());
-                this._readBuffer.Add(null);
-                // If this column has the delimeter as the first character, remove it (TODO: THE REGEX EXPRESSION SHOULD ELIMINATE THIS FOR US)
-                if (matches[i].Value[0].ToString() == this._delimeter)
+                var matches = Regex.Matches(line, this._regexParseExpression, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                this._columnName = new System.Collections.ArrayList(matches.Count);
+                this._readBuffer = new System.Collections.ArrayList(matches.Count);           // preallocate once and only once for performance
+
+                // Foreach of the extract columns from the first row
+                for (var i = 0; i < matches.Count; i++)
                 {
-                    this._columnName[i] = this._columnName[i].ToString().Substring(this._delimeter.Length, this._columnName[i].ToString().Length - this._delimeter.Length);
+                    var val = matches[i].Groups[2].Value;
+                    this._columnName.Add(val.ToString());
+                    this._readBuffer.Add(null);
+                    // If we don't have a header, use the column number as the name
+                    if (!this._header) 
+                    {
+                        this._columnName[i] = i.ToString();
+                    }
                 }
-                // If we don't have a header, use the column number as the name
-                if (!this._header) 
+            }
+            else 
+            {
+                // Otherwise, use simple delimeter parsing (i.e. Split)
+                var columns = line.Split(this._splitDelimeter, StringSplitOptions.None);
+                this._columnName = new System.Collections.ArrayList(columns.Length);
+                this._readBuffer = new System.Collections.ArrayList(columns.Length);           // preallocate once and only once for performance
+
+                // Foreach of the extract columns from the first row
+                for (var i = 0; i < columns.Length; i++)
                 {
-                    this._columnName[i] = i.ToString();
+                    this._columnName.Add(columns[i]);
+                    this._readBuffer.Add(null);
+                    
+                    // If we don't have a header, use the column number as the name
+                    if (!this._header) 
+                    {
+                        this._columnName[i] = i.ToString();
+                    }
                 }
             }
 
@@ -249,12 +291,12 @@ namespace PowerSync
 
         public string GetString(int i)
         {
-            return this._readBuffer[i].ToString();
+            return (string)this._readBuffer[i];
         }
 
         public object GetValue(int i)
         {
-            return this._readBuffer[i].ToString();
+            return this._readBuffer[i];
         }
 
         public int GetValues(object[] values)
@@ -281,18 +323,35 @@ namespace PowerSync
                 return false;
             }
             
-            // Use REGEX to parse out the CSV fields. Will handle quotes.
-            var matches = Regex.Matches(line, this._regexParseExpression, RegexOptions.IgnoreCase | RegexOptions.Multiline);
-            
-            // Foreach of the extract columns
-            for (var i = 0; i < matches.Count; i++)
+            // If we're using REGEX to parse text file.
+            if (this._regexParseExpression != null)
             {
-                this._readBuffer[i] = matches[i].Value;
+                // Use REGEX to parse out the CSV fields. Will handle quotes.
+                var matches = Regex.Matches(line, this._regexParseExpression, RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 
-                // If this column has the delimeter as the first character, remove it (TODO: THE REGEX EXPRESSION SHOULD ELIMINATE THIS FOR US)
-                if (matches[i].Value[0].ToString() == this._delimeter)
+                // Foreach of the extract columns
+                for (var i = 0; i < matches.Count; i++)
                 {
-                    this._readBuffer[i] = this._readBuffer[i].ToString().Substring(this._delimeter.Length, this._readBuffer[i].ToString().Length - this._delimeter.Length);
+                    // Most times the clean value is found in group 2, but when quoted, it's found in group 1.
+                    var val = matches[i].Groups[2].Value;
+                    if (val.Length == 0)
+                    {
+                        val = matches[i].Groups[1].Value;
+                    }
+                    // Our regex doesn't unescape the double quotes, so do that manually.
+                    val = val.Replace(this._quoteEscape, this._quote);
+                    this._readBuffer[i] = val;
+                }
+            }
+            else
+            {
+                // Otherwise, use simple delimeter parsing (i.e. Split)
+                var columns = line.Split(this._splitDelimeter, StringSplitOptions.None);
+                
+                // Foreach of the extract columns
+                for (var i = 0; i < columns.Length; i++)
+                {
+                    this._readBuffer[i] = columns[i];
                 }
             }
 

@@ -13,8 +13,7 @@ An optional category to help organize different messages.
  #>
 function Write-PSYDebugLog {
     [CmdletBinding()]
-    param
-    (
+    param (
         [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true)]
         [string] $Message,
         [Parameter(HelpMessage = "An optional category to help organize different messages.", Mandatory = $false)]

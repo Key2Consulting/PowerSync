@@ -136,7 +136,7 @@ function Import-PSYSqlServer {
             $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString)
             $blk.DestinationTableName = if ($Consistent) { $loadTableFQN } else { $finalTableFQN }
             $blk.BulkCopyTimeout = Select-Coalesce @(($Timeout), (Get-PSYVariable 'PSYDefaultCommandTimeout'))
-            $blk.BatchSize = (Get-PSYVariable -Name 'PSYDefaultCommandTimeout' -DefaultValue 10000)
+            $blk.BatchSize = (Get-PSYVariable -Name 'PSYDefaultBatchSize' -DefaultValue 50000)
             $blk.WriteToServer($reader)
         }
         else {
@@ -190,5 +190,8 @@ function Import-PSYSqlServer {
     }
     catch {
         Write-PSYErrorLog $_ "Error in Import-PSYSqlServer."
+    }
+    finally {
+        $InputObject.DataReader.Dispose()
     }
 }

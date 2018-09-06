@@ -8,7 +8,7 @@ namespace PowerSync
         {
             Console.WriteLine("CSharp Tests Started");
             
-            var reader = new TextFileDataReader("D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles\\Sample100.csv", true, true, "(?:^|,)(?=[^\"]|(\")?)\"?((?(1)[^\"]*|[^,\"]*))\"?(?=,|$)", ",");
+            var reader = new TextFileDataReader("D:\\Dropbox\\Project\\Key2\\PowerSync\\Test\\SampleFiles\\Sample100.csv", 1, true);
             Console.Write(reader.GetDataTypeName(2).ToString());
             Console.Write(reader.GetFieldType(0).ToString());
             Console.Write(reader.FieldCount);

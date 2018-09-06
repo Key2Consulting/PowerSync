@@ -2,7 +2,7 @@
 # Test Configuration
 ######################################################
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\"
-$jsonRepo = "$($rootPath)Repository.json"
+$jsonRepo = "$($rootPath)TempRepository.json"
 $testDBServer = "(LocalDb)\MSSQLLocalDB"
 $testDBPath = "$($rootPath)PowerSyncTestDB.MDF"
 
@@ -14,12 +14,11 @@ $ErrorActionPreference = "Stop"
 # Reset the source and target databases
 Write-Host "Resetting test databases..."
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testDBServer -Variable "DatabaseName=PowerSyncTestTarget"
-Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testDBServer -Variable "DatabaseName=PowerSyncSampleData"
+Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testDBServer -Variable "DatabaseName=PowerSyncTestSource"
 #Remove-Item -Path "$testDBPath" -Force -ErrorAction SilentlyContinue
 #Remove-Item -Path "$testDBPath" -Force -ErrorAction SilentlyContinue
-Invoke-Sqlcmd -Query "CREATE DATABASE [PowerSyncTestTarget]" -ServerInstance $testDBServer
-Invoke-Sqlcmd -Query "CREATE DATABASE [PowerSyncSampleData]" -ServerInstance $testDBServer
-Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Sample Data.sql" -ServerInstance $testDBServer -Database "PowerSyncSampleData"
+Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Source Database.sql" -ServerInstance $testDBServer
+Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Target Database.sql" -ServerInstance $testDBServer
 
 ######################################################
 # Run Tests
@@ -33,15 +32,15 @@ Remove-PSYJsonRepository $jsonRepo
 New-PSYJsonRepository $jsonRepo
 Connect-PSYJsonRepository $jsonRepo
 
-Set-PSYConnection -Name "TestDbSqlServer" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestTarget"
+Set-PSYConnection -Name "TestSqlServerTarget" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestTarget"
 Set-PSYConnection -Name "TestDbOleDb" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=$testDBServer;Database=PowerSyncTestTarget;Trusted_Connection=yes;"
 Set-PSYConnection -Name "SampleFiles" -Provider TextFile -ConnectionString "$($rootPath)Test\SampleFiles"
-Set-PSYConnection -Name "SampleData" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncSampleData"
+Set-PSYConnection -Name "TestSqlServerSource" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestSource"
 Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot     # needed so Stored Command finds our custom scripts
 
 # Run required tests
 Write-Host "RUNNING Test Scripts"
-#.\Test\TestQuickCommand.ps1
+.\Test\TestQuickCommand.ps1
 .\Test\TestGeneral.ps1
 .\Test\TestConcurrency.ps1
 .\Test\TestCSVToSQL.ps1
