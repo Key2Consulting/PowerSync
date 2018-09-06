@@ -133,11 +133,14 @@ function Import-PSYSqlServer {
 
         # If we're not using PolyBase, use SqlBulkCopy to import the data, the fastest option aside from BCP and PolyBase.
         if (-not $PolyBase) {
-            $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString)
+            $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString, [Data.SqlClient.SqlBulkCopyOptions]::TableLock)        # [Data.SqlClient.SqlBulkCopyOptions]::TableLock -bor [Data.SqlClient.SqlBulkCopyOptions]::UseInternalTransaction 
             $blk.DestinationTableName = if ($Consistent) { $loadTableFQN } else { $finalTableFQN }
             $blk.BulkCopyTimeout = Select-Coalesce @(($Timeout), (Get-PSYVariable 'PSYDefaultCommandTimeout'))
             $blk.BatchSize = (Get-PSYVariable -Name 'PSYDefaultBatchSize' -DefaultValue 50000)
             $blk.WriteToServer($reader)
+            #$task = $blk.WriteToServerAsync($reader)       # can spin up multiple instances to increase throughput
+            #$await = $task.GetAwaiter()
+            #$r = $await.GetResult()
         }
         else {
             # TODO: HOW WILL THIS WORK? POLYBASE REALLY HANDLES THE EXPORT AND IMPORT SIDES OF THE DATA MOVEMENT. IF OUR FILE EXPORTER IS ALREADY
