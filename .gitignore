@@ -1,1 +1,5 @@
 Temp*.*
+*CSharpLibrary.dll
+*CSharpLibrary.pdb
+Test/CSharpLibrary/bin/Debug/netcoreapp2.0/CSharpLibrary.dll
+Test/CSharpLibrary/bin/Debug/netcoreapp2.0/CSharpLibrary.pdb
