@@ -291,12 +291,12 @@ namespace PowerSync
 
         public string GetString(int i)
         {
-            return this._readBuffer[i].ToString();
+            return (string)this._readBuffer[i];
         }
 
         public object GetValue(int i)
         {
-            return this._readBuffer[i].ToString();
+            return this._readBuffer[i];
         }
 
         public int GetValues(object[] values)
