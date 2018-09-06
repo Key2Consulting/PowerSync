@@ -1,5 +1,3 @@
 Temp*.*
-*CSharpLibrary.dll
-*CSharpLibrary.pdb
 Test/CSharpLibrary/bin/*
 Test/CSharpLibrary/obj/*
