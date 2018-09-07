@@ -66,14 +66,14 @@ function Import-PSYTextFile {
 
         # Write the file
         $writer = New-Object PowerSync.TextFileDataWriter($filePath, $Format, $Header)
-        $writer.Write($InputObject.DataReader)
+        $writer.Write($InputObject.DataReaders[0])
 
         # If compression is enabled, compress the file.
         if ($Compress) {
             $archivePath = [System.IO.Path]::ChangeExtension($filePath, "zip")
             if ((Test-Path $archivePath -PathType Leaf)) {
                 Remove-Item -Path $archivePath -Force
-            }    
+            }
             Compress-Archive -Path $filePath -CompressionLevel Optimal -DestinationPath $archivePath
             Remove-Item -Path $filePath -Force
         }
@@ -83,6 +83,13 @@ function Import-PSYTextFile {
         Write-PSYErrorLog $_ "Error in Import-PSYTextFile."
     }
     finally {
-        $InputObject.DataReader.Dispose()
+        # Dispose of all data readers now that import is complete.
+        foreach ($reader in $InputObject.DataReaders) {
+            $reader.Dispose()
+        }
+        # If the exporter requires cleanup, invoke their logic now.
+        if ($InputObject.ContainsKey('OnCompleteScriptBlock')) {
+            Invoke-Command -ScriptBlock $InputObject.OnCompleteScriptBlock -InputObject $InputObject.OnCompleteInputObject
+        }
     }
 }

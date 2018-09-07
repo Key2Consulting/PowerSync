@@ -71,8 +71,8 @@ function Import-PSYSqlServer {
         # Initialize target connection
         $conn = Get-PSYConnection -Name $Connection
         $providerName = [Enum]::GetName([PSYDbConnectionProvider], $conn.Provider)
-        $targetSchemaTable = @(ConvertTo-TargetSchemaTable -SourceProvider $InputObject.Provider -TargetProvider $conn.Provider -SchemaTable $InputObject.DataReader.GetSchemaTable())
-        $reader = $InputObject.DataReader
+        $targetSchemaTable = @(ConvertTo-TargetSchemaTable -SourceProvider $InputObject.Provider -TargetProvider $conn.Provider -SchemaTable $InputObject.DataReaders[0].GetSchemaTable())
+        $readers = $InputObject.DataReaders
 
         # Information about the final table we're importing into.
         $finalTableCreated = $false
@@ -126,25 +126,53 @@ function Import-PSYSqlServer {
         # NOTE: Type conversion is required by data types that require special conversion rules (e.g. Geography) during transport or persistence.
         foreach ($col in $targetSchemaTable) {
             if ($col['TransportDataTypeName'] -isnot [System.DBNull]) {
-                $reader = New-Object PowerSync.TypeConversionDataReader($InputObject.DataReader, $targetSchemaTable[0].Table)
+                $typedReaders = New-Object System.Collections.ArrayList
+                foreach ($reader in $readers) {
+                    [void] $typedReaders.Add((New-Object PowerSync.TypeConversionDataReader($reader, $targetSchemaTable[0].Table)))
+                }
+                $readers = $typedReaders
                 break
             }
         }
 
+        # Default settings
+        $timeout = Select-Coalesce @(($Timeout), (Get-PSYVariable 'PSYDefaultCommandTimeout'))
+        $batchSize = (Get-PSYVariable -Name 'PSYDefaultBatchSize' -DefaultValue 50000)
+        $readerThrottle = (Get-PSYVariable -Name 'PSYDefaultReaderThrottle' -DefaultValue 5)
+
         # If we're not using PolyBase, use SqlBulkCopy to import the data, the fastest option aside from BCP and PolyBase.
         if (-not $PolyBase) {
-            $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString, [Data.SqlClient.SqlBulkCopyOptions]::TableLock)        # [Data.SqlClient.SqlBulkCopyOptions]::TableLock -bor [Data.SqlClient.SqlBulkCopyOptions]::UseInternalTransaction 
-            $blk.DestinationTableName = if ($Consistent) { $loadTableFQN } else { $finalTableFQN }
-            $blk.BulkCopyTimeout = Select-Coalesce @(($Timeout), (Get-PSYVariable 'PSYDefaultCommandTimeout'))
-            $blk.BatchSize = (Get-PSYVariable -Name 'PSYDefaultBatchSize' -DefaultValue 50000)
-            $blk.WriteToServer($reader)
-            #$task = $blk.WriteToServerAsync($reader)       # can spin up multiple instances to increase throughput
-            #$await = $task.GetAwaiter()
-            #$r = $await.GetResult()
+            # Import all of the readers asynchronously
+            $tasks = New-Object System.Collections.ArrayList
+            foreach ($reader in $readers) {
+                # Load via SqlBulkCopy
+                $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString, [Data.SqlClient.SqlBulkCopyOptions]::TableLock)        # [Data.SqlClient.SqlBulkCopyOptions]::TableLock -bor [Data.SqlClient.SqlBulkCopyOptions]::UseInternalTransaction 
+                $blk.DestinationTableName = if ($Consistent) { $loadTableFQN } else { $finalTableFQN }
+                $blk.BulkCopyTimeout = $timeout
+                $blk.BatchSize = $batchSize
+                [void] $tasks.Add($blk.WriteToServerAsync($reader))
+
+                # Throttle
+                while ($tasks.Count -ge $readerThrottle) {
+                    foreach ($task in $tasks) {
+                        if ($task.IsCompleted) {
+                            $r = $task.GetAwaiter().GetResult()     # completes the operation, reporting any errors
+                            $tasks.Remove($task)
+                            break                                   # can't alter list your enumerating and still continue, will pick up any remaining completed tasks next iteration
+                        }
+                    }
+                    Start-Sleep -Milliseconds 500
+                }
+            }
+
+            # Wait for all remaining tasks to complete
+            foreach ($task in $tasks) {
+                $r = $task.GetAwaiter().GetResult()
+            }
         }
         else {
             # TODO: HOW WILL THIS WORK? POLYBASE REALLY HANDLES THE EXPORT AND IMPORT SIDES OF THE DATA MOVEMENT. IF OUR FILE EXPORTER IS ALREADY
-            # EXPORTING, WE WOULD NEED TO CANCEL OR IGNORE IT. WE COULD USE THE CONTEXTUAL INFORMATION (I.E. FILE NAME) FROM THE EXPORTER TO
+            # EXPORTING, WE WOULD NEED TO CANCEL OR IGNORE IT. WE COULD` USE THE CONTEXTUAL INFORMATION (I.E. FILE NAME) FROM THE EXPORTER TO
             # THEN EXPORT USING POLYBASE.
         }
 
@@ -195,6 +223,13 @@ function Import-PSYSqlServer {
         Write-PSYErrorLog $_ "Error in Import-PSYSqlServer."
     }
     finally {
-        $InputObject.DataReader.Dispose()
+        # Dispose of all data readers now that import is complete.
+        foreach ($reader in $readers) {
+            $reader.Dispose()
+        }
+        # If the exporter requires cleanup, invoke their logic now.
+        if ($InputObject.ContainsKey('OnCompleteScriptBlock')) {
+            Invoke-Command -ScriptBlock $InputObject.OnCompleteScriptBlock -InputObject $InputObject.OnCompleteInputObject
+        }
     }
 }

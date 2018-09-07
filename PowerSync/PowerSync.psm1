@@ -1,6 +1,6 @@
 # Global PowerShell Settings
-Set-StrictMode -Version latest
-Trap {"Error: $_"; Break;}
+#Set-StrictMode -Version latest
+#Trap {"Error: $_"; Break;}
 
 #Export-ModuleMember -Function 'Remove-PSYJsonRepository'
 
