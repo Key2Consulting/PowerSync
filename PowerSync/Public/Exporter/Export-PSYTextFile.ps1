@@ -7,11 +7,13 @@ Exports data from a text file defined by the supplied connection. Exporters are 
 
 The full path to the file is a combination of the base ConnectionString and the Path. Either of those could be omitted, as long as the other supplies the full path.
 
+Supports Zip archives as well as multiple files via wildcards.
+
 .PARAMETER Connection
 Name of the connection to extract from.
 
 .PARAMETER Path
-Path of the file to export. A TextFile connection can supply the root path, which is then prefixed with this path parameter.
+Path of the file or files to export (supports wildcards). A TextFile connection can supply the root path, which is then prefixed with this path parameter. If path is a Zip archive, will be uncompressed prior to execution.
 
 .PARAMETER Format
 The format of the file (CSV, Tab).
@@ -30,14 +32,14 @@ function Export-PSYTextFile {
     param (
         [Parameter(HelpMessage = "Name of the connection to extract from.", Mandatory = $false)]
         [string] $Connection,
-        [Parameter(HelpMessage = "Path of the file to export. A TextFile connection can supply the root path, which is then prefixed with this path parameter.", Mandatory = $false)]
+        [Parameter(HelpMessage = "Path of the file or files to export (supports wildcards).", Mandatory = $false)]
         [string] $Path,
         [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $true)]
         [PSYTextFileFormat] $Format,
         [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
         [switch] $Header
     )
-
+    
     try {
         # Initialize source connection
         $connDef = Get-PSYConnection -Name $Connection
@@ -45,26 +47,53 @@ function Export-PSYTextFile {
         # Construct the full path to the file, which for files is a combination of the base ConnectionString and the Path. Either
         # of those could be omitted.
         if ($connDef.ConnectionString -and $Path) {
-            $filePath = $connDef.ConnectionString.Trim('\') + '\' + $Path.TrimStart('\')
+            $completefilePath = $connDef.ConnectionString.Trim('\') + '\' + $Path.TrimStart('\')
         }
         elseif ($Path) {
-            $filePath = $Path
+            $completefilePath = $Path
         }
         elseif ($connDef.ConnectionString) {
-            $filePath = $connDef.ConnectionString
+            $completefilePath = $connDef.ConnectionString
         }
 
-        $reader = New-Object PowerSync.TextFileDataReader($filePath, $Format, $Header)
-        Write-PSYInformationLog -Message "Exported $Format text data from $filePath."
+        # If the file path points to a Zip archive, unzip it and update our file path.
+        if ($completefilePath.EndsWith('zip')) {
+            $expandedPath = $completefilePath.SubString(0, $completefilePath.Length - 4)
+            $expandedPath | Remove-Item -Recurse -ErrorAction SilentlyContinue
+            Expand-Archive -Path $completefilePath -DestinationPath $expandedPath
+            $filePath = $expandedPath + '\*.*'
+        }
+        else {
+            $expandedPath = ""
+            $filePath = $completefilePath
+        }
+
+        # The file path could point to multiple files. For each file, we spin up a reader. Throttling is
+        # handled on the import side.
+        $readers = New-Object System.Collections.ArrayList
+        $files = Get-ChildItem -Path $filePath
+        foreach ($file in $files) {
+            $reader = New-Object PowerSync.TextFileDataReader($file.FullName, $Format, $Header)
+            [void] $readers.Add($reader)
+        }
+
+        Write-PSYInformationLog -Message "Exported $Format text data from $completefilePath."
 
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer
         # of some basic contextual information, which can be used to make decisions on how best to import.
         @{
-            DataReader = $reader
+            DataReaders = $readers
             Provider = [PSYDbConnectionProvider]::TextFile
-            FilePath = $Path
+            FilePath = $completefilePath
             Format = $Format
             Header = $Header
+            OnCompleteInputObject = $expandedPath
+            OnCompleteScriptBlock = {
+                # If we unzipped an archive, clean up uncompressed files
+                if ($Input) {
+                    Remove-Item -Path $Input -Recurse
+                }
+            }
         }
     }
     catch {

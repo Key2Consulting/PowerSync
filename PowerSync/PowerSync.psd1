@@ -56,6 +56,8 @@
         "$PSScriptRoot\Public\Common\ConvertFrom-PSYNativeType.ps1",
         "$PSScriptRoot\Private\Common\Select-PSYTablePart.ps1",
         "$PSScriptRoot\Private\Common\Copy-Object.ps1",
+        "$PSScriptRoot\Private\Security\Protect-PSYText.ps1",
+        "$PSScriptRoot\Private\Security\Unprotect-PSYText.ps1",
         "$PSScriptRoot\Private\Repository\Repository.ps1",
         "$PSScriptRoot\Private\Common\New-FactoryObject.ps1",
         "$PSScriptRoot\Private\Repository\FileRepository.ps1",

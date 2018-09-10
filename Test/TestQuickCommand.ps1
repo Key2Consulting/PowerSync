@@ -19,5 +19,9 @@ Start-PSYActivity -Name 'Test Quick Commands' -ScriptBlock {
         
         Copy-PSYTable -SProvider SqlServer -SServer $testDBServer -SDatabase "PowerSyncTestTarget" -STable "dbo.QuickTypedCSVCopy" `
             -TProvider TextFile -TConnectionString "Test\SampleFiles\TempOutput.txt" -TFormat TSV -THeader -TCompress
+
+        Copy-PSYTable -SProvider TextFile -SConnectionString "Test\SampleFiles\MultipleFileSample.zip" -SFormat TSV -SHeader `
+            -TProvider SqlServer -TServer $testDBServer -TDatabase "PowerSyncTestTarget" -TTable "dbo.MultipleFileSample"
+
     }
 }

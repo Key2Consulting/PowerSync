@@ -59,8 +59,9 @@ function Export-PSYSqlServer {
         $cmd = $conn.CreateCommand()
         $cmd.CommandText = $ExtractQuery
         $cmd.CommandTimeout = Select-Coalesce @(($Timeout), (Get-PSYVariable 'PSYDefaultCommandTimeout'))
-        $reader = $cmd.ExecuteReader()
-
+        $readers = New-Object System.Collections.ArrayList
+        $readers.Add($cmd.ExecuteReader())
+        
         # Log
         if ($Table) {
             Write-PSYInformationLog -Message "Exported $providerName data from [$Connection]:$Table"
@@ -76,7 +77,7 @@ function Export-PSYSqlServer {
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer
         # of some basic contextual information, which can be used to make decisions on how best to import.
         @{
-            DataReader = $reader
+            DataReaders = $readers
             Provider = [PSYDbConnectionProvider]::SqlServer
         }
     }

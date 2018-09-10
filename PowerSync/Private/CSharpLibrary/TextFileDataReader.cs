@@ -317,7 +317,7 @@ namespace PowerSync
         public bool Read()
         {
             var line = this._reader.ReadLine();        // TODO: how could a row delimeter be applied here?
-            if (line == null) {
+            if (line == null || line.Trim().Length == 0) {
                 this._reader.Close();
                 this._isClosed = true;
                 return false;

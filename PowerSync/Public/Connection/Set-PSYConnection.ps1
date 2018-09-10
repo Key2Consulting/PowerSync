@@ -41,10 +41,10 @@ function Set-PSYConnection {
         [string] $Server,
         [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
         [string] $Database,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(HelpMessage = "Additional properties used by the provider. These vary from provider to provider.", Mandatory = $false)]
         [hashtable] $Properties,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [SecureString] $Credentials
+        [System.Management.Automation.PSCredential] $Credentials
     )
 
     try {
