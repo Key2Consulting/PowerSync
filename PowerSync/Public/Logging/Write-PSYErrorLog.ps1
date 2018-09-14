@@ -77,7 +77,7 @@ function Write-PSYErrorLog {
                     Message = $ErrorRecord.Exception.Message
                     Exception = $ErrorRecord.Exception.ToString()
                     StackTrace = $ErrorRecord.ScriptStackTrace
-                    CallParameters = $handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1     # we could be as verbose as we wanted here, and include BoundParameters all the way up the stack
+                    Invocation = "$($handler.FunctionName) ($($handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1 -Compress))"     # we could be as verbose as we wanted here, and include BoundParameters all the way up the stack
                     CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
@@ -88,7 +88,7 @@ function Write-PSYErrorLog {
         }
         # Print to Console
         Write-Host $ErrorRecord.Exception.ToString() -ForegroundColor Red
-        Write-Host "$($handler.FunctionName) ($($handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1 -Compress))" -ForegroundColor DarkRed
+        Write-Host "$($handler.FunctionName) ($($handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1 -Compress))" -ForegroundColor DarkGreen
         Write-Host $ErrorRecord.ScriptStackTrace -ForegroundColor DarkGray
 
         # Mark exception as non-originating for next throw
