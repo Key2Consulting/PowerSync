@@ -1,6 +1,18 @@
 # Introduction
-PowerSync is a PowerShell 
+PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option to administer data systems. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT model where transformations are best performed by the database system oppose to the integration framework. 
 
+As its rooted in PowerShell, PowerSync natively supports the plethora of PowerShell commands/cmdlets found in the community and included by the PowerShell platform. PowerShell is known for it's convenient and simplistic API for managing large volumes of resources. It's PowerSync's goal to provide that same simplistic API for managing data resources.
+
+PowerSync features:
+ - Portable by nature, so it can run on a desktop, server, Linux or Windows without much overhead.
+ - Can scale within any PowerShell supported hosting environment (e.g. Azure WebJobs).
+ - Exporters and Importers compatible with a wide range of data systems.
+ - Sequential or parallel execution models.
+ - Activity model to organize work and isolate workloads.
+ - Comprehensive logging system.
+ - Supports process resiliency (i.e. resume/retry).
+ - State management system.
+ 
 ## Examples
 Quickly copies a table from one database to another database, creating the table if it doesn't exist.
 ```powershell
@@ -24,7 +36,7 @@ Connect-PSYJsonRepository 'PowerSyncRepo.json'
 
 # Create source and target connections.
 Set-PSYConnection -Name "OracleSource" -Provider Oracle -ConnectionString "Data Source=MyOracleDB;Integrated Security=yes;"
-Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestTarget"
+Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString "Server=TargetServer;Integrated Security=true;Database=DatabaseB"
 
 # Start a parallel activity which copies the tables.
 @('Table1', 'Table2', 'Table3') | Start-PSYForEachActivity -Name 'Multi-Table Copy' -Parallel -Throttle 3 -ScriptBlock {
