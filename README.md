@@ -1,13 +1,32 @@
 # Introduction
 Quick introduction paragraph.
 ## Examples
-Copy a table from one database to another database, creating the table if it doesn't exist.
-~~~~~~ powershell
+Quickly copies a table from one database to another database, creating the table if it doesn't exist.
+```powershell
 Copy-PSYTable `
-    -SProvider SqlServer -SServer $testDBServer -SDatabase "PowerSyncTestTarget" -STable "dbo.QuickTypedCSVCopy" `
-    -TProvider SqlServer -TServer $testDBServer -TDatabase "PowerSyncTestTarget" -TTable "dbo.QuickTypedCSVCopyOfCopy"
-~~~~~~
-` this is some code`
+    -SProvider SqlServer -SServer 'SourceServer' -SDatabase "DatabaseA" -STable "dbo.MyTable" `
+    -TProvider SqlServer -TServer 'TargetServer' -TDatabase "DatabaseB" -TTable "dbo.MyTableCopy"
+```
+Quickly imports a CSV file into a database table, and then back out to a tab delimited file.
+```powershell
+Copy-PSYTable `
+    -SProvider TextFile -SConnectionString "InputFile.csv" -SFormat CSV -SHeader `
+    -TProvider SqlServer -TServer 'TargetServer' -TDatabase "DatabaseB" -TTable "dbo.MyTable"
+Copy-PSYTable `
+    -SProvider SqlServer -SServer 'TargetServer' -SDatabase "DatabaseB" -STable "dbo.MyTable" `
+    -TProvider TextFile -TConnectionString "OutputFile.txt" -TFormat TSV -THeader
+```
+Orchestrates a multi-table copy between different database systems.
+```powershell
+Connect-PSYJsonRepository 'PowerSyncRepo.json'
+# Create source and target connections
+Set-PSYConnection -Name "OracleSource" -Provider Oracle -ConnectionString "Data Source=MyOracleDB;Integrated Security=yes;"
+Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestTarget"
+@('Table1', 'Table2', 'Table3') | Start-PSYForEachActivity -Name 'Multi-Table Copy' -Parallel -Throttle 5 -ScriptBlock {
+    Export-PSYOracle -Connection "OracleSource" -Table $Input `
+        | Import-PSYSqlServer -Connection "SqlServerTarget" -Table $Input -Create -Index
+    }
+```
 ## Installing and Importing
 ## PSY Command Prefix
 ## Choosing the Right Repository
