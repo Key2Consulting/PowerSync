@@ -1,5 +1,6 @@
 # Introduction
-Quick introduction paragraph.
+PowerSync is a PowerShell 
+
 ## Examples
 Quickly copies a table from one database to another database, creating the table if it doesn't exist.
 ```powershell
@@ -16,13 +17,17 @@ Copy-PSYTable `
     -SProvider SqlServer -SServer 'TargetServer' -SDatabase "DatabaseB" -STable "dbo.MyTable" `
     -TProvider TextFile -TConnectionString "OutputFile.txt" -TFormat TSV -THeader
 ```
-Orchestrates a multi-table copy between different database systems.
+Orchestrates a parallel, multi-table copy between different database systems.
 ```powershell
+# Connect to PowerSync repository (stores all our runtime and persisted state).
 Connect-PSYJsonRepository 'PowerSyncRepo.json'
-# Create source and target connections
+
+# Create source and target connections.
 Set-PSYConnection -Name "OracleSource" -Provider Oracle -ConnectionString "Data Source=MyOracleDB;Integrated Security=yes;"
 Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestTarget"
-@('Table1', 'Table2', 'Table3') | Start-PSYForEachActivity -Name 'Multi-Table Copy' -Parallel -Throttle 5 -ScriptBlock {
+
+# Start a parallel activity which copies the tables.
+@('Table1', 'Table2', 'Table3') | Start-PSYForEachActivity -Name 'Multi-Table Copy' -Parallel -Throttle 3 -ScriptBlock {
     Export-PSYOracle -Connection "OracleSource" -Table $Input `
         | Import-PSYSqlServer -Connection "SqlServerTarget" -Table $Input -Create -Index
     }
@@ -44,9 +49,13 @@ See [Quick Commands](#quick-commands) for more information.
 ## Activities
 ### Parallelism
 ## Connections
+### Connection Security
 ## Stored Commands
 ## Exporters and Importers
 ## Variables
 ## Quick Commands
+# Advanced Topics
+## Type Conversion
+## Multiple File Readers
 # References
  - ASCII based diagrams created with [asciiflow](http://asciiflow.com).
