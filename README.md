@@ -2,8 +2,9 @@
 Quick introduction paragraph.
 ## Examples
 Copy a table from one database to another database, creating the table if it doesn't exist.
-~~~~~~powershell
-Copy-PSYTable -SProvider SqlServer -SServer $testDBServer -SDatabase "PowerSyncTestTarget" -STable "dbo.QuickTypedCSVCopy" `
+~~~~~~ powershell
+Copy-PSYTable `
+    -SProvider SqlServer -SServer $testDBServer -SDatabase "PowerSyncTestTarget" -STable "dbo.QuickTypedCSVCopy" `
     -TProvider SqlServer -TServer $testDBServer -TDatabase "PowerSyncTestTarget" -TTable "dbo.QuickTypedCSVCopyOfCopy"
 ~~~~~~
 ` this is some code`
