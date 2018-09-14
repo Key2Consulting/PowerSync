@@ -57,6 +57,6 @@ function Write-PSYQueryLog {
         # Don't output to console since queries can get rather large.
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Write-PSYQueryLog."
+        Write-PSYErrorLog $_
     }
 }

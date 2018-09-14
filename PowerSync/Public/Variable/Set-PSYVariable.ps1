@@ -89,6 +89,6 @@ function Set-PSYVariable {
         Write-PSYVariableLog $Name $Value
     }
     catch {
-        Write-PSYErrorLog $_ "Error setting variable '$Name'."
+        Write-PSYErrorLog $_
     }
 }

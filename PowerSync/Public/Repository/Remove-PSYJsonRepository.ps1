@@ -24,6 +24,6 @@ function Remove-PSYJsonRepository {
         Remove-Item $Path -ErrorAction SilentlyContinue
     }
     catch {
-        Write-PSYErrorLog $_ "Error removing to JSON repository."
+        Write-PSYErrorLog $_
     }
 }

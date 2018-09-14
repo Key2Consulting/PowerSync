@@ -80,7 +80,7 @@ function Import-PSYTextFile {
         Write-PSYInformationLog -Message "Imported $Format text data into $filePath."
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Import-PSYTextFile."
+        Write-PSYErrorLog $_
     }
     finally {
         # Dispose of all data readers now that import is complete.

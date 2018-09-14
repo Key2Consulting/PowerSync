@@ -151,6 +151,6 @@ function Copy-PSYTable {
         }
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Copy-PSYTable."
+        Write-PSYErrorLog $_
     }
 }

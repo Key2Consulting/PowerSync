@@ -45,7 +45,7 @@ function Lock-PSYVariable {
         Invoke-Command -ScriptBlock $ScriptBlock
     }
     catch {
-        Write-PSYErrorLog $_ "Error locking state '$Name'."
+        Write-PSYErrorLog $_
     }
     finally {
         $mutex.ReleaseMutex()

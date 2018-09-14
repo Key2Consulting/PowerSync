@@ -1,4 +1,5 @@
 function New-FactoryObject {
+    [CmdletBinding()]
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
@@ -6,9 +7,7 @@ function New-FactoryObject {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [switch] $Connection,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [string] $TypeName,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $NoLogError
+        [string] $TypeName
     )
 
     # Confirm we're connected and initialized
@@ -37,8 +36,6 @@ function New-FactoryObject {
         }
     }
     catch {
-        if (-not $NoLogError) {
-            Write-PSYErrorLog -ErrorRecord $_ -Message "Unable to generate factory object."
-        }
+        Write-PSYErrorLog $_
     }
 }

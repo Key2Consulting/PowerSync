@@ -75,6 +75,6 @@ function Invoke-PSYCmd {
             }
             $conn.Dispose()
         }
-        Write-PSYErrorLog -ErrorRecord $_ -Message 'Error in Invoke-PSYCmd'
+        Write-PSYErrorLog $_
     }
 }

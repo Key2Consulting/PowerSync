@@ -9,7 +9,7 @@ $testDBPath = "$($rootPath)PowerSyncTestDB.MDF"
 ######################################################
 # Initialize Tests
 ######################################################
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"     # we want to run through all tests
 
 # Reset the source and target databases
 Write-Host "Resetting test databases..."
@@ -29,7 +29,7 @@ Import-Module "$rootPath\PowerSync"
 # Initialize PowerSync repository
 Write-Host "Resetting repository..."
 Remove-PSYJsonRepository $jsonRepo
-New-PSYJsonRepository $jsonRepo
+New-PSYJsonRepository $jsonRepo -ErrorAction SilentlyContinue
 Connect-PSYJsonRepository $jsonRepo
 
 Set-PSYConnection -Name "TestSqlServerTarget" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestTarget"

@@ -37,7 +37,7 @@ try {
     }
 }
 catch {
-    Write-PSYErrorLog -Message "Failed Single Scalar Values Test"
+    throw "Failed Single Scalar Values Test"
 }
 
 # Atomic complex types. These can be hashtables/dictionaries, but since it's a single state var
@@ -50,7 +50,7 @@ try {
     }
 }
 catch {
-    Write-PSYErrorLog -Message "Failed Atomic hashtable test"
+    throw "Failed Atomic hashtable test"
 }
 
 # Lists of scalar values
@@ -67,7 +67,7 @@ try {
     }
 }
 catch {
-    Write-PSYErrorLog -Message "Failed List of Scalar Values"
+    throw "Failed List of Scalar Values"
 }
 
 # List of complex types
@@ -83,7 +83,7 @@ try {
     }
 }
 catch {
-    Write-PSYErrorLog -Message "Failed List of complex types Test"
+    throw "Failed List of complex types Test"
 }
 
 # TODO: IMPLEMENT REMAINDER

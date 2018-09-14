@@ -66,6 +66,6 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
         Write-ActivityLog -Name $Name -Message "Activity '$Name' completed" -Status 'Completed' -Activity $a
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Start-PSYActivity '$Name'."
+        Write-PSYErrorLog $_
     }
 }

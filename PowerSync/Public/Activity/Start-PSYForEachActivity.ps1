@@ -65,6 +65,6 @@ function Start-PSYForEachActivity {
         Write-ActivityLog -Name $Name -Message "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a
     }
     catch {
-        Write-PSYErrorLog $_ "Error in Start-PSYForEachActivity '$Name'."
+        Write-PSYErrorLog $_
     }
 }
