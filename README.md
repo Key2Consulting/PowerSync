@@ -1,4 +1,3 @@
---toc
 # Introduction
 ## Example
 # Getting Started
@@ -6,6 +5,10 @@
 ## PSY Command Prefix
 ## Choosing the Right Repository
 ## Copy a Table
+See [Quick Commands](#QuickCommands) for more information.
+See [Quick Commands](#Quick Commands) for more information.
+See [Quick Commands](#Logging) for more information.
+See [Quick Commands](##Logging) for more information.
 # Concepts
 ## The PowerSync Repository
 ### Json Repository
@@ -22,3 +25,5 @@
 ## Exporters and Importers
 ## Variables
 ## Quick Commands
+# References
+ - ASCII based diagrams created with [asciiflow](http://asciiflow.com).
