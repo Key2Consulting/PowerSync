@@ -5,10 +5,9 @@
 ## PSY Command Prefix
 ## Choosing the Right Repository
 ## Copy a Table
-See [Quick Commands](#QuickCommands) for more information.
-See [Quick Commands](#Quick Commands) for more information.
-See [Quick Commands](#Logging) for more information.
-See [Quick Commands](##Logging) for more information.
+See [Quick Commands](#quick-commands) for more information.
+See [Quick Commands](##logging) for more information.
+See [Quick Commands](#logging) for more information.
 # Concepts
 ## The PowerSync Repository
 ### Json Repository
