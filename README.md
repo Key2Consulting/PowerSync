@@ -118,13 +118,78 @@ TODO: We may need to reconsider this, since we want use to be as simple as possi
 #### Usage
 TODO
 
+## Activities
+PowerSync activities organize your data integration workload into atomic units of work. You execute an Activity with the `Start-PSYActivity` or `Start-PSYForEachActivity` functions. Although activities are not required, they provide certain benefits:
+ - Log operations performed during an activity are associated to that activity.
+ - Automatic logging of errors.
+ - Sequential or parallel execution (using remote jobs).
+
+Activities are nestable, giving projects the ability to decompose complex workloads into smaller, logical units of work.
+```PowerShell
+Start-PSYActivity -Name 'Outer Activity' -ScriptBlock {
+    Start-PSYActivity -Name 'Inner Activity' -ScriptBlock {
+        Write-Host 'Hello Inner World'
+    }
+    Write-Host 'Hello Outer World'
+}
+```
+You can also execute multiple scriptblocks within the same activity:
+```PowerShell
+Start-PSYActivity -Name 'Multiple Activities' -ScriptBlock ({
+    Write-Host 'One'
+}, {
+    Write-Host 'Two'
+}, {
+    Write-Host 'Three'
+})
+```
+You can execute the same activity for a list of items, foreach style (use the automatic variable `$Input` to retrieve the current item):
+```PowerShell
+(1, 2, 3) | Start-PSYActivity -Name 'ForEach Activity' -ScriptBlock {
+    Write-Host "Hello Item $Input"
+}
+```
+By default, activities execute in a sequential manner. However, setting the `-Parallel` switch will execute the activity in parallel (where applicable) and can be throttled via the `-Throttle` parameter.
+```PowerShell
+# Prints Three, Two, One
+Start-PSYActivity -Name 'Multiple Activities' -Parallel -Throttle 5 -ScriptBlock ({
+    Start-Sleep -Seconds 3
+    Write-Host 'One'
+}, {
+    Start-Sleep -Seconds 2
+    Write-Host 'Two'
+}, {
+    Start-Sleep -Seconds 1
+    Write-Host 'Three'
+})
+# Can print in any order.
+(1, 2, 3) | Start-PSYActivity -Name 'ForEach Activity' -Parallel -Throttle 5 -ScriptBlock {
+    Write-Host "Hello Item $Input"
+}
+```
+### A Note about Parallelism
+[TODO: Verbiage about why persistent variables is preferred over runtime variables. Data integration is naturally long running.]
+
+Since remote jobs are used for parallel execution, any enumerated object must support PowerShell serialization (primitives, hashtables, ArrayLists). You may want to avoid using classes developed in PowerShell as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). 
+Changes to enumerated objects during parallel execution will not affect the copy in the caller's process space.
+
+If state needs to be shared and made updatable, it is recommended to use PowerSync variables or manage the state yourself outside PowerSync. You could use custom tables stored in the PowerSync Database Repository, another database entirely, or even a web service.
+
+Debugging parallel execution in PowerShell is tricky. Enabling parallel execution disables breakpoints in most IDEs, so consider disabling parallel execution when initially developing or debugging an issue.
+
+## Connections
+### Connection Security
+## Stored Commands
+## Exporters and Importers
+## Variables
+
 ## Logging
 Enterprise integration systems are inherently complex, with many moving parts and potential points of failure. Logging of a large-scale data integration system is one of the most important, and often overlooked capabilities. Comprehensive logging provides projects with insight into the runtime state of the framework, and is critical for monitoring, debugging, and performance tuning.
 
 PowerSync builds upon the logging concepts baked into PowerShell, and adds additional logs to support data integration specific requirements.
 
 ### Error Log
-The error log records unexpected exceptions and logs them to the repository using `Write-PSYErrorLog`. The error log is used with Try/Catch blocks, which are highly promoted by the PowerSync framework. `Write-PSYErrorLog` will honor the current Error Action Preference. See the [API](TODO) for more information.
+The error log records unexpected exceptions and logs them to the repository using `Write-PSYErrorLog`. The error log is used with Try/Catch blocks, which is the recommended method for handling exceptions. `Write-PSYErrorLog` will honor the current Error Action Preference.
 ```PowerShell
 try {
     $x = 1 / 0
@@ -133,23 +198,25 @@ catch {
     Write-PSYErrorLog $_
 }
 ```
+See the [API](TODO) for more information.
+
 ### Information and Verbose Log
-The Information and Verbose logs record similar information. The information log should be to narrate the work being performed at a high level. The Verbose Log is similar to the Information Log, in that it should narrate the work being performed, but at a more detailed level. The verbose log provides an extra level of detail the information log does not. You can enable verbose logging using the `-Verbose` common parameter.
+The Information and Verbose logs record similar information. The information log narrates the work being performed at a high level. The Verbose Log logs similar information, except at a more detailed level. You can enable verbose logging using the `-Verbose` common parameter.
 ```PowerShell
-# Do some work
 Write-PSYInformationLog -Message "Completed synchronization of source and target."
-Write-PSYVerboseLog -Message "Exported $rowCount data from $tableName"
+$workItems | Write-PSYVerboseLog -Message "Exported $($_.$RowCount) data from $($_.$TableName)."
 ```
 
 ### Debug Log
+The Debug Log should be used to log technical operations internal to the system, and useful for debugging purposes. You can enable debug logging using the `-Debug` common parameter.
+```PowerShell
+Write-PSYDebugLog -Message "Process $PID could not find table '$tableName', initiating table creation."
+```
 ### Variable Log
-## Activities
-### Parallelism
-## Connections
-### Connection Security
-## Stored Commands
-## Exporters and Importers
-## Variables
+The Variable Log is used to capture the state changes of PowerSync variables. Tracking state changes is important when trying to debug an issue due to dynamic nature of integration systems. Use of `Set-PSYVariable` automatically writes to this log.
+```PowerShell
+Write-PSYVariableLog -Name 'My Variable Name' -Value 'New Value'
+```
 ## Quick Commands
 # Advanced Topics
 ## Type Conversion
