@@ -41,7 +41,8 @@ Copy-PSYTable `
 ```
 Orchestrate a parallel, multi-table copy between different database systems.
 ```powershell
-# Connect to PowerSync repository (stores all our runtime and persisted state).
+# Create and Connect to PowerSync repository (stores all our runtime and persisted state).
+New-PSYJsonRepository 'PowerSyncRepo.json'
 Connect-PSYJsonRepository 'PowerSyncRepo.json'
 
 # Create source and target connections (only need to do this once).
@@ -56,14 +57,16 @@ Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString 
 ```
 ## Installing and Importing
 ### Windows
-There's essentially three ways to install and use PowerSync in a windows environment. All of these options require you to download PowerSync from GitHub, and extract the PowerSync folder (PowerSync is not available via a repository). After downloading, use a similar command to unblock the source files.
-```PowerShell
-Get-ChildItem -Path "$YourPathToPowerSyncFolder" -Recurse | Unblock-File
-```
+There's essentially three ways to install and use PowerSync in a windows environment. All of these options require you to download PowerSync from GitHub, and extract the PowerSync folder (PowerSync is not available via a repository). 
 
 PowerSync requires a minimum of RemoteSigned execution policy.
 ```PowerShell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+```
+
+After downloading, use must unblock the source files.
+```PowerShell
+Get-ChildItem -Path "$YourPathToPowerSyncFolder" -Recurse | Unblock-File
 ```
 
 You can also run the Install-PowerSync script included in the root of the GitHub project.
@@ -72,26 +75,42 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned   # escalate execution policy
 Unblock-File -Path '.\Install-PowerSync.ps1'        # in case it was just downloaded
 .\Install-PowerSync.ps1                             # install for current user only
 .\Install-PowerSync.ps1 -InstallForAllUsers         # OR install for all users (requires Run as Administrator)
+Import-Module PowerSync
 ```
 
 See [Installing a PowerShell Module](https://docs.microsoft.com/en-us/powershell/developer/module/installing-a-powershell-module) for more information.
 
 #### Copy to $PSHome
-Copy PowerSync folder to $PSHome (%Windir%\System32\WindowsPowerShell\v1.0\Modules). This will enable PowerSync for all users of a machine, but requires local admin permssion. Use `Import-Module 'PowerSync'` in your script.
+Copy PowerSync folder to $PSHome (%Windir%\System32\WindowsPowerShell\v1.0\Modules). This will enable PowerSync for all users of a machine, but requires local admin permssion. Use `Import-Module PowerSync` in your script.
 #### Copy to $Home\Documents\WindowsPowerShell\Modules
-Copy PowerSync folder to $Home\Documents\WindowsPowerShell\Modules (%UserProfile%\Documents\WindowsPowerShell\Modules). This enables PowerSync for the current user only. This option isolates your version of PowerSync from others on the same machine, and does not require local admin permission. Use `Import-Module 'PowerSync'` in your script.
+Copy PowerSync folder to $Home\Documents\WindowsPowerShell\Modules (%UserProfile%\Documents\WindowsPowerShell\Modules). This enables PowerSync for the current user only. This option isolates your version of PowerSync from others on the same machine, and does not require local admin permission. Use `Import-Module PowerSync` in your script.
 #### Include as Library in Broader Project
-Include the PowerSync folder as part of a project folder structure, and import via it's relative path. This option is recommended for development projects, and may be the only option available for PaaS hosting scenarios. It ensures proper version control of PowerSync with your project. Use something like `Import-Module $PSScriptRoot\PowerSync'` in your script.
-### PSY Command Prefix
-All PowerSync commands use the 'PSY' prefix to ensure uniqueness with other modules (pronounces Sai).
-## Choosing the Right Repository
-## Copy a Table
+Include the PowerSync folder as part of a project folder structure, and import via it's relative path. This option is recommended for development projects, and may be the only option available for PaaS hosting scenarios. It ensures proper version control of PowerSync with your project. Use something like `Import-Module "$PSScriptRoot\PowerSync"` in your script.
 ### Linux
-TODO
-See [Quick Commands](#quick-commands) for more information.  
+## PSY Command Prefix
+All PowerSync commands use the 'PSY' prefix to ensure uniqueness with other modules (pronounces *Sigh*).
+
 # Concepts
 ## The PowerSync Repository
+The PowerSync Repository is a data store PowerSync uses to store all of its internal persisted state and runtime information. The repository should not be confused with source and target data sources (i.e. Connections) used for data integration purposes. For a given project, you would have one and only one repository. Except for [Quick Commands](#quick-commands), PowerSync commands require a connection to a repository to function.
+> Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution.
+
+There are two types of repositories: file and database. Currently, Json and OleDb are the only file and database repository options.
+
 ### Json Repository
+The Json file repository is the quickest and easiest way to start using PowerSync. It uses a single Json formatted text file stored on the local file system. One of the downsides to using a Json repository is that Json files can be difficult to read and query. It also does not scale well under heavy usage, since reading/writing to a single text file can become a bottleneck. However, it's a great choice for small projects or workflows that don't need a full-fledged database.
+
+An OleDb database repository is more complex option, but also more robust. It also provides additional persistent (i.e. custom tables) to manage custom configuration specific to your project.
+
+**Usage**   
+**Create a new Json repository**
+```PowerShell
+New-PSYJsonRepository '.\MyPSYRepo.json'
+```
+Create a new Json repository.
+```PowerShell
+New-PSYJsonRepository '.\MyPSYRepo.json'
+```
 ### OleDb Repository
 ## Logging
 ### Error Log
