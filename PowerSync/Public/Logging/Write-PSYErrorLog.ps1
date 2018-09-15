@@ -68,7 +68,9 @@ function Write-PSYErrorLog {
     if ($originating -and $ErrorActionPreference -ne "SilentlyContinue") {
         # Must be careful trying to connect to repository within an exception handler. The exception could
         # be caused by connectivity issues with the repository. If so, we disconnect before proceeding.
-        $repo = New-FactoryObject -Repository -ErrorAction SilentlyContinue
+        if ($PSYSession.Initialized) {
+            $repo = New-FactoryObject -Repository -ErrorAction SilentlyContinue
+        }
         # Log
         if ($repo) {
             [void] $repo.CriticalSection({
