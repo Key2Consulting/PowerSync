@@ -56,13 +56,32 @@ Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString 
 ```
 ## Installing and Importing
 ### Windows
-There's essentially three ways to install and use PowerSync in a windows environment. All of these options require you to download PowerSync from GitHub, and extract the PowerSync folder. Currently, PowerSync is not published to any repository.
+There's essentially three ways to install and use PowerSync in a windows environment. All of these options require you to download PowerSync from GitHub, and extract the PowerSync folder (PowerSync is not available via a repository). After downloading, use a similar command to unblock the source files.
+```PowerShell
+Get-ChildItem -Path "$YourPathToPowerSyncFolder" -Recurse | Unblock-File
+```
+
+PowerSync requires a minimum of RemoteSigned execution policy.
+```PowerShell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+```
+
+You can also run the Install-PowerSync script included in the root of the GitHub project.
+```PowerShell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned   # escalate execution policy
+Unblock-File -Path '.\Install-PowerSync.ps1'        # in case it was just downloaded
+.\Install-PowerSync.ps1                             # install for current user only
+.\Install-PowerSync.ps1 -InstallForAllUsers         # OR install for all users (requires Run as Administrator)
+```
+
+See [Installing a PowerShell Module](https://docs.microsoft.com/en-us/powershell/developer/module/installing-a-powershell-module) for more information.
+
 #### Copy to $PSHome
 Copy PowerSync folder to $PSHome (%Windir%\System32\WindowsPowerShell\v1.0\Modules). This will enable PowerSync for all users of a machine, but requires local admin permssion. Use `Import-Module 'PowerSync'` in your script.
 #### Copy to $Home\Documents\WindowsPowerShell\Modules
 Copy PowerSync folder to $Home\Documents\WindowsPowerShell\Modules (%UserProfile%\Documents\WindowsPowerShell\Modules). This enables PowerSync for the current user only. This option isolates your version of PowerSync from others on the same machine, and does not require local admin permission. Use `Import-Module 'PowerSync'` in your script.
 #### Include as Library in Broader Project
-Include the PowerSync folder as part of a project folder structure, and import via it's relative path. This option is recommended for development projects, and may be the only option available for PaaS hosting scenarios. It ensures proper version control of PowerSync with your project. Use something like Import-Module `'$PSScriptRoot\PowerSync'` in your script.
+Include the PowerSync folder as part of a project folder structure, and import via it's relative path. This option is recommended for development projects, and may be the only option available for PaaS hosting scenarios. It ensures proper version control of PowerSync with your project. Use something like `Import-Module $PSScriptRoot\PowerSync'` in your script.
 ### PSY Command Prefix
 All PowerSync commands use the 'PSY' prefix to ensure uniqueness with other modules (pronounces Sai).
 ## Choosing the Right Repository
