@@ -101,25 +101,46 @@ There are two types of repositories: file and database. Currently, Json and OleD
 ### Json Repository
 The Json file repository is the quickest and easiest way to start using PowerSync. It uses a single Json formatted text file stored on the local file system. One of the downsides to using a Json repository is that Json files can be difficult to read and query. It also does not scale well under heavy usage, since reading/writing to a single text file can become a bottleneck. However, it's a great choice for small projects or workflows that don't need a full-fledged database.
 
-An OleDb database repository is more complex option, but also more robust. It also provides additional persistent (i.e. custom tables) to manage custom configuration specific to your project.
-
-#### Usage
-**Create a new Json repository**
+The following is an example of creating, connecting, and then removing a Json repository (of course, in a real project you probably wouldn't create and then immediately remove a repository).
 ```PowerShell
 New-PSYJsonRepository '.\MyPSYRepo.json'
-```
-Connect to an existing Json repository.
-```PowerShell
 Connect-PSYJsonRepository '.\MyPSYRepo.json'
-```
-```PowerShell
+# Do some work
 Remove-PSYJsonRepository '.\MyPSYRepo.json'
 ```
-Delete a Json repository.
+
 ### OleDb Repository
+An OleDb database repository is more complex option, but also more robust. It also provides additional persistent (i.e. custom tables) to manage custom configuration specific to your project. It also allows for more complex querying, monitoring, and reporting of the runtime state of your project. The downside is it requires a database system, and lacks the portability of files.
+
+The OleDb provider can use any OleDb compatible database. However, the use of a database repository requires the creation of a database which conforms to the structures and capabilities required by PowerSync. Since database systems and their proprietary syntax can vary significantly, PowerSync delegates creation and management of the database repository to your project. However, PowerSync does include *Kits* which contain pre-packaged and fully functional database repository projects ready to use. Once deployed, maintaining and upgrading database repositories based on those kits is the responsibility of the developer.
+
+TODO: We may need to reconsider this, since we want use to be as simple as possible.
+#### Usage
+TODO
+
 ## Logging
+Enterprise integration systems are inherently complex, with many moving parts and potential points of failure. Logging of a large-scale data integration system is one of the most important, and often overlooked capabilities. Comprehensive logging provides projects with insight into the runtime state of the framework, and is critical for monitoring, debugging, and performance tuning.
+
+PowerSync builds upon the logging concepts baked into PowerShell, and adds additional logs to support data integration specific requirements.
+
 ### Error Log
+The error log records unexpected exceptions and logs them to the repository using `Write-PSYErrorLog`. The error log is used with Try/Catch blocks, which are highly promoted by the PowerSync framework. `Write-PSYErrorLog` will honor the current Error Action Preference. See the [API](TODO) for more information.
+```PowerShell
+try {
+    $x = 1 / 0
+}
+catch {
+    Write-PSYErrorLog $_
+}
+```
 ### Information and Verbose Log
+The Information and Verbose logs record similar information. The information log should be to narrate the work being performed at a high level. The Verbose Log is similar to the Information Log, in that it should narrate the work being performed, but at a more detailed level. The verbose log provides an extra level of detail the information log does not. You can enable verbose logging using the `-Verbose` common parameter.
+```PowerShell
+# Do some work
+Write-PSYInformationLog -Message "Completed synchronization of source and target."
+Write-PSYVerboseLog -Message "Exported $rowCount data from $tableName"
+```
+
 ### Debug Log
 ### Variable Log
 ## Activities
