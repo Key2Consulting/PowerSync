@@ -124,7 +124,7 @@ PowerSync activities organize your data integration workload into atomic units o
  - Automatic logging of errors.
  - Sequential or parallel execution (using remote jobs).
 
-Activities are nestable, giving projects the ability to decompose complex workloads into smaller, logical units of work.
+Activities are nestable, giving projects the ability to decompose complex workloads into smaller, simpler units of work.
 ```PowerShell
 Start-PSYActivity -Name 'Outer Activity' -ScriptBlock {
     Start-PSYActivity -Name 'Inner Activity' -ScriptBlock {
@@ -178,8 +178,50 @@ If state needs to be shared and made updatable, it is recommended to use PowerSy
 Debugging parallel execution in PowerShell is tricky. Enabling parallel execution disables breakpoints in most IDEs, so consider disabling parallel execution when initially developing or debugging an issue.
 
 ## Connections
+Extracting data from a source first requires a connection. Connections define all of the required information required to establish a connection to a source or target system. Connections are persisted in the repository, only need to be created once, and then referenced by name downstream.
+
+Connections definitions are fairly generic and platform agnostic. The specific properties required to establish a connection to a data system depend on the provider of a connection, but most providers support the notion of a Connection String.
+
+> PowerSync automatically defines a connection to the PowerSync repository using the name *PSYRepository*.
+
+```PowerShell
+Set-PSYConnection -Name "MyConnection" -Provider SqlServer -ConnectionString "Server=MyServer;Integrated Security=true;Database=MyDatabase"      # creates or overwrites
+Get-PSYConnection -Name "MyConnection"       # you would rarely use this function
+Remove-PSYConnection -Name "MyConnection"
+```
 ### Connection Security
+Data systems enforce some level of access security, whether via integrated security of the current principle, a user name and password, or certificates. PowerSync only supports integrated security, and user name / password defined within the connection string. It is generally recommended to handle authorization from within your hosting environment such that the credentials executing your PowerSync application are authorized to access backend data systems.
 ## Stored Commands
+Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. PowerSync will attempt to locate the script (via the `-Name` param) in the Project Folder, which defaults to the location of the script that imported PowerSync. 
+> The script name can omit the file extension.
+
+Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value defined in the script (i.e. a default).
+
+If the Stored Command returns a resultset, it is converted into an ArrayList of hashtables and returned to the caller. A single row just returns a hashtable.
+
+Sophisticated projects requiring complex configuration structures and custom workflows should leverage Stored Commands for state management. PowerSync [variables](#variables) could also be used, but are simplistic and do not provide a rich data model.
+
+Example using a custom table in the PowerSync repository to retrieve list of tables to extract.
+```PowerShell
+# Use a custom script. The parameter Frequency is passed into the script, but Category is not.
+$extractWorkload = Invoke-PSYCmd -Connection 'PSYRepository' -Name "GetExtractWorkload.sql" -Param @{Frequency = 'Daily'}
+
+# Do extraction and loading...
+
+# Update the high water mark for next extraction. Although using a script is recommended, it's not required (and PowerShell makes it easy to pass parameters).
+Invoke-PSYCmd -Connection 'PSYRepository' -Command "UPDATE dbo.MyDataFeed WHERE HighWaterMark = '$maxModifiedDateTime'"
+```
+GetExtractWorkload.sql
+```SQL
+:setvar Frequency "Monthly"
+:setvar Category "All"      -- not passed so $(Category) defaults to All
+SELECT ExtractTableName, LoadTableName, HighWaterMark
+FROM dbo.MyDataFeed
+WHERE 
+    Frequency = $(Frequency)
+    AND (Category = $(Category) OR $(Category) = 'All')
+```
+
 ## Exporters and Importers
 ## Variables
 
@@ -198,7 +240,7 @@ catch {
     Write-PSYErrorLog $_
 }
 ```
-See the [API](TODO) for more information.
+TODO: Describe error action preference and nesting rules.
 
 ### Information and Verbose Log
 The Information and Verbose logs record similar information. The information log narrates the work being performed at a high level. The Verbose Log logs similar information, except at a more detailed level. You can enable verbose logging using the `-Verbose` common parameter.
