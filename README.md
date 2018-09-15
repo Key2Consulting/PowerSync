@@ -81,12 +81,13 @@ Import-Module PowerSync
 See [Installing a PowerShell Module](https://docs.microsoft.com/en-us/powershell/developer/module/installing-a-powershell-module) for more information.
 
 #### Copy to $PSHome
-Copy PowerSync folder to $PSHome (%Windir%\System32\WindowsPowerShell\v1.0\Modules). This will enable PowerSync for all users of a machine, but requires local admin permssion. Use `Import-Module PowerSync` in your script.
+Copy PowerSync folder to $PSHome (*%Windir%\System32\WindowsPowerShell\v1.0\Modules*). This will enable PowerSync for all users of a machine, but requires local admin permssion. Use `Import-Module PowerSync` in your script.
 #### Copy to $Home\Documents\WindowsPowerShell\Modules
-Copy PowerSync folder to $Home\Documents\WindowsPowerShell\Modules (%UserProfile%\Documents\WindowsPowerShell\Modules). This enables PowerSync for the current user only. This option isolates your version of PowerSync from others on the same machine, and does not require local admin permission. Use `Import-Module PowerSync` in your script.
+Copy PowerSync folder to $Home\Documents\WindowsPowerShell\Modules (*%UserProfile%\Documents\WindowsPowerShell\Modules*). This enables PowerSync for the current user only. This option isolates your version of PowerSync from others on the same machine, and does not require local admin permission. Use `Import-Module PowerSync` in your script.
 #### Include as Library in Broader Project
 Include the PowerSync folder as part of a project folder structure, and import via it's relative path. This option is recommended for development projects, and may be the only option available for PaaS hosting scenarios. It ensures proper version control of PowerSync with your project. Use something like `Import-Module "$PSScriptRoot\PowerSync"` in your script.
 ### Linux
+TODO
 ## PSY Command Prefix
 All PowerSync commands use the 'PSY' prefix to ensure uniqueness with other modules (pronounces *Sigh*).
 
@@ -102,15 +103,19 @@ The Json file repository is the quickest and easiest way to start using PowerSyn
 
 An OleDb database repository is more complex option, but also more robust. It also provides additional persistent (i.e. custom tables) to manage custom configuration specific to your project.
 
-**Usage**   
+#### Usage
 **Create a new Json repository**
 ```PowerShell
 New-PSYJsonRepository '.\MyPSYRepo.json'
 ```
-Create a new Json repository.
+Connect to an existing Json repository.
 ```PowerShell
-New-PSYJsonRepository '.\MyPSYRepo.json'
+Connect-PSYJsonRepository '.\MyPSYRepo.json'
 ```
+```PowerShell
+Remove-PSYJsonRepository '.\MyPSYRepo.json'
+```
+Delete a Json repository.
 ### OleDb Repository
 ## Logging
 ### Error Log
