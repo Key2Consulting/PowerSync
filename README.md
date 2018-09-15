@@ -3,34 +3,34 @@ PowerSync is a PowerShell based data integration system. It can be used as a com
 
 As its rooted in PowerShell, PowerSync natively supports the plethora of PowerShell commands/cmdlets found in the community and included by the PowerShell platform. PowerShell is known for it's convenient and simplistic API for managing vast numbers of resources. It's PowerSync's goal to provide that same simplistic API for managing data resources.
 
-PowerSync features:
+## Features
  - Portable by nature, so it can run on a desktop, server, Linux or Windows without much overhead.
- - Can scale within any compatible hosting environment (e.g. Azure WebJobs).
+ - Easily scales alongside it's hosting environment (e.g. Azure WebJobs).
  - High performance Exporters and Importers compatible with a wide range of data systems.
- - Sequential or parallel execution models.
+ - Sequential or parallel execution.
  - Activity model to organize work and isolate workloads.
  - Comprehensive logging system.
- - Supports process resiliency (i.e. resume/retry).
+ - Process resiliency support (i.e. resume/retry).
  - State management system.
  - Highly customizable.
 
 ## Design Goals
- * Existing tools make it difficult to reuse code, where many times the majority of the work is repetitive. PowerSync should allow users to build upon prior work by creating compositions of new capablities using existing components, and conforming to the [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
- * Procedural programming model with source control versioning that works (ever tried to compare an SSIS package?).
- * Support loose or dynamic typing of source and target schemas.
+ * Existing tools make it difficult to reuse code, where many times the majority of the work is repetitive. PowerSync should allow users to build upon prior work by creating compositions of new capablities using existing components, and conforming to the [DRY Principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
+ * Procedural programming model with source control versioning that works (ever try to compare an SSIS package?).
+ * Support weak typing of source and target schemas.
  * Reduce the overhead and complexity of performing simple tasks, providing users with a CLI option when needed.
  * Avoid vendor lock-in as much as possible.
  * Compatibility with most PowerShell libraries.
  * Provide a design model familiar to developers who've worked with commercial data integration tools before.
 
-## Examples
-Quickly copies a table from one database to another database, creating the table if it doesn't exist.
+## The Syntax
+Copies a table from one database to another database, creating the table if it doesn't exist.
 ```powershell
 Copy-PSYTable `
     -SProvider SqlServer -SServer 'SourceServer' -SDatabase "DatabaseA" -STable "dbo.MyTable" `
     -TProvider SqlServer -TServer 'TargetServer' -TDatabase "DatabaseB" -TTable "dbo.MyTableCopy"
 ```
-Quickly imports a CSV file into a database table, and then back out to a tab delimited file.
+Import a CSV file into a database table, and then back out to a tab delimited file.
 ```powershell
 Copy-PSYTable `
     -SProvider TextFile -SConnectionString "InputFile.csv" -SFormat CSV -SHeader `
@@ -39,7 +39,7 @@ Copy-PSYTable `
     -SProvider SqlServer -SServer 'TargetServer' -SDatabase "DatabaseB" -STable "dbo.MyTable" `
     -TProvider TextFile -TConnectionString "OutputFile.txt" -TFormat TSV -THeader
 ```
-Orchestrates a parallel, multi-table copy between different database systems.
+Orchestrate a parallel, multi-table copy between different database systems.
 ```powershell
 # Connect to PowerSync repository (stores all our runtime and persisted state).
 Connect-PSYJsonRepository 'PowerSyncRepo.json'
@@ -50,14 +50,25 @@ Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString 
 
 # Start a parallel activity which copies the tables.
 @('Table1', 'Table2', 'Table3') | Start-PSYForEachActivity -Name 'Multi-Table Copy' -Parallel -Throttle 3 -ScriptBlock {
-    Export-PSYOracle -Connection "OracleSource" -Table $Input `
-        | Import-PSYSqlServer -Connection "SqlServerTarget" -Table $Input -Create -Index
+        Export-PSYOracle -Connection "OracleSource" -Table $Input `
+            | Import-PSYSqlServer -Connection "SqlServerTarget" -Table $Input -Create -Index
     }
 ```
 ## Installing and Importing
-## PSY Command Prefix
+### Windows
+There's essentially three distinct ways to install and use PowerSync in a host environment. All of these options require you to download PowerSync from GitHub, and extract the PowerSync folder. Currently, PowerSync is not published to any repository.
+#### Copy to $PSHome
+Copy PowerSync folder to $PSHome (%Windir%\System32\WindowsPowerShell\v1.0\Modules). This will enable PowerSync for all users of a machine, but requires local admin permssion. Use `Import-Module 'PowerSync'` in your script.
+#### Copy to $Home\Documents\WindowsPowerShell\Modules
+Copy PowerSync folder to $Home\Documents\WindowsPowerShell\Modules (%UserProfile%\Documents\WindowsPowerShell\Modules). This enables PowerSync for the current user only. This option isolates your version of PowerSync from others on the same machine, and does not require local admin permission. Use `Import-Module 'PowerSync'` in your script.
+#### Include as Library in Broader Project
+Include the PowerSync folder as part of a project folder structure, and import via it's relative path. Use something like Import-Module `'$PSScriptRoot\PowerSync'` in your script.
+### PSY Command Prefix
+All PowerSync commands use the 'PSY' prefix to ensure uniqueness with other modules (pronounces Sai).
 ## Choosing the Right Repository
 ## Copy a Table
+### Linux
+TODO
 See [Quick Commands](#quick-commands) for more information.  
 # Concepts
 ## The PowerSync Repository
@@ -79,5 +90,6 @@ See [Quick Commands](#quick-commands) for more information.
 # Advanced Topics
 ## Type Conversion
 ## Multiple File Readers
+## Adding Resiliency
 # References
  - ASCII based diagrams created with [asciiflow](http://asciiflow.com).
