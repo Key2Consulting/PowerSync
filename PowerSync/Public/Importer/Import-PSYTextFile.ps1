@@ -48,14 +48,17 @@ function Import-PSYTextFile {
         
         # Construct the full path to the file, which for files is a combination of the base ConnectionString and the Path. Either
         # of those could be omitted.
-        if ($connDef.ConnectionString -and $Path) {
+        if ($connDef -and $connDef.ConnectionString -and $Path) {
             $filePath = $connDef.ConnectionString.Trim('\') + '\' + $Path.TrimStart('\')
+        }
+        elseif ($connDef -and $connDef.ConnectionString) {
+            $filePath = $connDef.ConnectionString
         }
         elseif ($Path) {
             $filePath = $Path
         }
-        elseif ($connDef.ConnectionString) {
-            $filePath = $connDef.ConnectionString
+        else {
+            throw 'Unable to acquire connection as no paths were set by connection or importer.'
         }
 
         # Prepare file for use
