@@ -1,7 +1,7 @@
 # Introduction
-PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option for administering data systems. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT model where transformations are best performed by the database system oppose to the integration framework. 
+PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option for synchronizing data between platforms. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT model where transformations are best performed by the database system oppose to the integration framework. 
 
-As its rooted in PowerShell, PowerSync natively supports the plethora of PowerShell commands/cmdlets found in the community and included by the PowerShell platform. PowerShell is known for it's convenient and simplistic API for managing vast numbers of resources. It's PowerSync's goal to provide that same simplistic API for managing data resources.
+As it's rooted in PowerShell, PowerSync natively supports the plethora of PowerShell commands/cmdlets found in the community and included by the PowerShell platform. PowerShell is known for it's convenient and simplistic API for managing vast numbers of resources. It's PowerSync's goal to provide that same simplistic API for managing data resources.
 
 ## Features
  - Portable by nature, so it can run on a desktop, server, Linux or Windows without much overhead.
@@ -55,7 +55,7 @@ Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString 
             | Import-PSYSqlServer -Connection "SqlServerTarget" -Table $Input -Create -Index
     }
 ```
-## Installing and Importing
+## Installing and Importing the Module
 ### Windows
 There's essentially three ways to install and use PowerSync in a windows environment. All of these options require you to download PowerSync from GitHub, and extract the PowerSync folder (PowerSync is not available via a repository). 
 
@@ -84,7 +84,7 @@ See [Installing a PowerShell Module](https://docs.microsoft.com/en-us/powershell
 Copy PowerSync folder to $PSHome (*%Windir%\System32\WindowsPowerShell\v1.0\Modules*). This will enable PowerSync for all users of a machine, but requires local admin permssion. Use `Import-Module PowerSync` in your script.
 #### Copy to $Home\Documents\WindowsPowerShell\Modules
 Copy PowerSync folder to $Home\Documents\WindowsPowerShell\Modules (*%UserProfile%\Documents\WindowsPowerShell\Modules*). This enables PowerSync for the current user only. This option isolates your version of PowerSync from others on the same machine, and does not require local admin permission. Use `Import-Module PowerSync` in your script.
-#### Include as Library in Broader Project
+#### Project Library
 Include the PowerSync folder as part of a project folder structure, and import via it's relative path. This option is recommended for development projects, and may be the only option available for PaaS hosting scenarios. It ensures proper version control of PowerSync with your project. Use something like `Import-Module "$PSScriptRoot\PowerSync"` in your script.
 ### Linux
 TODO
@@ -284,8 +284,8 @@ Invoke-PSYCmd -Connection 'PSYRepository' -Command "UPDATE dbo.MyDataFeed WHERE 
 SELECT ExtractTableName, LoadTableName, HighWaterMark
 FROM dbo.MyDataFeed
 WHERE 
-    Frequency = $(Frequency)
-    AND (Category = $(Category) OR $(Category) = 'All')
+    Frequency = '$(Frequency)'
+    AND (Category = '$(Category)' OR $(Category) = 'All')
 ```
 
 ## Exporters and Importers
@@ -324,6 +324,21 @@ The Variable Log is used to capture the state changes of PowerSync State Variabl
 ```PowerShell
 Write-PSYVariableLog -Name 'My Variable Name' -Value 'New Value'
 ```
+### Query Log
+The Query Log captures the execution of Stored Commands and their parameters. It provides insight into the queries that extract, load, or transform data, as well as custom state tables applications create in the PowerSync repository. If you use Stored Commands exclusive to execute queries, then the Query Log is already written to for you. Otherwise, use the following syntax to write to the log.
+
+```PowerShell
+Write-PSYQueryLog -Name 'Transform Target' -Query 'UPDATE MyTable SET Abc = 123'
+```
+
+### Reading the Logs
+PowerSync logs are searchable using `Find-PSYLog`, which executes a holistc search across all log types. Search terms support the use of wildcards (e.g. `*` and `?`). Of course, projects using a database repository are free to use whatever RDBMS tools are provided to search the log tables.
+
+```PowerShell
+Find-PSYLog -Search '*MyTable*' -StartDate '1/1/2018'   # search all logs for MyTable reference
+Find-PSYLog -Type 'ErrorLog' -Search '*MyTable*'        # search just error log for MyTable reference
+```
+
 ## Quick Commands
 Except for [Quick Commands](#quick-commands), PowerSync commands require a connection to a repository to function.
 > Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution.
