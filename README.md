@@ -209,8 +209,29 @@ If PowerSync State Variables don't meet your requirements, look to using [Stored
 ### State Management and Concurrency
 Native PowerShell variables (i.e. `$myVar = 123`) have limited use in data integration systems because those systems are inherintely designed to be long running (and susceptible to failures) and recurring, picking up where it left off. These capabilities require persisted state, which PowerShell variables do not provide. In addition, many of these processes will execute in parallel so state mechanisms must support concurrency. PowerSync provides several concurrent, state management constructs, like [State Variables](#state-variables) and [Stored Commands](#stored-commands). You also have the option of managing state yourself outside PowerSync. You could use a custom database or even a web service.
 
-Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, ArrayLists). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). Changes to remote objects during parallel execution will not affect the copy in the caller's process space.
+Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, arrays). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). 
 
+One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, sequential activities do retain visibility to these variables. Furthermore, changes to enumerated objects during parallel execution (`Start-PSYForEachActivity`) will not affect the copy in the caller's process space.
+```PowerShell
+$readMe = 123
+Start-PSYActivity -ScriptBlock ({
+    $x = $readMe     # $x equals 123
+}
+Start-PSYActivity -Parallel -ScriptBlock ({     # set Parallel switch
+    $x = $readMe     # $x equals null
+}, {
+    $x = $readMe     # $x equals null
+})
+
+$obj = @{WriteMe = 123}
+($obj) | Start-PSYForEachActivity -ScriptBlock {
+    $obj.WriteMe = 456      # updates caller's obj
+}
+($obj) | Start-PSYForEachActivity -Parallel -ScriptBlock {      # set Parallel switch
+    $obj.WriteMe = 789      # $obj is now remote, does not update caller's obj
+}
+$x = $obj.WriteMe           # still 456
+```
 ## Connections
 Extracting data from a source first requires a connection. Connections define all of the required information required to establish a connection to a source or target system. Connections are persisted in the repository, only need to be created once, and then referenced by name downstream.
 
