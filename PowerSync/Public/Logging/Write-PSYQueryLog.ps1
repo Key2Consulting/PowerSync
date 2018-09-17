@@ -20,9 +20,9 @@ Any parameters passed into the Stored Command.
 function Write-PSYQueryLog {
     [CmdletBinding()]
     param (
-        [Parameter(HelpMessage = "The name of the Stored Query.", Mandatory = $true)]
+        [Parameter(HelpMessage = "The name of the Stored Query.", Mandatory = $false)]
         [string] $Name,
-        [Parameter(HelpMessage = "The name of the connection the query executed against.", Mandatory = $true)]
+        [Parameter(HelpMessage = "The name of the connection the query executed against.", Mandatory = $false)]
         [string] $Connection,
         [Parameter(HelpMessage = "The TSQL text executed against the database.", Mandatory = $false)]
         [string] $Query,

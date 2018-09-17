@@ -33,7 +33,11 @@ function Find-PSYLog {
         [Parameter(HelpMessage = "Restricts search to a specific log type.", Mandatory = $false)]
         [string] $Type,
         [Parameter(HelpMessage = "The term to search for. Supports wildcards (i.e. *, ?).", Mandatory = $false)]
-        [string] $Search
+        [string] $Search,
+        [Parameter(HelpMessage = "Filters logs dated later than StartDate.", Mandatory = $false)]
+        [datetime] $StartDate,
+        [Parameter(HelpMessage = "Filters logs dated earlier than EndDate.", Mandatory = $false)]
+        [datetime] $EndDate
     )
 
     try {
@@ -69,6 +73,9 @@ function Find-PSYLog {
             else {
                 $allLogs
             }
+
+            # TODO: Add date filter support (e.g. StartDate, EndDate)
+            
         })
     }
     catch {
