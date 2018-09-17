@@ -42,16 +42,8 @@ Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot     # needed so Stored C
 Write-Host "RUNNING Test Scripts"
 .\Test\TestQuickCommand.ps1
 .\Test\TestGeneral.ps1
+.\Test\TestVariables.ps1
 .\Test\TestConcurrency.ps1
 .\Test\TestCSVToSQL.ps1
 .\Test\TestSQLToSQL.ps1
 Write-Host "FINISHED Runing Test Scripts"
-
-<#
-FUTURE TESTS: 
- - AutoCreate false
- - Test no overwrite
- - File to file, change format
- - MultiSource Manifest Repository
-    - Consider creating a PowerSync Data Integration Framework using Azure SQL as a manifest repository (separate project?)
-#>

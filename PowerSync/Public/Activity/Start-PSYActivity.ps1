@@ -4,7 +4,7 @@ Starts a PowerSync Activity.
 
 .DESCRIPTION
 PowerSync activities organize your data integration workload into atomic units of work. Although activities are not required, they provide certain benefits, such as:
- - Any log operations performed during an activity is associated to that activity. 
+ - Log operations performed during an activity are associated to that activity.
  - Automatic error handling and logging.
  - Sequential or parallel execution (using remote jobs).
 
@@ -19,6 +19,9 @@ Runs the scriptblocks in parallel when multiple scriptblocks are defined.
 
 .PARAMETER Throttle
 Maximum number of parallel executions.
+
+.PARAMETER WaitDebugger
+If set, forces remote jobs used in parallel processes to break into the debugger.
 
 .EXAMPLE
 Start-PSYActivity -Name 'Simple Activity' -ScriptBlock {
@@ -47,7 +50,9 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
         [Parameter(HelpMessage = "Runs the scriptblocks in parallel when multiple scriptblocks are defined.", Mandatory = $false)]
         [switch] $Parallel,
         [Parameter(HelpMessage = "Maximum number of parallel executions", Mandatory = $false)]
-        [int] $Throttle = 3
+        [int] $Throttle = 3,
+        [Parameter(HelpMessage = "If set, forces remote jobs used in parallel processes to break into the debugger.", Mandatory = $false)]
+        [switch] $WaitDebugger
     )
 
     try {
@@ -60,7 +65,7 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
         $parentActivity = if ($ScriptBlock -is [array]) {$a} else {$null}       # only log a child activity if an array of scriptblocks need processing
 
         # Execute foreach (in parallel if specified)
-        $job = ($ScriptBlock | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Throttle $Throttle -Name "$Name[{0}]" -ParentActivity $parentActivity)
+        $job = ($ScriptBlock | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Throttle $Throttle -Name "$Name[{0}]" -ParentActivity $parentActivity -WaitDebugger:$WaitDebugger)
         
         # Log activity end
         Write-ActivityLog -Name $Name -Message "Activity '$Name' completed" -Status 'Completed' -Activity $a

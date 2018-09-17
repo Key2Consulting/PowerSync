@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-Removes or deletes a PowerSync variable from the connected repository, and creates a null entry in the variable log.
+Removes or deletes a PowerSync state variable from the connected repository, and creates a null entry in the variable log.
 
 .DESCRIPTION
-Variables are discrete state managed by PowerSync. The primary benefits of using variables over simple PowerShell variables is that they are persisted and they work with parallel processes.
+State Variables are discrete state managed by PowerSync. The primary benefits of using PowerSync State Variables over native PowerShell variables is that they are persisted and they work with parallel processes.
 
-Variables are simple name/value pairs which are stored in the repository. The value can be a primitive type (e.g. numbers or text), or complex types (e.g. hashtables or array lists).
+State Variables are simple name/value pairs which are stored in the repository. The value can be a primitive type (e.g. numbers or text), or complex types (e.g. hashtables or array lists).
 
 An important consideration is variable read/write operations are performed as a single atomic unit of work. In other words, there's no way to update just part of a variable when performing concurrent updates.  
 

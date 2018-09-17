@@ -1,43 +1,335 @@
-# PowerSync #
-*Currently Under Development*
+# Introduction
+PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option for administering data systems. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT model where transformations are best performed by the database system oppose to the integration framework. 
 
-The fundamental philosphy of PowerSync is that many data integration operations are repetitive and do not require large scale ETL frameworks to accomplish. The goal of PowerSync is to handle these common scenarios as a library of robust PowerShell commands. These commands can be used individually to tackle administrative/operational tasks, or can be composed into more a sophisticated data integration framework.
+As its rooted in PowerShell, PowerSync natively supports the plethora of PowerShell commands/cmdlets found in the community and included by the PowerShell platform. PowerShell is known for it's convenient and simplistic API for managing vast numbers of resources. It's PowerSync's goal to provide that same simplistic API for managing data resources.
 
-*Note that PowerSync prefers an ELT over ETL approach to data integration, and leaves it up to the consumer to transform data according to their requirements.*
+## Features
+ - Portable by nature, so it can run on a desktop, server, Linux or Windows without much overhead.
+ - Easily scales alongside it's hosting environment (e.g. Azure WebJobs).
+ - High performance Exporters and Importers compatible with a wide range of data systems.
+ - Sequential or parallel execution.
+ - Activity model to organize work and isolate workloads.
+ - Comprehensive logging system.
+ - Process resiliency support (i.e. resume/retry).
+ - State management system.
+ - Highly customizable.
 
-Features:
- - Quickly copy a table, view, or the results of query to a target database.
- - Copy single table, or an entire list (manifest) of tables.
- - Dynamically creates target table based on extract query (think SELECT INTO).
- - Can optionally and automatically create [clustered columnstore] indexes on target.
- - Does not depend on link servers.
- - Perform full or incremental updates.
- - Can extract data from any ADO.NET or OLEDB compatible data source.
-  
- Benefits:
- - Easy to Use
- - Lightweight
- - Portable
- - Procedural
- - Bulk Operations
+## Design Goals
+ * Existing tools make it difficult to reuse code, where many times the majority of the work is repetitive. PowerSync should allow users to build upon prior work by creating compositions of new capablities using existing components, and conforming to the [DRY Principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
+ * Procedural programming model with source control versioning that works (ever try to compare an SSIS package?).
+ * Support weak typing of source and target schemas.
+ * Reduce the overhead and complexity of performing simple tasks, providing users with a CLI option when needed.
+ * Avoid vendor lock-in as much as possible.
+ * Compatibility with most PowerShell libraries.
+ * Provide a design model familiar to developers who've worked with commercial data integration tools before.
 
-Situations where PowerSync is not a good fit:
- - When each extraction has custom transformation requirements (it's best suited for repetitive transformations scenarios)
- - Long running processes
- - Highly customized workflows
+## The Syntax
+Copies a table from one database to another database, creating the table if it doesn't exist.
+```powershell
+Copy-PSYTable `
+    -SProvider SqlServer -SServer 'SourceServer' -SDatabase "DatabaseA" -STable "dbo.MyTable" `
+    -TProvider SqlServer -TServer 'TargetServer' -TDatabase "DatabaseB" -TTable "dbo.MyTableCopy"
+```
+Import a CSV file into a database table, and then back out to a tab delimited file.
+```powershell
+Copy-PSYTable `
+    -SProvider TextFile -SConnectionString "InputFile.csv" -SFormat CSV -SHeader `
+    -TProvider SqlServer -TServer 'TargetServer' -TDatabase "DatabaseB" -TTable "dbo.MyTable"
+Copy-PSYTable `
+    -SProvider SqlServer -SServer 'TargetServer' -SDatabase "DatabaseB" -STable "dbo.MyTable" `
+    -TProvider TextFile -TConnectionString "OutputFile.txt" -TFormat TSV -THeader
+```
+Orchestrate a parallel, multi-table copy between different database systems.
+```powershell
+# Create and Connect to PowerSync repository (stores all our runtime and persisted state).
+New-PSYJsonRepository 'PowerSyncRepo.json'
+Connect-PSYJsonRepository 'PowerSyncRepo.json'
+
+# Create source and target connections (only need to do this once).
+Set-PSYConnection -Name "OracleSource" -Provider Oracle -ConnectionString "Data Source=MyOracleDB;Integrated Security=yes;"
+Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString "Server=TargetServer;Integrated Security=true;Database=DatabaseB"
+
+# Start a parallel activity which copies the tables.
+@('Table1', 'Table2', 'Table3') | Start-PSYForEachActivity -Name 'Multi-Table Copy' -Parallel -Throttle 3 -ScriptBlock {
+        Export-PSYOracle -Connection "OracleSource" -Table $Input `
+            | Import-PSYSqlServer -Connection "SqlServerTarget" -Table $Input -Create -Index
+    }
+```
+## Installing and Importing
+### Windows
+There's essentially three ways to install and use PowerSync in a windows environment. All of these options require you to download PowerSync from GitHub, and extract the PowerSync folder (PowerSync is not available via a repository). 
+
+PowerSync requires a minimum of RemoteSigned execution policy.
+```PowerShell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+```
+
+After downloading, use must unblock the source files.
+```PowerShell
+Get-ChildItem -Path "$YourPathToPowerSyncFolder" -Recurse | Unblock-File
+```
+
+You can also run the Install-PowerSync script included in the root of the GitHub project.
+```PowerShell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned   # escalate execution policy
+Unblock-File -Path '.\Install-PowerSync.ps1'        # in case it was just downloaded
+.\Install-PowerSync.ps1                             # install for current user only
+.\Install-PowerSync.ps1 -InstallForAllUsers         # OR install for all users (requires Run as Administrator)
+Import-Module PowerSync
+```
+
+See [Installing a PowerShell Module](https://docs.microsoft.com/en-us/powershell/developer/module/installing-a-powershell-module) for more information.
+
+#### Copy to $PSHome
+Copy PowerSync folder to $PSHome (*%Windir%\System32\WindowsPowerShell\v1.0\Modules*). This will enable PowerSync for all users of a machine, but requires local admin permssion. Use `Import-Module PowerSync` in your script.
+#### Copy to $Home\Documents\WindowsPowerShell\Modules
+Copy PowerSync folder to $Home\Documents\WindowsPowerShell\Modules (*%UserProfile%\Documents\WindowsPowerShell\Modules*). This enables PowerSync for the current user only. This option isolates your version of PowerSync from others on the same machine, and does not require local admin permission. Use `Import-Module PowerSync` in your script.
+#### Include as Library in Broader Project
+Include the PowerSync folder as part of a project folder structure, and import via it's relative path. This option is recommended for development projects, and may be the only option available for PaaS hosting scenarios. It ensures proper version control of PowerSync with your project. Use something like `Import-Module "$PSScriptRoot\PowerSync"` in your script.
+### Linux
+TODO
+## PSY Command Prefix
+All PowerSync commands use the 'PSY' prefix to ensure uniqueness with other modules (pronounces *Sigh*).
+
+# Concepts
+## The PowerSync Repository
+The PowerSync Repository is a data store PowerSync uses to store all of its internal persisted state and runtime information. The repository should not be confused with source and target data sources (i.e. Connections) used for data integration purposes. For a given project, you would have one and only one repository.
+
+There are two types of repositories: file and database. Currently, Json and OleDb are the only file and database repository options.
+
+### Json Repository
+The Json file repository is the quickest and easiest way to start using PowerSync. It uses a single Json formatted text file stored on the local file system. One of the downsides to using a Json repository is that Json files can be difficult to read and query. It also does not scale well under heavy usage, since reading/writing to a single text file can become a bottleneck. However, it's a great choice for small projects or workflows that don't need a full-fledged database.
+
+The following is an example of creating, connecting, and then removing a Json repository (of course, in a real project you probably wouldn't create and then immediately remove a repository).
+```PowerShell
+New-PSYJsonRepository '.\MyPSYRepo.json'
+Connect-PSYJsonRepository '.\MyPSYRepo.json'
+# Do some work
+Remove-PSYJsonRepository '.\MyPSYRepo.json'
+```
+
+### OleDb Repository
+An OleDb database repository is more complex option, but also more robust. It also provides additional persistent (i.e. custom tables) to manage custom configuration specific to your project. It also allows for more complex querying, monitoring, and reporting of the runtime state of your project. The downside is it requires a database system, and lacks the portability of files.
+
+The OleDb provider can use any OleDb compatible database. However, the use of a database repository requires the creation of a database which conforms to the structures and capabilities required by PowerSync. Since database systems and their proprietary syntax can vary significantly, PowerSync delegates creation and management of the database repository to your project. However, PowerSync does include *Kits* which contain pre-packaged and fully functional database repository projects ready to use. Once deployed, maintaining and upgrading database repositories based on those kits is the responsibility of the developer.
+
+TODO: We may need to reconsider this, since we want use to be as simple as possible.
+#### Usage
+TODO
+
+## Activities
+PowerSync activities organize your data integration workload into atomic units of work. You execute an Activity with the `Start-PSYActivity` or `Start-PSYForEachActivity` functions. Although activities are not required, they provide certain benefits:
+ - Log operations performed during an activity are associated to that activity.
+ - Automatic logging of errors.
+ - Sequential or parallel execution (using remote jobs).
+
+Activities are nestable, giving projects the ability to decompose complex workloads into smaller, simpler units of work.
+```PowerShell
+Start-PSYActivity -Name 'Outer Activity' -ScriptBlock {
+    Start-PSYActivity -Name 'Inner Activity' -ScriptBlock {
+        Write-Host 'Hello Inner World'
+    }
+    Write-Host 'Hello Outer World'
+}
+```
+You can also execute multiple scriptblocks within the same activity:
+```PowerShell
+Start-PSYActivity -Name 'Multiple Activities' -ScriptBlock ({
+    Write-Host 'One'
+}, {
+    Write-Host 'Two'
+}, {
+    Write-Host 'Three'
+})
+```
+You can execute the same activity for a list of items, foreach style (use the variable `$Input` to retrieve the current item):
+```PowerShell
+(1, 2, 3) | Start-PSYActivity -Name 'ForEach Activity' -ScriptBlock {
+    Write-Host "Hello Item $Input"
+}
+```
+By default, activities execute in a sequential manner. However, setting the `-Parallel` switch will execute the activity in parallel (where applicable) and can be throttled via the `-Throttle` parameter.
+```PowerShell
+# Prints Three, Two, One
+Start-PSYActivity -Name 'Multiple Activities' -Parallel -Throttle 5 -ScriptBlock ({
+    Start-Sleep -Seconds 3
+    Write-Host 'One'
+}, {
+    Start-Sleep -Seconds 2
+    Write-Host 'Two'
+}, {
+    Start-Sleep -Seconds 1
+    Write-Host 'Three'
+})
+# Can print in any order.
+(1, 2, 3) | Start-PSYForEachActivity -Name 'ForEach Activity' -Parallel -Throttle 5 -ScriptBlock {
+    Write-Host "Hello Item $Input"
+}
+```
+### Debugging Parallel Processes
+Debugging parallel execution in PowerShell is tricky. Enabling parallel execution disables breakpoints in most IDEs. You can leverage the PowerSync logs to help pinpoint the issue, but sometimes stepping through the code is the best and only option. When initially developing or debugging an issue, consider disabling parallel execution by temporarily removing the `-Parallel` switch. If the problem only occurs during parallel execution, the `WaitDebugger` switch will force each remote job to break in the debugger. Howevever, it will break within an internal PowerSync function so you'll need to step through until you reach your code.
+
+## State Variables
+PowerSync State Variables are discrete state managed by PowerSync. State Variables are simple name/value pairs which are stored in the repository. The value can be a primitive type (e.g. numbers or text), or complex types (e.g. hashtables or arrays). The primary benefits of using State Variables over only using native PowerShell variables is that they are
+ - Persisted
+ - Work with parallel processes
+ - State changes are logged
+ - Can be synchronized across parallel processes
  
-## PowerSync.ps1 ##
+```PowerShell
+Set-PSYVariable -Name 'MyVar' -Value 'Hello World'                          # scalar
+Set-PSYVariable -Name 'MyComplexVar' -Value @{Hello = 'World'; Abc = 123}   # hashtable
+Set-PSYVariable -Name 'MyComplexListVar' -Value (                           # array of hashtables
+        @{Prop1 = 123; Prop2 = 'ABC'},
+        @{Prop1 = 456; Prop2 = 'DEF'},
+        @{Prop1 = 789; Prop2 = 'GHI'}
+    )
+Write-Host "$(Get-PSYVariable -Name 'MyVar')"
+```
+`Get-PSYVariable` and `Remove-PSYVariable` support the wildcards `*` and `?`.
+```PowerShell
+Remove-PSYVariable -Name 'My*' -Wildcards
+```
+An important consideration is that State Variable read/write operations are performed as a single atomic unit of work. In other words, there's no way to update just part of a variable when performing concurrent updates. If you require a multi-row variable where each row is independently updatable, consider creating multiple variables with a name differing by an index and using wildcards.
+```PowerShell
+Set-PSYVariable -Name 'MyVar[0]' -Value 'Blue'
+Set-PSYVariable -Name 'MyVar[1]' -Value 'Red'
+Set-PSYVariable -Name 'MyVar[2]' -Value 'Green'
+foreach ($var in (Get-PSYVariable -Name 'MyVar[*]' -Wildcards)) {
+    Write-Host "Color is $($var)"
+}
+```
+State Variable access can also be synchronized across parallel processes via Lock-PSYVariable. Locking a variable establishes exclusive access so no other process can read or write to the same variable. An exclusive lock blocks other processes, so the duration of the lock should minimized. Locking uses Mutexes to ensure synchronization, so it's limited to parallel processes executing on the same server.
+```PowerShell
+Lock-PSYVariable 'TestVariable' {
+        Set-PSYVariable 'TestVariable' ((Get-PSYVariable 'TestVariable') + 1)
+    }
+```
+If PowerSync State Variables don't meet your requirements, look to using [Stored Commands](#stored-commands) instead and creating your own data structures within your repository.
+### State Management and Concurrency
+Native PowerShell variables (i.e. `$myVar = 123`) have limited use in data integration systems because those systems are inherintely designed to be long running (and susceptible to failures) and recurring, picking up where it left off. These capabilities require persisted state, which PowerShell variables do not provide. In addition, many of these processes will execute in parallel so state mechanisms must support concurrency. PowerSync provides several concurrent, state management constructs, like [State Variables](#state-variables) and [Stored Commands](#stored-commands). You also have the option of managing state yourself outside PowerSync. You could use a custom database or even a web service.
 
-## PowerSync-Manifest.ps1 ##
-Runs PowerSync for a collection of items defined in a manifest file (CSV format), and performs an Extract, Load, Transform for each item. The TSQL used
-at each stage is defined in separate .SQL files and (optionally) passed into PowerSync. PowerSync attempts to pass every field in the manifest into each 
-TSQL script using SQMCMD :setvar syntax, and also applies SQLCMD variables that only exist in the script. 
+Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, arrays). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). 
 
-PowerSync-Manifest also supports writebacks to the manifest file itself. This is useful for tracking runtime information like the last incremental 
-extraction value (for incremental loads), or the last run date/time.
+One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, sequential activities do retain visibility to these variables. Furthermore, changes to enumerated objects during parallel execution (`Start-PSYForEachActivity`) will not affect the copy in the caller's process space.
+```PowerShell
+$readMe = 123
+Start-PSYActivity -ScriptBlock ({
+    $x = $readMe     # $x equals 123
+}
+Start-PSYActivity -Parallel -ScriptBlock ({     # set Parallel switch
+    $x = $readMe     # $x equals null
+})
 
-Event execution order:
- 1) Prepare (incremental extract range, writebacks)
- 2) Extract
- 3) Load
- 4) Transform
+$obj = @{WriteMe = 123}
+($obj) | Start-PSYForEachActivity -ScriptBlock {
+    $obj.WriteMe = 456      # updates caller's obj
+}
+($obj) | Start-PSYForEachActivity -Parallel -ScriptBlock {      # set Parallel switch
+    $obj.WriteMe = 789      # $obj is now remote, does not update caller's obj
+}
+$x = $obj.WriteMe           # still 456
+```
+## Connections
+Connections define all of the required information required to establish a connection to a source or target system. Connections are persisted in the repository, only need to be created once, and then referenced by name in downstream functions.
+
+Connections definitions are fairly generic and platform agnostic. The specific properties required to establish a connection to a data system depend on the provider of a connection, but most providers support the notion of a Connection String.
+
+> PowerSync automatically defines a connection to the PowerSync repository using the name *PSYRepository*.
+
+```PowerShell
+Set-PSYConnection -Name "MyConnection" -Provider SqlServer -ConnectionString "Server=MyServer;Integrated Security=true;Database=MyDatabase"      # creates or overwrites
+Get-PSYConnection -Name "MyConnection"       # you would rarely use this function
+Remove-PSYConnection -Name "MyConnection"
+```
+### File Connections
+File based connections use the ConnectionString property as the base path to the file. When the connection is used within an importer, the full path to the file is a combination of the ConnectionString and the Path passed into the importer. Either of those could be omitted, as long as the other supplies the full path. So technically speaking, file importers do not require a connection.
+
+### Connection Examples
+```PowerShell
+Set-PSYConnection -Name "SqlServerConnection" -Provider SqlServer -ConnectionString "Server=MyServer;Integrated Security=true;Database=MyDatabase"
+Set-PSYConnection -Name "OleDbConnection" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=MyServer;Database=MyDatabase;Trusted_Connection=yes;"
+Set-PSYConnection -Name "FolderConnection" -Provider TextFile -ConnectionString "D:\MyFiles\"
+Set-PSYConnection -Name "FileConnection" -Provider TextFile -ConnectionString "D:\MyFiles\File1.csv"
+```
+
+### Connection Security
+Data systems enforce some level of access security, whether via integrated security of the current principle, a user name and password, or certificates. PowerSync only supports integrated security, and user name / password defined within the connection string. It is generally recommended to handle authorization from within your hosting environment such that the credentials executing your PowerSync application are authorized to access backend data systems.
+
+## Stored Commands
+Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. PowerSync will attempt to locate the script (via the `-Name` param) in the Project Folder, which defaults to the location of the script that imported PowerSync. 
+> Specifying the file extension in the script name is optional.
+
+Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value defined in the script (i.e. a default).
+
+If the Stored Command returns a resultset, it is converted into an ArrayList of hashtables and returned to the caller. A single row just returns a hashtable.
+
+Sophisticated projects requiring complex configuration structures and custom workflows should leverage Stored Commands for state management. PowerSync [State Variables](#state-variables) could also be used, but are simplistic and do not provide a rich data model.
+
+Example using a custom table in the PowerSync repository to retrieve list of tables to extract.
+```PowerShell
+# Use a custom script. The parameter Frequency is passed into the script, but Category is not.
+$extractWorkload = Invoke-PSYCmd -Connection 'PSYRepository' -Name "GetExtractWorkload.sql" -Param @{Frequency = 'Daily'}
+
+# Do extraction and loading...
+
+# Update the high water mark for next extraction. Although using a script is recommended, it's not 
+# required (and PowerShell makes it easy to pass parameters).
+Invoke-PSYCmd -Connection 'PSYRepository' -Command "UPDATE dbo.MyDataFeed WHERE HighWaterMark = '$maxModifiedDateTime'"
+```
+*GetExtractWorkload.sql*
+```SQL
+:setvar Frequency "Monthly"
+:setvar Category "All"      -- not passed so $(Category) defaults to All
+SELECT ExtractTableName, LoadTableName, HighWaterMark
+FROM dbo.MyDataFeed
+WHERE 
+    Frequency = $(Frequency)
+    AND (Category = $(Category) OR $(Category) = 'All')
+```
+
+## Exporters and Importers
+
+## Logging
+Enterprise integration systems are inherently complex, with many moving parts and potential points of failure. Logging of a large-scale data integration system is one of the most important, and often overlooked capabilities. Comprehensive logging provides projects with insight into the runtime state of the framework, and is critical for monitoring, debugging, and performance tuning.
+
+PowerSync builds upon the logging concepts baked into PowerShell, and adds additional logs to support data integration specific requirements.
+
+### Error Log
+The error log records unexpected exceptions and logs them to the repository using `Write-PSYErrorLog`. The error log is used with Try/Catch blocks, which is the recommended method for handling exceptions. `Write-PSYErrorLog` will honor the current Error Action Preference.
+```PowerShell
+try {
+    $x = 1 / 0
+}
+catch {
+    Write-PSYErrorLog $_
+}
+```
+TODO: Describe error action preference and nesting rules.
+
+### Information and Verbose Log
+The Information and Verbose logs record similar information. The information log narrates the work being performed at a high level. The Verbose Log logs similar information, except at a more detailed level. You can enable verbose logging using the `-Verbose` common parameter.
+```PowerShell
+Write-PSYInformationLog -Message "Completed synchronization of source and target."
+$workItems | Write-PSYVerboseLog -Message "Exported $($_.$RowCount) data from $($_.$TableName)."
+```
+
+### Debug Log
+The Debug Log should be used to log technical operations internal to the system, and useful for debugging purposes. You can enable debug logging using the `-Debug` common parameter.
+```PowerShell
+Write-PSYDebugLog -Message "Process $PID could not find table '$tableName', initiating table creation."
+```
+### Variable Log
+The Variable Log is used to capture the state changes of PowerSync State Variables. Tracking state changes is important when trying to debug an issue due to dynamic nature of integration systems. Use of `Set-PSYVariable` automatically writes to this log.
+```PowerShell
+Write-PSYVariableLog -Name 'My Variable Name' -Value 'New Value'
+```
+## Quick Commands
+Except for [Quick Commands](#quick-commands), PowerSync commands require a connection to a repository to function.
+> Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution.
+# Advanced Topics
+## Type Conversion
+## Multiple File Readers
+## Adding Resiliency
+# References
+ - ASCII based diagrams created with [asciiflow](http://asciiflow.com).

@@ -22,9 +22,12 @@ Runs the scriptblocks in parallel when multiple scriptblocks are defined.
 .PARAMETER Throttle
 Maximum number of parallel executions.
 
+.PARAMETER WaitDebugger
+If set, forces remote jobs used in parallel processes to break into the debugger.
+
 .EXAMPLE
-Start-PSYActivity -Name 'Simple Activity' -ScriptBlock {
-    Write-PSYInformationLog 'Parallel nested script 1 is executing'
+(1, 2, 3) | Start-PSYForEachActivity -Name 'ForEach Activity' -ScriptBlock {
+    Write-PSYInformation "Item $Input"
 }
 
 .EXAMPLE
@@ -51,7 +54,9 @@ function Start-PSYForEachActivity {
         [Parameter(HelpMessage = "Runs the ForEach in parallel", Mandatory = $false)]
         [switch] $Parallel,
         [Parameter(HelpMessage = "Maximum number of parallel executions", Mandatory = $false)]
-        [int] $Throttle = 3
+        [int] $Throttle = 3,
+        [Parameter(HelpMessage = "If set, forces remote jobs used in parallel processes to break into the debugger.", Mandatory = $false)]
+        [switch] $WaitDebugger
     )
 
     try {
@@ -59,7 +64,7 @@ function Start-PSYForEachActivity {
         $a = Write-ActivityLog -ScriptAst $ScriptBlock.Ast.ToString() -Name $Name -Message "ForEach Activity '$Name' started" -Status 'Started'
 
         # Execute foreach (in parallel if specified)
-        $jobs = ($InputObject | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Throttle $Throttle -Name "$Name[{0}]" -ParentActivity $a)
+        $jobs = ($InputObject | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Throttle $Throttle -Name "$Name[{0}]" -ParentActivity $a -WaitDebugger:$WaitDebugger)
         
         # Log activity end
         Write-ActivityLog -Name $Name -Message "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a

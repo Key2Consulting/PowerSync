@@ -68,7 +68,9 @@ function Write-PSYErrorLog {
     if ($originating -and $ErrorActionPreference -ne "SilentlyContinue") {
         # Must be careful trying to connect to repository within an exception handler. The exception could
         # be caused by connectivity issues with the repository. If so, we disconnect before proceeding.
-        $repo = New-FactoryObject -Repository -ErrorAction SilentlyContinue
+        if ($PSYSession.Initialized) {
+            $repo = New-FactoryObject -Repository -ErrorAction SilentlyContinue
+        }
         # Log
         if ($repo) {
             [void] $repo.CriticalSection({
@@ -78,7 +80,7 @@ function Write-PSYErrorLog {
                     Exception = $ErrorRecord.Exception.ToString()
                     StackTrace = $ErrorRecord.ScriptStackTrace
                     Invocation = "$($handler.FunctionName) ($($handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1 -Compress))"     # we could be as verbose as we wanted here, and include BoundParameters all the way up the stack
-                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
+                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID

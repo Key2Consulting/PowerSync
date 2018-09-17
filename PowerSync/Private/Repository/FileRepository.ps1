@@ -51,7 +51,7 @@ class FileRepository : Repository {
         $e = $table.Where({$_.ID -eq $EntityID})
         if ($e) {
             # In case the Json contains non-native types, convert to native
-            $entityHash = ConvertTo-PSYNativeType $e
+            $entityHash = ConvertTo-PSYCompatibleType $e
             return $entityHash
         }
         else {
@@ -96,7 +96,7 @@ class FileRepository : Repository {
         if ($eQuery) {
             foreach ($entity in $eQuery) {
                 # In case the Json contains non-native types, convert to native
-                $entityNative = ConvertTo-PSYNativeType $entity
+                $entityNative = ConvertTo-PSYCompatibleType $entity
                 [void] $entityList.Add($entityNative)
             }
         }
