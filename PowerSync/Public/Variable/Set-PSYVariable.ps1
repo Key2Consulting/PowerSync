@@ -33,7 +33,7 @@ For example:
     Set-PSYVariable -Name 'MyVar[1]' -Value 'Red'
     Set-PSYVariable -Name 'MyVar[2]' -Value 'Green'
     foreach ($var in (Get-PSYVariable -Name 'MyVar[*]' -Wildcards)) {
-        Write-Host "Color is $($var.Value)"
+        Write-Host "Color is $($var)"
     }
     Remove-PSYVariable -Name 'MyVar[*]' -Wildcards
 #>
@@ -75,7 +75,6 @@ function Set-PSYVariable {
                     ReadDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 }
                 $this.CreateEntity('Variable', $o)
-                return $o
             }
             else {
                 $existing.Value = $Value
@@ -85,7 +84,7 @@ function Set-PSYVariable {
         })
 
         # Log
-        Write-PSYVariableLog $Name $Value
+        Write-PSYVariableLog -Name $Name -Value $Value
     }
     catch {
         Write-PSYErrorLog $_
