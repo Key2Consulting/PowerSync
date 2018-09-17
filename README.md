@@ -324,6 +324,21 @@ The Variable Log is used to capture the state changes of PowerSync State Variabl
 ```PowerShell
 Write-PSYVariableLog -Name 'My Variable Name' -Value 'New Value'
 ```
+### Query Log
+The Query Log captures the execution of Stored Commands and their parameters. It provides insight into the queries that extract, load, or transform data, as well as custom state tables applications create in the PowerSync repository. If you use Stored Commands exclusive to execute queries, then the Query Log is already written to for you. Otherwise, use the following syntax to write to the log.
+
+```PowerShell
+Write-PSYQueryLog -Name 'Transform Target' -Query 'UPDATE MyTable SET Abc = 123'
+```
+
+### Reading the Logs
+PowerSync logs are searchable using `Find-PSYLog`, which executes a holistc search across all log types. Search terms support the use of wildcards (e.g. `*` and `?`). Of course, projects using a database repository are free to use whatever RDBMS tools are provided to search the log tables.
+
+```PowerShell
+Find-PSYLog -Search '*MyTable*' -StartDate '1/1/2018'   # search all logs for MyTable reference
+Find-PSYLog -Type 'ErrorLog' -Search '*MyTable*'        # search just error log for MyTable reference
+```
+
 ## Quick Commands
 Except for [Quick Commands](#quick-commands), PowerSync commands require a connection to a repository to function.
 > Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution.
