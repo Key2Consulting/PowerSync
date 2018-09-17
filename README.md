@@ -219,8 +219,6 @@ Start-PSYActivity -ScriptBlock ({
 }
 Start-PSYActivity -Parallel -ScriptBlock ({     # set Parallel switch
     $x = $readMe     # $x equals null
-}, {
-    $x = $readMe     # $x equals null
 })
 
 $obj = @{WriteMe = 123}
@@ -233,7 +231,7 @@ $obj = @{WriteMe = 123}
 $x = $obj.WriteMe           # still 456
 ```
 ## Connections
-Extracting data from a source first requires a connection. Connections define all of the required information required to establish a connection to a source or target system. Connections are persisted in the repository, only need to be created once, and then referenced by name downstream.
+Connections define all of the required information required to establish a connection to a source or target system. Connections are persisted in the repository, only need to be created once, and then referenced by name in downstream functions.
 
 Connections definitions are fairly generic and platform agnostic. The specific properties required to establish a connection to a data system depend on the provider of a connection, but most providers support the notion of a Connection String.
 
@@ -244,8 +242,20 @@ Set-PSYConnection -Name "MyConnection" -Provider SqlServer -ConnectionString "Se
 Get-PSYConnection -Name "MyConnection"       # you would rarely use this function
 Remove-PSYConnection -Name "MyConnection"
 ```
+### File Connections
+File based connections use the ConnectionString property as the base path to the file. When the connection is used within an importer, the full path to the file is a combination of the ConnectionString and the Path passed into the importer. Either of those could be omitted, as long as the other supplies the full path. So technically speaking, file importers do not require a connection.
+
+### Connection Examples
+```PowerShell
+Set-PSYConnection -Name "SqlServerConnection" -Provider SqlServer -ConnectionString "Server=MyServer;Integrated Security=true;Database=MyDatabase"
+Set-PSYConnection -Name "OleDbConnection" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=MyServer;Database=MyDatabase;Trusted_Connection=yes;"
+Set-PSYConnection -Name "FolderConnection" -Provider TextFile -ConnectionString "D:\MyFiles\"
+Set-PSYConnection -Name "FileConnection" -Provider TextFile -ConnectionString "D:\MyFiles\File1.csv"
+```
+
 ### Connection Security
 Data systems enforce some level of access security, whether via integrated security of the current principle, a user name and password, or certificates. PowerSync only supports integrated security, and user name / password defined within the connection string. It is generally recommended to handle authorization from within your hosting environment such that the credentials executing your PowerSync application are authorized to access backend data systems.
+
 ## Stored Commands
 Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. PowerSync will attempt to locate the script (via the `-Name` param) in the Project Folder, which defaults to the location of the script that imported PowerSync. 
 > Specifying the file extension in the script name is optional.
