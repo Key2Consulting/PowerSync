@@ -93,8 +93,7 @@ All PowerSync commands use the 'PSY' prefix to ensure uniqueness with other modu
 
 # Concepts
 ## The PowerSync Repository
-The PowerSync Repository is a data store PowerSync uses to store all of its internal persisted state and runtime information. The repository should not be confused with source and target data sources (i.e. Connections) used for data integration purposes. For a given project, you would have one and only one repository. Except for [Quick Commands](#quick-commands), PowerSync commands require a connection to a repository to function.
-> Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution.
+The PowerSync Repository is a data store PowerSync uses to store all of its internal persisted state and runtime information. The repository should not be confused with source and target data sources (i.e. Connections) used for data integration purposes. For a given project, you would have one and only one repository.
 
 There are two types of repositories: file and database. Currently, Json and OleDb are the only file and database repository options.
 
@@ -167,11 +166,6 @@ Start-PSYActivity -Name 'Multiple Activities' -Parallel -Throttle 5 -ScriptBlock
     Write-Host "Hello Item $Input"
 }
 ```
-### A Note about Parallelism
-PowerSync provides several concurrent, state management constructs, like [State Variables](#state-variables) and [Stored Commands](#stored-commands). However, sometimes it's useful to use a native PowerShell variable like `$myVar = 123`. Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, ArrayLists). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). Changes to remote objects during parallel execution will not affect the copy in the caller's process space.
-
-If state needs to be shared and made updatable, it is recommended to use State Variables or manage the state yourself outside PowerSync. You could use custom tables stored in the PowerSync Database Repository, another database entirely, or even a web service.
-
 ### Debugging Parallel Processes
 Debugging parallel execution in PowerShell is tricky. Enabling parallel execution disables breakpoints in most IDEs. You can leverage the PowerSync logs to help pinpoint the issue, but sometimes stepping through the code is the best and only option. When initially developing or debugging an issue, consider disabling parallel execution by temporarily removing the `-Parallel` switch. If the problem only occurs during parallel execution, the `WaitDebugger` switch will force each remote job to break in the debugger. Howevever, it will break within an internal PowerSync function so you'll need to step through until you reach your code.
 
@@ -185,7 +179,7 @@ PowerSync State Variables are discrete state managed by PowerSync. State Variabl
 ```PowerShell
 Set-PSYVariable -Name 'MyVar' -Value 'Hello World'                          # scalar
 Set-PSYVariable -Name 'MyComplexVar' -Value @{Hello = 'World'; Abc = 123}   # hashtable
-Set-PSYVariable -Name 'MyComplexVar' -Value (                               # arraylist
+Set-PSYVariable -Name 'MyComplexListVar' -Value (                           # array of hashtables
         @{Prop1 = 123; Prop2 = 'ABC'},
         @{Prop1 = 456; Prop2 = 'DEF'},
         @{Prop1 = 789; Prop2 = 'GHI'}
@@ -196,13 +190,13 @@ Write-Host "$(Get-PSYVariable -Name 'MyVar')"
 ```PowerShell
 Remove-PSYVariable -Name 'My*' -Wildcards
 ```
-An important consideration is State Variable read/write operations are performed as a single atomic unit of work. In other words, there's no way to update just part of a variable when performing concurrent updates. If you require a multi-row variable where each row is independently updatable, consider creating multiple variables with a name differing by an index and using wildcards.
+An important consideration is that State Variable read/write operations are performed as a single atomic unit of work. In other words, there's no way to update just part of a variable when performing concurrent updates. If you require a multi-row variable where each row is independently updatable, consider creating multiple variables with a name differing by an index and using wildcards.
 ```PowerShell
 Set-PSYVariable -Name 'MyVar[0]' -Value 'Blue'
 Set-PSYVariable -Name 'MyVar[1]' -Value 'Red'
 Set-PSYVariable -Name 'MyVar[2]' -Value 'Green'
 foreach ($var in (Get-PSYVariable -Name 'MyVar[*]' -Wildcards)) {
-    Write-Host "Color is $($var.Value)"
+    Write-Host "Color is $($var)"
 }
 ```
 State Variable access can also be synchronized across parallel processes via Lock-PSYVariable. Locking a variable establishes exclusive access so no other process can read or write to the same variable. An exclusive lock blocks other processes, so the duration of the lock should minimized. Locking uses Mutexes to ensure synchronization, so it's limited to parallel processes executing on the same server.
@@ -212,8 +206,10 @@ Lock-PSYVariable 'TestVariable' {
     }
 ```
 If PowerSync State Variables don't meet your requirements, look to using [Stored Commands](#stored-commands) instead and creating your own data structures within your repository.
-### State Management and Parallelism
-[TODO: Verbiage about why persistent variables is preferred over runtime variables. Data integration is naturally long running.]
+### State Management and Concurrency
+Native PowerShell variables (i.e. `$myVar = 123`) have limited use in data integration systems because those systems are inherintely designed to be long running (and susceptible to failures) and recurring, picking up where it left off. These capabilities require persisted state, which PowerShell variables do not provide. In addition, many of these processes will execute in parallel so state mechanisms must support concurrency. PowerSync provides several concurrent, state management constructs, like [State Variables](#state-variables) and [Stored Commands](#stored-commands). You also have the option of managing state yourself outside PowerSync. You could use a custom database or even a web service.
+
+Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, ArrayLists). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). Changes to remote objects during parallel execution will not affect the copy in the caller's process space.
 
 ## Connections
 Extracting data from a source first requires a connection. Connections define all of the required information required to establish a connection to a source or target system. Connections are persisted in the repository, only need to be created once, and then referenced by name downstream.
@@ -298,6 +294,8 @@ The Variable Log is used to capture the state changes of PowerSync State Variabl
 Write-PSYVariableLog -Name 'My Variable Name' -Value 'New Value'
 ```
 ## Quick Commands
+Except for [Quick Commands](#quick-commands), PowerSync commands require a connection to a repository to function.
+> Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution.
 # Advanced Topics
 ## Type Conversion
 ## Multiple File Readers
