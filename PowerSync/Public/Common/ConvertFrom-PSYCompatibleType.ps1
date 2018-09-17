@@ -12,9 +12,9 @@ The object to convert back.
 The desired type.
 
 .EXAMPLE
-ConvertFrom-PSYNativeType -Object '2018-09-02T21:35:01.378Z' -Type [DateTime]
+ConvertFrom-PSYCompatibleType -Object '2018-09-02T21:35:01.378Z' -Type [DateTime]
 #>
-function ConvertFrom-PSYNativeType {
+function ConvertFrom-PSYCompatibleType {
     [Parameter(HelpMessage = "The object to convert back.", Mandatory = $false)]
     [object] $Object,
     [Parameter(HelpMessage = "The desired type.", Mandatory = $false)]

@@ -9,9 +9,9 @@ Certain data types, like DateTime, don't work well within PowerSync. This functi
 The object to convert to a native type.
 
 .EXAMPLE
-ConvertFrom-PSYNativeType -Object (Get-Date)
+ConvertFrom-PSYCompatibleType -Object (Get-Date)
 #>
-function ConvertTo-PSYNativeType {
+function ConvertTo-PSYCompatibleType {
     [CmdletBinding()]
     param(
         [parameter(HelpMessage = "The object to convert to a native type.", Mandatory = $false, ValueFromPipeline = $true)]
@@ -33,13 +33,13 @@ function ConvertTo-PSYNativeType {
             }
             elseif ($type -eq 'hashtable') {                                # Hashtable is our native type, but it's values may not be, so enumerate
                 foreach ($k in $InputObject.Keys) {
-                    $hash[$k] = ConvertTo-PSYNativeType $hash[$k]
+                    $hash[$k] = ConvertTo-PSYCompatibleType $hash[$k]
                 }
             }
             elseif ($type -eq 'pscustomobject') {                           # Convert PSCustomObject to HashTable
                 $hash = @{}
                 foreach ($p in $InputObject.PSObject.Properties) {
-                    $hash[$p.Name] = ConvertTo-PSYNativeType $p.Value
+                    $hash[$p.Name] = ConvertTo-PSYCompatibleType $p.Value
                     #if ($p.Value -is [System.Management.Automation.PSCustomObject]) {
                 }
                 return $hash
@@ -47,7 +47,7 @@ function ConvertTo-PSYNativeType {
             elseif ($type -eq 'arraylist') {                                 # ArrayList is our native type, but it's values may not be, so enumerate
                 $new = New-Object System.Collections.ArrayList
                 foreach ($o in $InputObject) {
-                    [void] $new.Add((ConvertTo-PSYNativeType $o))
+                    [void] $new.Add((ConvertTo-PSYCompatibleType $o))
                 }
             }
             else {

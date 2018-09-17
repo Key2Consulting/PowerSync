@@ -36,7 +36,7 @@ The new value of the variable.
                     Type = 'Variable'
                     VariableName = $Name
                     VariableValue = $logValue
-                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
+                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID

@@ -16,7 +16,7 @@ function Invoke-ForEach {
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
         [switch] $Parallel,
         [Parameter(HelpMessage = "TODO", Mandatory = $false)]
-        [switch] $ForceDebug
+        [switch] $WaitDebugger
     )
 
     begin {
@@ -46,7 +46,7 @@ function Invoke-ForEach {
                 DebugPreference = $DebugPreference
                 VerbosePreference = $VerbosePreference
                 ErrorActionPreference = $ErrorActionPreference
-                ForceDebug = $ForceDebug
+                WaitDebugger = $WaitDebugger
             }
             if ($ScriptBlock -is [array]) {                                 # ScriptBlocks can either be a single definition, or an array of different definitions, one per pipeline item.
                 $workItem.ScriptBlock = $ScriptBlock[$index]
@@ -77,8 +77,8 @@ function Invoke-ForEach {
                     param ($workItem)
                     
                     # Initialize environment
-                    if ($workItem.ForceDebug) {
-                        Wait-Debugger       # if the ForceDebug option is set in Invoke-ForEach, will break here. Step into Invoke-Command to debug client code.
+                    if ($workItem.WaitDebugger) {
+                        Wait-Debugger       # if the WaitDebugger option is set in Invoke-ForEach, will break here. Step into Invoke-Command to debug client code.
                     }
                     Import-Module $workItem.PSYSession.Module
                     $global:PSYSession = $workItem.PSYSession
@@ -116,7 +116,7 @@ function Invoke-ForEach {
                 Write-PSYDebugLog ("$($Name): Sequential" -f $workItem.Index)
             }
 
-            if ($workItem.ForceDebug -and $Parallel) {
+            if ($workItem.WaitDebugger -and $Parallel) {
                 Start-Sleep -Milliseconds 500       # isn't there a better way?
                 Debug-Job $workItem.Job
             }

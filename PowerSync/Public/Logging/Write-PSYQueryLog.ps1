@@ -43,7 +43,7 @@ function Write-PSYQueryLog {
                     Connection = $Connection
                     Query = $Query
                     Param = ConvertTo-Json -InputObject $Param -Depth 3 -Compress
-                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
+                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 }
                 if ($o.Param -and $o.Param.Length -gt 2000) {
                     $o.Param = $o.Param.Substring(0, 2000);

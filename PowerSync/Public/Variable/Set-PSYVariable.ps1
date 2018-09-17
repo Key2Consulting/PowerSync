@@ -5,7 +5,7 @@ Sets (or creates) a PowerSync variable in the connected repository, and creates 
 .DESCRIPTION
 Variables are discrete state managed by PowerSync. The primary benefits of using variables over simple PowerShell variables is that they are persisted and they work with parallel processes.
 
-Variables are simple name/value pairs which are stored in the repository. The value can be a primitive type (e.g. numbers or text), or complex types (e.g. hashtables or array lists).
+Variables are simple name/value pairs which are stored in the repository. The value can be a primitive type (e.g. numbers or text), or complex types (e.g. hashtables or arrays).
 
 An important consideration is variable read/write operations are performed as a single atomic unit of work. In other words, there's no way to update just part of a variable when performing concurrent updates.  
 
@@ -46,7 +46,6 @@ function Set-PSYVariable {
         [object] $Value,
         [Parameter(HelpMessage = "An optional and custom name given by the user describing the type of this variable. Can be used to control the physical storage location in a database repository, or as additional metadata.", Mandatory = $false)]
         [string] $UserType
-
     )
 
     try {
@@ -71,16 +70,16 @@ function Set-PSYVariable {
                     Name = $Name
                     Value = $Value
                     UserType = $UserType
-                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
-                    ModifiedDateTime = Get-Date | ConvertTo-PSYNativeType
-                    ReadDateTime = Get-Date | ConvertTo-PSYNativeType
+                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                    ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                    ReadDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 }
                 $this.CreateEntity('Variable', $o)
                 return $o
             }
             else {
                 $existing.Value = $Value
-                $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYNativeType
+                $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 return $this.UpdateEntity('Variable', $existing)
             }
         })

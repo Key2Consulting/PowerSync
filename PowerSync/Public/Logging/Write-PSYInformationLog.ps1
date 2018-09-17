@@ -15,10 +15,12 @@ function Write-PSYInformationLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true)]
-        [string] $Message,
-        [Parameter(HelpMessage = "An optional category to help organize different messages.", Mandatory = $false)]
-        [string] $Category
+        [parameter(HelpMessage = "TODO", Mandatory = $true, ValueFromPipeline = $true, ParameterSetName='Pipe')]
+            [object] $InputObject,
+        [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true, ParameterSetName='Explicit', Position=0)]
+            [string] $Message,
+        [Parameter(HelpMessage = "An optional category to help organize different messages.", Mandatory = $false, ParameterSetName='Explicit', Position=1)]
+            [string] $Category
     )
 
     try {
@@ -32,7 +34,7 @@ function Write-PSYInformationLog {
                     Type = 'Information'
                     Category = $Category
                     Message = $Message
-                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
+                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
                     $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID

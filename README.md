@@ -143,7 +143,7 @@ Start-PSYActivity -Name 'Multiple Activities' -ScriptBlock ({
     Write-Host 'Three'
 })
 ```
-You can execute the same activity for a list of items, foreach style (use the automatic variable `$Input` to retrieve the current item):
+You can execute the same activity for a list of items, foreach style (use the variable `$Input` to retrieve the current item):
 ```PowerShell
 (1, 2, 3) | Start-PSYActivity -Name 'ForEach Activity' -ScriptBlock {
     Write-Host "Hello Item $Input"
@@ -163,19 +163,57 @@ Start-PSYActivity -Name 'Multiple Activities' -Parallel -Throttle 5 -ScriptBlock
     Write-Host 'Three'
 })
 # Can print in any order.
-(1, 2, 3) | Start-PSYActivity -Name 'ForEach Activity' -Parallel -Throttle 5 -ScriptBlock {
+(1, 2, 3) | Start-PSYForEachActivity -Name 'ForEach Activity' -Parallel -Throttle 5 -ScriptBlock {
     Write-Host "Hello Item $Input"
 }
 ```
 ### A Note about Parallelism
+PowerSync provides several concurrent, state management constructs, like [State Variables](#state-variables) and [Stored Commands](#stored-commands). However, sometimes it's useful to use a native PowerShell variable like `$myVar = 123`. Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, ArrayLists). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). Changes to remote objects during parallel execution will not affect the copy in the caller's process space.
+
+If state needs to be shared and made updatable, it is recommended to use State Variables or manage the state yourself outside PowerSync. You could use custom tables stored in the PowerSync Database Repository, another database entirely, or even a web service.
+
+### Debugging Parallel Processes
+Debugging parallel execution in PowerShell is tricky. Enabling parallel execution disables breakpoints in most IDEs. You can leverage the PowerSync logs to help pinpoint the issue, but sometimes stepping through the code is the best and only option. When initially developing or debugging an issue, consider disabling parallel execution by temporarily removing the `-Parallel` switch. If the problem only occurs during parallel execution, the `WaitDebugger` switch will force each remote job to break in the debugger. Howevever, it will break within an internal PowerSync function so you'll need to step through until you reach your code.
+
+## State Variables
+PowerSync State Variables are discrete state managed by PowerSync. State Variables are simple name/value pairs which are stored in the repository. The value can be a primitive type (e.g. numbers or text), or complex types (e.g. hashtables or arrays). The primary benefits of using State Variables over only using native PowerShell variables is that they are
+ - Persisted
+ - Work with parallel processes
+ - State changes are logged
+ - Can be synchronized across parallel processes
+ 
+```PowerShell
+Set-PSYVariable -Name 'MyVar' -Value 'Hello World'                          # scalar
+Set-PSYVariable -Name 'MyComplexVar' -Value @{Hello = 'World'; Abc = 123}   # hashtable
+Set-PSYVariable -Name 'MyComplexVar' -Value (                               # arraylist
+        @{Prop1 = 123; Prop2 = 'ABC'},
+        @{Prop1 = 456; Prop2 = 'DEF'},
+        @{Prop1 = 789; Prop2 = 'GHI'}
+    )
+Write-Host "$(Get-PSYVariable -Name 'MyVar')"
+```
+`Get-PSYVariable` and `Remove-PSYVariable` support the wildcards `*` and `?`.
+```PowerShell
+Remove-PSYVariable -Name 'My*' -Wildcards
+```
+An important consideration is State Variable read/write operations are performed as a single atomic unit of work. In other words, there's no way to update just part of a variable when performing concurrent updates. If you require a multi-row variable where each row is independently updatable, consider creating multiple variables with a name differing by an index and using wildcards.
+```PowerShell
+Set-PSYVariable -Name 'MyVar[0]' -Value 'Blue'
+Set-PSYVariable -Name 'MyVar[1]' -Value 'Red'
+Set-PSYVariable -Name 'MyVar[2]' -Value 'Green'
+foreach ($var in (Get-PSYVariable -Name 'MyVar[*]' -Wildcards)) {
+    Write-Host "Color is $($var.Value)"
+}
+```
+State Variable access can also be synchronized across parallel processes via Lock-PSYVariable. Locking a variable establishes exclusive access so no other process can read or write to the same variable. An exclusive lock blocks other processes, so the duration of the lock should minimized. Locking uses Mutexes to ensure synchronization, so it's limited to parallel processes executing on the same server.
+```PowerShell
+Lock-PSYVariable 'TestVariable' {
+        Set-PSYVariable 'TestVariable' ((Get-PSYVariable 'TestVariable') + 1)
+    }
+```
+If PowerSync State Variables don't meet your requirements, look to using [Stored Commands](#stored-commands) instead and creating your own data structures within your repository.
+### State Management and Parallelism
 [TODO: Verbiage about why persistent variables is preferred over runtime variables. Data integration is naturally long running.]
-
-Since remote jobs are used for parallel execution, any enumerated object must support PowerShell serialization (primitives, hashtables, ArrayLists). You may want to avoid using classes developed in PowerShell as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). 
-Changes to enumerated objects during parallel execution will not affect the copy in the caller's process space.
-
-If state needs to be shared and made updatable, it is recommended to use PowerSync variables or manage the state yourself outside PowerSync. You could use custom tables stored in the PowerSync Database Repository, another database entirely, or even a web service.
-
-Debugging parallel execution in PowerShell is tricky. Enabling parallel execution disables breakpoints in most IDEs, so consider disabling parallel execution when initially developing or debugging an issue.
 
 ## Connections
 Extracting data from a source first requires a connection. Connections define all of the required information required to establish a connection to a source or target system. Connections are persisted in the repository, only need to be created once, and then referenced by name downstream.
@@ -193,13 +231,13 @@ Remove-PSYConnection -Name "MyConnection"
 Data systems enforce some level of access security, whether via integrated security of the current principle, a user name and password, or certificates. PowerSync only supports integrated security, and user name / password defined within the connection string. It is generally recommended to handle authorization from within your hosting environment such that the credentials executing your PowerSync application are authorized to access backend data systems.
 ## Stored Commands
 Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. PowerSync will attempt to locate the script (via the `-Name` param) in the Project Folder, which defaults to the location of the script that imported PowerSync. 
-> The script name can omit the file extension.
+> Specifying the file extension in the script name is optional.
 
 Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value defined in the script (i.e. a default).
 
 If the Stored Command returns a resultset, it is converted into an ArrayList of hashtables and returned to the caller. A single row just returns a hashtable.
 
-Sophisticated projects requiring complex configuration structures and custom workflows should leverage Stored Commands for state management. PowerSync [variables](#variables) could also be used, but are simplistic and do not provide a rich data model.
+Sophisticated projects requiring complex configuration structures and custom workflows should leverage Stored Commands for state management. PowerSync [State Variables](#state-variables) could also be used, but are simplistic and do not provide a rich data model.
 
 Example using a custom table in the PowerSync repository to retrieve list of tables to extract.
 ```PowerShell
@@ -208,10 +246,11 @@ $extractWorkload = Invoke-PSYCmd -Connection 'PSYRepository' -Name "GetExtractWo
 
 # Do extraction and loading...
 
-# Update the high water mark for next extraction. Although using a script is recommended, it's not required (and PowerShell makes it easy to pass parameters).
+# Update the high water mark for next extraction. Although using a script is recommended, it's not 
+# required (and PowerShell makes it easy to pass parameters).
 Invoke-PSYCmd -Connection 'PSYRepository' -Command "UPDATE dbo.MyDataFeed WHERE HighWaterMark = '$maxModifiedDateTime'"
 ```
-GetExtractWorkload.sql
+*GetExtractWorkload.sql*
 ```SQL
 :setvar Frequency "Monthly"
 :setvar Category "All"      -- not passed so $(Category) defaults to All
@@ -223,7 +262,6 @@ WHERE
 ```
 
 ## Exporters and Importers
-## Variables
 
 ## Logging
 Enterprise integration systems are inherently complex, with many moving parts and potential points of failure. Logging of a large-scale data integration system is one of the most important, and often overlooked capabilities. Comprehensive logging provides projects with insight into the runtime state of the framework, and is critical for monitoring, debugging, and performance tuning.
@@ -255,7 +293,7 @@ The Debug Log should be used to log technical operations internal to the system,
 Write-PSYDebugLog -Message "Process $PID could not find table '$tableName', initiating table creation."
 ```
 ### Variable Log
-The Variable Log is used to capture the state changes of PowerSync variables. Tracking state changes is important when trying to debug an issue due to dynamic nature of integration systems. Use of `Set-PSYVariable` automatically writes to this log.
+The Variable Log is used to capture the state changes of PowerSync State Variables. Tracking state changes is important when trying to debug an issue due to dynamic nature of integration systems. Use of `Set-PSYVariable` automatically writes to this log.
 ```PowerShell
 Write-PSYVariableLog -Name 'My Variable Name' -Value 'New Value'
 ```

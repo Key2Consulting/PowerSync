@@ -83,8 +83,8 @@ function Set-PSYConnection {
                     Provider = $Provider
                     ConnectionString = $ConnectionString
                     Properties = $Properties
-                    CreatedDateTime = Get-Date | ConvertTo-PSYNativeType
-                    ModifiedDateTime = Get-Date | ConvertTo-PSYNativeType
+                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                    ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 }
                 $this.CreateEntity('Connection', $o)
                 return $o
@@ -93,7 +93,7 @@ function Set-PSYConnection {
                 $existing.Provider = $Provider
                 $existing.ConnectionString = $ConnectionString
                 $existing.Properties = $Properties
-                $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYNativeType
+                $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 return $this.UpdateEntity('Connection', $existing)
             }
         })

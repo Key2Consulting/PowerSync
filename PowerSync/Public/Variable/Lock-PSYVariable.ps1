@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Locks a PowerSync variable in the connected repository for exclusive access. The lock uses a mutex, which spans processes on the same computer.
+Locks a PowerSync State Variable in the connected repository for exclusive access. The lock uses a mutex, which spans processes on the same computer.
 
 .PARAMETER Name
 Name of the variable. Variable names must be unique.
