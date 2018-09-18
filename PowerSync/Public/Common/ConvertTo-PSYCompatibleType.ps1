@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-Converts a given data type to/from a native type supported by PowerSync.
+Converts a given data type to/from a compatible type supported by PowerSync.
 
 .DESCRIPTION
 Certain data types, like DateTime, don't work well within PowerSync. This function converts to/from those data types to a more suitable format.
 
 .PARAMETER Object
-The object to convert to a native type.
+The object to convert to a compatible type.
 
 .EXAMPLE
 ConvertFrom-PSYCompatibleType -Object (Get-Date)
@@ -14,7 +14,7 @@ ConvertFrom-PSYCompatibleType -Object (Get-Date)
 function ConvertTo-PSYCompatibleType {
     [CmdletBinding()]
     param(
-        [parameter(HelpMessage = "The object to convert to a native type.", Mandatory = $false, ValueFromPipeline = $true)]
+        [parameter(HelpMessage = "The object to convert to a compatible type.", Mandatory = $false, ValueFromPipeline = $true)]
         [object] $InputObject
     )
 
