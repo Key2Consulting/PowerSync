@@ -26,6 +26,26 @@ namespace PowerSync
             this._filePath = filePath;
             this._format = format;
             this._header = header;
+
+            // Open target file, and extract schema information. Note that we only support
+            // text data types since the text files don't come with data type information.
+            this._reader = new System.IO.StreamReader(this._filePath);
+
+            // Initialize read operation.
+            this.Initialize(format);
+        }
+
+        public TextFileDataReader(System.IO.StreamReader reader, int format, bool header)
+        {
+            this._format = format;
+            this._header = header;
+            this._reader = reader;
+
+            // Initialize read operation.
+            this.Initialize(format);
+        }
+
+        protected void Initialize(int format) {
             
             // Set parsing information based on format
             if (format == 1)        // CSV
@@ -44,10 +64,6 @@ namespace PowerSync
                 this._quote = "";
                 this._quoteEscape = "";
             }
-
-            // Open target file, and extract schema information. Note that we only support
-            // text data types since the text files don't come with data type information.
-            this._reader = new System.IO.StreamReader(this._filePath);
 
             // Read the first line to extract column information. Even if no header is set, we
             // still need to know how many columns there are.

@@ -1,5 +1,7 @@
+*This project is under development.*
+
 # Introduction
-PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option for synchronizing data between platforms. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT model where transformations are best performed by the database system oppose to the integration framework. 
+PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option for synchronizing data between platforms. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT philosophy where transformations are best performed by the database system oppose to the integration framework.
 
 As it's rooted in PowerShell, PowerSync natively supports the plethora of PowerShell commands/cmdlets found in the community and included by the PowerShell platform. PowerShell is known for it's convenient and simplistic API for managing vast numbers of resources. It's PowerSync's goal to provide that same simplistic API for managing data resources.
 
@@ -211,7 +213,7 @@ Native PowerShell variables (i.e. `$myVar = 123`) have limited use in data integ
 
 Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, arrays). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). 
 
-One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, sequential activities do retain visibility to these variables. Furthermore, changes to enumerated objects during parallel execution (`Start-PSYForEachActivity`) will not affect the copy in the caller's process space.
+One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, *sequential* activities do retain visibility to these variables. Furthermore, changes to enumerated objects during parallel execution (`Start-PSYForEachActivity`) will not affect the copy in the caller's process space.
 ```PowerShell
 $readMe = 123
 Start-PSYActivity -ScriptBlock ({
@@ -311,7 +313,7 @@ TODO: Describe error action preference and nesting rules.
 The Information and Verbose logs record similar information. The information log narrates the work being performed at a high level. The Verbose Log logs similar information, except at a more detailed level. You can enable verbose logging using the `-Verbose` common parameter.
 ```PowerShell
 Write-PSYInformationLog -Message "Completed synchronization of source and target."
-$workItems | Write-PSYVerboseLog -Message "Exported $($_.$RowCount) data from $($_.$TableName)."
+$workItems | ForEach-Object { Write-PSYVerboseLog -Message "Exported $($_.$RowCount) data from $($_.$TableName)." }
 ```
 
 ### Debug Log

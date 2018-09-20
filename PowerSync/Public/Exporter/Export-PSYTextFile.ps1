@@ -7,7 +7,7 @@ Exports data from a text file defined by the supplied connection. Exporters are 
 
 The full path to the file is a combination of the base ConnectionString and the Path. Either of those could be omitted, as long as the other supplies the full path.
 
-Supports Zip archives as well as multiple files via wildcards.
+Supports Zip archives, and multiple files via wildcards.
 
 .PARAMETER Connection
 Name of the connection to extract from.
@@ -42,11 +42,16 @@ function Export-PSYTextFile {
     
     try {
         # Initialize source connection
-        $connDef = Get-PSYConnection -Name $Connection
-        
+        if ($Connection) {
+            $connDef = Get-PSYConnection -Name $Connection
+        }
+        else {
+            $connDef = $null
+        }
+
         # Construct the full path to the file, which for files is a combination of the base ConnectionString and the Path. Either
         # of those could be omitted.
-        if ($connDef.ConnectionString -and $Path) {
+        if ($connDef -and $connDef.ConnectionString -and $Path) {
             $completefilePath = $connDef.ConnectionString.Trim('\') + '\' + $Path.TrimStart('\')
         }
         elseif ($Path) {

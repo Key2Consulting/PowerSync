@@ -44,7 +44,12 @@ function Import-PSYTextFile {
 
     try {
         # Initialize source connection
-        $connDef = Get-PSYConnection -Name $Connection
+        if ($Connection) {
+            $connDef = Get-PSYConnection -Name $Connection
+        }
+        else {
+            $connDef = $null
+        }
         
         # Construct the full path to the file, which for files is a combination of the base ConnectionString and the Path. Either
         # of those could be omitted.

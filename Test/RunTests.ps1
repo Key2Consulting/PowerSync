@@ -2,7 +2,7 @@
 # Test Configuration
 ######################################################
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\"
-$jsonRepo = "$($rootPath)TempRepository.json"
+$jsonRepo = "$PSScriptRoot\TempFiles\TempRepository.json"
 $testDBServer = "(LocalDb)\MSSQLLocalDB"
 $testDBPath = "$($rootPath)PowerSyncTestDB.MDF"
 
@@ -32,11 +32,15 @@ Remove-PSYJsonRepository $jsonRepo
 New-PSYJsonRepository $jsonRepo -ErrorAction SilentlyContinue
 Connect-PSYJsonRepository $jsonRepo
 
+# Create default connections
 Set-PSYConnection -Name "TestSqlServerTarget" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestTarget"
 Set-PSYConnection -Name "TestDbOleDb" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=$testDBServer;Database=PowerSyncTestTarget;Trusted_Connection=yes;"
 Set-PSYConnection -Name "SampleFiles" -Provider TextFile -ConnectionString "$($rootPath)Test\SampleFiles"
 Set-PSYConnection -Name "TestSqlServerSource" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestSource"
-Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot     # needed so Stored Command finds our custom scripts
+
+# Set environment variables
+Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot                         # needed so Stored Command finds our custom scripts
+Set-PSYVariable -Name 'PSYTempFolder' -Value "$PSScriptRoot\TempFiles"     # needed for Azure tests
 
 # Run required tests
 Write-Host "RUNNING Test Scripts"
@@ -46,4 +50,5 @@ Write-Host "RUNNING Test Scripts"
 .\Test\TestConcurrency.ps1
 .\Test\TestCSVToSQL.ps1
 .\Test\TestSQLToSQL.ps1
+.\Test\TestAzure.ps1
 Write-Host "FINISHED Runing Test Scripts"
