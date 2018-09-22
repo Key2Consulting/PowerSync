@@ -59,7 +59,12 @@ If the file is a compressed as a ZIP file, it will be decompressed prior to the 
         if (-not $Stream) {
             # Extract the file name and prepare target download folder.
             $tempFolder = Get-PSYVariable -Name 'PSYTempFolder'
-            $downloadedPath = Join-Path -Path $tempFolder -ChildPath $Path.Replace('/', '\')
+            if (-not $tempFolder) {
+                throw "PSYTempFolder environment variable isn't set. A folder to store temporary files is required when using Azure Blob functionality."
+            }
+            $fileName = Split-Path -Path $Path -Leaf
+            $tempChildFolder = Join-Path -Path $tempFolder -ChildPath "$(New-Guid)"
+            $downloadedPath = "$tempChildFolder\$fileName"
             New-Item -ItemType Directory -Force -Path (Split-Path -Path $downloadedPath -Parent)
 
             # Download the file from Azure Blob Storage.
@@ -72,9 +77,9 @@ If the file is a compressed as a ZIP file, it will be decompressed prior to the 
 
             # Add a cleanup routine that removes the temp files. If one already exists, it's from Export-PSYTextFile and we can ignore
             # since our cleanup removes everything.
-            $r.OnCompleteInputObject = $downloadedPath
+            $r.OnCompleteInputObject = $tempChildFolder
             $r.OnCompleteScriptBlock = {
-                Remove-Item -Path $Input
+                Remove-Item -Path $Input -Recurse
             }
             $r
         }
@@ -121,7 +126,7 @@ If the file is a compressed as a ZIP file, it will be decompressed prior to the 
         if ($reader) {
             $reader.Dispose()
         }
-    
+        Remove-Item -Path $tempChildFolder -Recurse -ErrorAction SilentlyContinue       # try to clean again, just in case
         Write-PSYErrorLog $_
     }
 }

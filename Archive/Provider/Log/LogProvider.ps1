@@ -69,10 +69,10 @@ class LogProvider : Provider {
     [void] ProcessLog([string] $MessageType, [string] $Message, [string] $VariableName, [object] $VariableValue) {
         # Always output to the screen
         if ($VariableName.Length -ne 0) {
-            Write-Host "${MessageType}: $VariableName = $VariableValue"
+            Write-PSYHost "${MessageType}: $VariableName = $VariableValue"
         }
         else {
-            Write-Host "${MessageType}: $Message"
+            Write-PSYHost "${MessageType}: $Message"
         }
         # Call derived class specific implementation of log saving
 

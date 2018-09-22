@@ -31,6 +31,10 @@ function Invoke-ForEach {
         if ($VerbosePreference -eq 'Inquire') {
             $VerbosePreference = 'Continue'
         }
+        # Progress doesn't work well in an unattended environment.
+        if (-not $PSYSession.UserInteractive) {
+            $ProgressPreference = "SilentlyContinue"        # certain hosting environments will fail b/c they don't support Write-Progress
+        }
         #$ErrorActionPreference = 'Stop'        # let the caller decide how to deal with exceptions
     }
 
@@ -88,6 +92,7 @@ function Invoke-ForEach {
                     # Without setting these preferences, this output won't get returned
                     $DebugPreference = $workItem.DebugPreference
                     $VerbosePreference = $workItem.VerbosePreference
+                    $ProgressPreference = "SilentlyContinue"
 
                     # Execute the input scriptblock
                     $scriptBlock = [Scriptblock]::Create($workItem.ScriptBlock)     # only the text was serialized, not the object, so reconstruct
@@ -143,21 +148,28 @@ function Invoke-ForEach {
                         # If this is being run as part of an activity, complete activity log
                         if ($ParentActivity) {
                             Write-ActivityLog -Name ($Name -f $_.Index) -Message ("Activity '$Name' completed" -f $_.Index) -Status 'Completed' -Activity $_.Activity
-                        }        
+                        }
                     }
                 }
             }
             # Return results of job to caller
             foreach ($item in $workItems) {
+                $j = $item.Job.ChildJobs[0]     # actual job is stored as first element of ChildJobs
                 @{
                     InputObject = $item.InputObject
                     Result = $item.Result
-                    HadErrors = [bool] $item.Job.ChildJobs[0].Error.Count
-                    Errors = $item.Job.ChildJobs[0].Error
+                    HadErrors = [bool] $j.Error.Count
+                    Errors = $j.Error
                 }
-                # If errors and the current error action is to stop, we should do just that. Otherwise processing would continue.
-                if ($item.Job.ChildJobs[0].Error.Count -gt 0 -and $ErrorActionPreference -eq "Stop") {
-                    throw $item.Job.ChildJobs[0].Error
+                
+                # Send any printable streams to the Console.
+                $j.Information | ForEach-Object { Write-PSYHost $_.MessageData }
+                $j.Debug | ForEach-Object { Write-PSYHost $_.MessageData }
+                $j.Verbose | ForEach-Object { Write-PSYHost $_.MessageData }
+                
+                # If errors and the current error action is to stop, we should do just that. Otherwise processing would continue silently.
+                if ($j.Error.Count -gt 0 -and $ErrorActionPreference -eq "Stop") {
+                    throw $j.Error
                 }
             }
         }

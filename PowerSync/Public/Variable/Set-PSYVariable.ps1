@@ -17,7 +17,7 @@ Name of the variable. Variable names must be unique.
 .PARAMETER Value
 The value assigned to the variable. Support primitive or complex types as long as they support PowerShell serialization.
 
-.PARAMETER UserType
+.PARAMETER Category
 An optional and custom name given by the user describing the type of this variable. Can be used to control the physical storage location in a database repository, or as additional metadata.
 
 .EXAMPLE
@@ -33,7 +33,7 @@ For example:
     Set-PSYVariable -Name 'MyVar[1]' -Value 'Red'
     Set-PSYVariable -Name 'MyVar[2]' -Value 'Green'
     foreach ($var in (Get-PSYVariable -Name 'MyVar[*]' -Wildcards)) {
-        Write-Host "Color is $($var)"
+        Write-PSYHost "Color is $($var)"
     }
     Remove-PSYVariable -Name 'MyVar[*]' -Wildcards
 #>
@@ -45,7 +45,7 @@ function Set-PSYVariable {
         [Parameter(HelpMessage = "The value assigned to the variable. Support primitive or complex types as long as they support PowerShell serialization.", Mandatory = $false)]
         [object] $Value,
         [Parameter(HelpMessage = "An optional and custom name given by the user describing the type of this variable. Can be used to control the physical storage location in a database repository, or as additional metadata.", Mandatory = $false)]
-        [string] $UserType
+        [string] $Category
     )
 
     try {
@@ -69,7 +69,7 @@ function Set-PSYVariable {
                     ID = $null                          # let the repository assign the surrogate key
                     Name = $Name
                     Value = $Value
-                    UserType = $UserType
+                    Category = $Category
                     CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                     ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                     ReadDateTime = Get-Date | ConvertTo-PSYCompatibleType

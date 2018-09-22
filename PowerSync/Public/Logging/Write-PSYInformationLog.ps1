@@ -43,7 +43,8 @@ function Write-PSYInformationLog {
             })
         }
         $logCategory = if ($Category) {"($Category) "} else {""}
-        Write-Host -Message "Information: $logCategory$Message"
+        Write-PSYHost "Information: $logCategory$Message"           # print to console
+        Write-Information "Information: $logCategory$Message"       # needed when executing parallel or unattended
     }
     catch {
         Write-PSYErrorLog $_

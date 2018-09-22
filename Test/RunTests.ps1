@@ -11,8 +11,11 @@ $testDBPath = "$($rootPath)PowerSyncTestDB.MDF"
 ######################################################
 $ErrorActionPreference = "Continue"     # we want to run through all tests
 
+# Import dependent modules
+Import-Module "$rootPath\PowerSync"
+
 # Reset the source and target databases
-Write-Host "Resetting test databases..."
+Write-PSYHost "Resetting test databases..."
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testDBServer -Variable "DatabaseName=PowerSyncTestTarget"
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testDBServer -Variable "DatabaseName=PowerSyncTestSource"
 #Remove-Item -Path "$testDBPath" -Force -ErrorAction SilentlyContinue
@@ -23,11 +26,9 @@ Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Target Database.sql" -Se
 ######################################################
 # Run Tests
 ######################################################
-# Import dependent modules
-Import-Module "$rootPath\PowerSync"
 
 # Initialize PowerSync repository
-Write-Host "Resetting repository..."
+Write-PSYHost "Resetting repository..."
 Remove-PSYJsonRepository $jsonRepo
 New-PSYJsonRepository $jsonRepo -ErrorAction SilentlyContinue
 Connect-PSYJsonRepository $jsonRepo
@@ -43,7 +44,7 @@ Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot                         
 Set-PSYVariable -Name 'PSYTempFolder' -Value "$PSScriptRoot\TempFiles"     # needed for Azure tests
 
 # Run required tests
-Write-Host "RUNNING Test Scripts"
+Write-PSYHost "RUNNING Test Scripts"
 .\Test\TestQuickCommand.ps1
 .\Test\TestGeneral.ps1
 .\Test\TestVariables.ps1
@@ -51,4 +52,4 @@ Write-Host "RUNNING Test Scripts"
 .\Test\TestCSVToSQL.ps1
 .\Test\TestSQLToSQL.ps1
 .\Test\TestAzure.ps1
-Write-Host "FINISHED Runing Test Scripts"
+Write-PSYHost "FINISHED Runing Test Scripts"
