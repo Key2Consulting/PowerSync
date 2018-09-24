@@ -1,5 +1,3 @@
-*This project is under development.*
-
 # Introduction
 PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option for synchronizing data between platforms. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT philosophy where transformations are best performed by the database system oppose to the integration framework.
 
