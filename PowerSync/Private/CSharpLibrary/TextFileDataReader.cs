@@ -45,8 +45,8 @@ namespace PowerSync
             this.Initialize(format);
         }
 
-        protected void Initialize(int format) {
-            
+        protected void Initialize(int format) 
+        {
             // Set parsing information based on format
             if (format == 1)        // CSV
             {
@@ -332,46 +332,54 @@ namespace PowerSync
 
         public bool Read()
         {
-            var line = this._reader.ReadLine();        // TODO: how could a row delimeter be applied here?
-            if (line == null || line.Trim().Length == 0) {
-                this._reader.Close();
-                this._isClosed = true;
-                return false;
-            }
-            
-            // If we're using REGEX to parse text file.
-            if (this._regexParseExpression != null)
+            string line = "";
+            try
             {
-                // Use REGEX to parse out the CSV fields. Will handle quotes.
-                var matches = Regex.Matches(line, this._regexParseExpression, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                line = this._reader.ReadLine();        // TODO: how could a row delimeter be applied here?
+                if (line == null || line.Trim().Length == 0) {
+                    this._reader.Close();
+                    this._isClosed = true;
+                    return false;
+                }
                 
-                // Foreach of the extract columns
-                for (var i = 0; i < matches.Count; i++)
+                // If we're using REGEX to parse text file.
+                if (this._regexParseExpression != null)
                 {
-                    // Most times the clean value is found in group 2, but when quoted, it's found in group 1.
-                    var val = matches[i].Groups[2].Value;
-                    if (val.Length == 0)
+                    // Use REGEX to parse out the CSV fields. Will handle quotes.
+                    var matches = Regex.Matches(line, this._regexParseExpression, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                    
+                    // Foreach of the extract columns
+                    for (var i = 0; i < matches.Count; i++)
                     {
-                        val = matches[i].Groups[1].Value;
+                        // Most times the clean value is found in group 2, but when quoted, it's found in group 1.
+                        var val = matches[i].Groups[2].Value;
+                        if (val.Length == 0)
+                        {
+                            val = matches[i].Groups[1].Value;
+                        }
+                        // Our regex doesn't unescape the double quotes, so do that manually.
+                        val = val.Replace(this._quoteEscape, this._quote);
+                        this._readBuffer[i] = val;
                     }
-                    // Our regex doesn't unescape the double quotes, so do that manually.
-                    val = val.Replace(this._quoteEscape, this._quote);
-                    this._readBuffer[i] = val;
                 }
-            }
-            else
-            {
-                // Otherwise, use simple delimeter parsing (i.e. Split)
-                var columns = line.Split(this._splitDelimeter, StringSplitOptions.None);
-                
-                // Foreach of the extract columns
-                for (var i = 0; i < columns.Length; i++)
+                else
                 {
-                    this._readBuffer[i] = columns[i];
+                    // Otherwise, use simple delimeter parsing (i.e. Split)
+                    var columns = line.Split(this._splitDelimeter, StringSplitOptions.None);
+                    
+                    // Foreach of the extract columns
+                    for (var i = 0; i < columns.Length; i++)
+                    {
+                        this._readBuffer[i] = columns[i];
+                    }
                 }
-            }
 
-            return true;
+                return true;
+            }
+            catch (Exception ex) {
+                line = this._reader.ReadLine();
+                throw new Exception(line, ex);
+            }
         }
     }
 }

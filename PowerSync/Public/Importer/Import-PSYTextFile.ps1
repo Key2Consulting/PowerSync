@@ -7,11 +7,15 @@ Imports data into a text file defined by the supplied connection. Importers are 
 
 The full path to the file is a combination of the base ConnectionString and the Path. Either of those could be omitted, as long as the other supplies the full path.
 
+If the file extension .gz is used, the file will be compressed using Gzip compression.
+
 .PARAMETER Connection
 Name of the connection to import into.
 
 .PARAMETER Path
 Path of the file to import. A TextFile connection can supply the root path, which is then prefixed with this path parameter.
+
+If the file extension .gz is used, the file will be compressed using Gzip compression.
 
 .PARAMETER Format
 The format of the file (CSV, Tab).
@@ -66,25 +70,31 @@ function Import-PSYTextFile {
             throw 'Unable to acquire connection as no paths were set by connection or importer.'
         }
 
-        # Prepare file for use
+        if ($filePath.Contains('*') -or $filePath.Contains('?')) {
+            throw "Wildcards not implemented."      # TODO: Support wildcards and multiple readers.
+        }
+
+        # Delete if already exists.
         if ((Test-Path $filePath -PathType Leaf)) {
             Remove-Item -Path $filePath -Force
         }
         $filePath = (New-Item $filePath).FullName
 
+        # Open the file stream.
+        $stream = [System.IO.File]::Open($filePath, [System.IO.FileMode]::Open)
+
+        # If the file path points to a Gzip archive.
+        if ($filePath.EndsWith('.gz')) {
+            $gzStream = [System.IO.Compression.GzipStream]::new($stream, [IO.Compression.CompressionMode]::Compress, $false)
+        }
+        else {
+            $gzStream = $stream
+        }
+
         # Write the file
-        $writer = New-Object PowerSync.TextFileDataWriter($filePath, $Format, $Header)
+        $writer = New-Object PowerSync.TextFileDataWriter($gzStream, $Format, $Header)
         $writer.Write($InputObject.DataReaders[0])
 
-        # If compression is enabled, compress the file.
-        if ($Compress) {
-            $archivePath = [System.IO.Path]::ChangeExtension($filePath, "zip")
-            if ((Test-Path $archivePath -PathType Leaf)) {
-                Remove-Item -Path $archivePath -Force
-            }
-            Compress-Archive -Path $filePath -CompressionLevel Optimal -DestinationPath $archivePath
-            Remove-Item -Path $filePath -Force
-        }
         Write-PSYInformationLog -Message "Imported $Format text data into $filePath."
     }
     catch {

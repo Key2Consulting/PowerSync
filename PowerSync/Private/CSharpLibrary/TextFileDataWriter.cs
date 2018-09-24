@@ -15,6 +15,7 @@ namespace PowerSync
         string _quote;
         string _quoteEscape;
         bool _header;
+        System.IO.StreamWriter _writer;
 
         public TextFileDataWriter(string filePath, int format, bool header)
         {
@@ -22,6 +23,25 @@ namespace PowerSync
             this._format = format;
             this._header = header;
             
+            // Open the target file, overwriting if exists
+            this._writer = new StreamWriter(this._filePath);
+
+            // Initialize write operation.
+            this.Initialize(format);
+        }
+
+        public TextFileDataWriter(System.IO.StreamWriter writer, int format, bool header)
+        {
+            this._format = format;
+            this._header = header;
+            this._writer = writer;
+
+            // Initialize write operation.
+            this.Initialize(format);
+        }
+
+        protected void Initialize(int format) 
+        {
             // Set parsing information based on format
             if (format == 1)        // CSV
             {
@@ -37,12 +57,9 @@ namespace PowerSync
 
         public void Write(IDataReader reader)
         {
-            StreamWriter writer = null;
+            var writer = this._writer;
             try
             {
-                // Open the target file, overwriting if exists
-                writer = new StreamWriter(this._filePath);
-
                 // If writing the header
                 if (this._header)
                 {

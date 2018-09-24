@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-Exports data from text file stored in Azure Blob storage.
+Exports data from text file stored in Azure Blob storage, with optional decompression.
 
 .DESCRIPTION
 Exports data from a text file defined by the supplied connection. Exporters are intended to be paired with Importers via the pipe command.
 
 The full path to the file is a combination of the base ConnectionString and the Path. Either of those could be omitted, as long as the other supplies the full path.
 
-Supports Zip archives, and multiple files via wildcards.
+If the file extension .gz is used, the file will be decompressed using Gzip compression.
 
 .PARAMETER Connection
 Name of the connection to extract from.
@@ -17,6 +17,8 @@ Azure blob storage container.
 
 .PARAMETER Path
 Path of the file or files to export (supports wildcards). A TextFile connection can supply the root path, which is then prefixed with this path parameter. If path is a Zip archive, will be uncompressed prior to execution.
+
+If the file extension .gz is used, the file will be decompressed using Gzip compression.
 
 .PARAMETER Format
 The format of the file (CSV, Tab).
@@ -29,11 +31,8 @@ Streams the file from Blob storage, oppose to downloading it by default. Most ti
 https://stackoverflow.com/questions/13020158/reading-line-by-line-from-blob-storage-in-windows-azure
 
 .EXAMPLE
-Export-PSYTextFile -Connection "TestSource" -Path "Sample100.csv" -Format CSV -Header `
-| Import-PSYSqlServer -Connection "TestTarget" -Table "dbo.Sample100" -Create -Index -Concurrent
-
-.NOTES
-If the file is a compressed as a ZIP file, it will be decompressed prior to the export operation. All files contained within the ZIP archive are exported as a single stream.
+Export-PSYAzureBlobTextFile -Connection "TestAzureBlob" -Container 'data' -Path "Sample10000.csv" -Format CSV -Header `
+| Import-PSYAzureBlobTextFile -Connection "TestAzureBlob" -Container 'data' -Path "Temp/AzureDownloadSample10000.gz" -Format CSV -Header
  #>
  function Export-PSYAzureBlobTextFile {
     param (
@@ -55,68 +54,45 @@ If the file is a compressed as a ZIP file, it will be decompressed prior to the 
         # Initialize source connection
         $connDef = Get-PSYConnection -Name $Connection
 
-        # If not streaming, download from Azure to temp folder, and process from there.
-        if (-not $Stream) {
-            # Extract the file name and prepare target download folder.
-            $tempFolder = Get-PSYVariable -Name 'PSYTempFolder'
-            if (-not $tempFolder) {
-                throw "PSYTempFolder environment variable isn't set. A folder to store temporary files is required when using Azure Blob functionality."
-            }
-            $fileName = Split-Path -Path $Path -Leaf
-            $tempChildFolder = Join-Path -Path $tempFolder -ChildPath "$(New-Guid)"
-            $downloadedPath = "$tempChildFolder\$fileName"
-            New-Item -ItemType Directory -Force -Path (Split-Path -Path $downloadedPath -Parent)
+        # Connect to the Blob
+        $ctx = New-AzureStorageContext -ConnectionString $connDef.ConnectionString
+        $blob = Get-AzureStorageBlob -Container $Container -Blob $Path -Context $ctx
+        $blobStream = $blob.ICloudBlob.OpenRead()
 
-            # Download the file from Azure Blob Storage.
-            $ctx = New-AzureStorageContext -ConnectionString $connDef.ConnectionString
-            Get-AzureStorageBlobContent -Container $Container -Blob $Path -Destination $downloadedPath -Context $ctx -Force
-            Write-PSYInformationLog -Message "Downloaded $Format text data from Blob [$Connection]:$Container/$Path."
+        if ($Path.Contains('*') -or $Path.Contains('?')) {
+            throw "Wildcards not implemented."      # TODO: Support wildcards and multiple readers.
+        }
 
-            # Now that the file is local, delegate the Import to the existing File Importer.
-            $r = Export-PSYTextFile -Path $downloadedPath -Format $Format -Header:$Header
-
-            # Add a cleanup routine that removes the temp files. If one already exists, it's from Export-PSYTextFile and we can ignore
-            # since our cleanup removes everything.
-            $r.OnCompleteInputObject = $tempChildFolder
-            $r.OnCompleteScriptBlock = {
-                Remove-Item -Path $Input -Recurse
-            }
-            $r
+        # If the file is compressed, decompress it during the read operation. Can only support streaming compatible compression.
+        if ($Path.EndsWith('.gz')) {
+            $gzStream = [System.IO.Compression.GzipStream]::new($blobStream, [IO.Compression.CompressionMode]::Decompress, $false)
         }
         else {
-            # Otherwise, we're streaming directly from the blob.
-            $ctx = New-AzureStorageContext -ConnectionString $connDef.ConnectionString
-            $blob = Get-AzureStorageBlob -Container $Container -Blob $Path -Context $ctx
-            $blobStream = $blob.ICloudBlob.OpenRead()
-            $streamReader = New-Object System.IO.StreamReader $blobStream
-
-            # TODO: Support wildcards and multiple readers.
-            $reader = New-Object PowerSync.TextFileDataReader($streamReader, $Format, $Header)
-    
-            Write-PSYInformationLog -Message "Exported $Format text data from $Container/$Path."    
-
-            # Return the reader, as well as some general information about what's being exported. This is to inform the importer
-            # of some basic contextual information, which can be used to make decisions on how best to import.
-            @{
-                DataReaders = @($reader)
-                Provider = [PSYDbConnectionProvider]::AzureBlobStorage
-                Container = $Container
-                Path = $Path
-                Format = $Format
-                Header = $Header
-                OnCompleteInputObject = @{
-                    Stream = $blobStream
-                    StreamReader = $streamReader
-                }
-                OnCompleteScriptBlock = {
-                    # If we unzipped an archive, clean up uncompressed files
-                    if ($Input) {
-                        $Input.Stream.Dispose()
-                        $Input.StreamReader.Dispose()
-                    }
-                }
-            }            
+            $gzStream = $blobStream
         }
+
+        $reader = New-Object PowerSync.TextFileDataReader($gzStream, $Format, $Header)
+
+        Write-PSYInformationLog -Message "Exported $Format text data from $Container/$Path."
+
+        # Return the reader, as well as some general information about what's being exported. This is to inform the importer
+        # of some basic contextual information, which can be used to make decisions on how best to import.
+        @{
+            DataReaders = @($reader)
+            Provider = [PSYDbConnectionProvider]::AzureBlobStorage
+            Container = $Container
+            Path = $Path
+            Format = $Format
+            Header = $Header
+            OnCompleteInputObject = @{
+                Stream = $blobStream
+            }
+            OnCompleteScriptBlock = {
+                if ($Input) {
+                    $Input.Stream.Dispose()
+                }
+            }
+        }            
     }
     catch {
         # If we started processing any of the files, clean them up, then log.
@@ -126,7 +102,10 @@ If the file is a compressed as a ZIP file, it will be decompressed prior to the 
         if ($reader) {
             $reader.Dispose()
         }
-        Remove-Item -Path $tempChildFolder -Recurse -ErrorAction SilentlyContinue       # try to clean again, just in case
+        try {
+            Remove-Item -Path $tempChildFolder -Recurse -ErrorAction SilentlyContinue       # try to clean again, just in case
+        }
+        catch {}
         Write-PSYErrorLog $_
     }
 }

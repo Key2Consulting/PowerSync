@@ -83,12 +83,6 @@ function Set-PSYVariable {
             }
         })
 
-        # Special case processing (not a great design to put this here, but it's incredibly convenient).
-        #
-        # If the temp folder was just specified, take this opportunity to clean it up.
-        if ($Name -eq 'PSYTempFolder') {
-            Remove-Item -Path (Join-Path $Value "*.*") -Recurse -ErrorAction SilentlyContinue
-        }
         # Log
         Write-PSYVariableLog -Name $Name -Value $Value
     }

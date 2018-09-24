@@ -27,7 +27,6 @@ function New-PSYJsonRepository {
         Set-PSYVariable -Name 'PSYDefaultCommandTimeout' -Value 3600 -Category 'Environment'
         Set-PSYVariable -Name 'PSYDefaultThrottle' -Value 5 -Category 'Environment'
         Set-PSYVariable -Name 'PSYCmdPath' -Value '' -Category 'Environment'
-        Set-PSYVariable -Name 'PSYTempFolder' -Value "$PSYSession.WorkingFolder\Temp" -Category 'Environment'
         Disconnect-PSYRepository
     }
     catch {

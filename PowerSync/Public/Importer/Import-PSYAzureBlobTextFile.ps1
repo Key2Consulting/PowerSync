@@ -1,11 +1,13 @@
 <#
 .SYNOPSIS
-Imports data into a text file.
+Imports data into a text file, with optional compression.
 
 .DESCRIPTION
 Imports data into a text file defined by the supplied connection. Importers are intended to be paired with Exporters via the pipe command.
 
 The full path to the file is a combination of the base ConnectionString and the Path. Either of those could be omitted, as long as the other supplies the full path.
+
+If the file extension .gz is used, the file will be compressed using Gzip compression.
 
 .PARAMETER Connection
 Name of the connection to import into.
@@ -16,18 +18,18 @@ Azure blob storage container.
 .PARAMETER Path
 Path of the file to import. A TextFile connection can supply the root path, which is then prefixed with this path parameter.
 
+If the file extension .gz is used, the file will be compressed using Gzip compression.
+
 .PARAMETER Format
 The format of the file (CSV, Tab).
 
 .PARAMETER Header
 Whether the first row of the text file contains header information.
 
-.PARAMETER Compress
-Adds compression to the target file via zip format.
-
 .EXAMPLE
-Export-PSYTextFile -Connection "TestSource" -Path "Sample100.csv" -Format CSV -Header `
-| Import-PSYTextFile -Connection "TestTarget" -Table "Sample100.txt" -Format Tab -Header
+Export-PSYAzureBlobTextFile -Connection "TestAzureBlob" -Container 'data' -Path "Sample10000.csv" -Format CSV -Header `
+| Import-PSYAzureBlobTextFile -Connection "TestAzureBlob" -Container 'data' -Path "Temp/AzureDownloadSample10000.gz" -Format CSV -Header
+
  #>
 function Import-PSYAzureBlobTextFile {
     param (
@@ -42,38 +44,37 @@ function Import-PSYAzureBlobTextFile {
         [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $true)]
         [PSYTextFileFormat] $Format,
         [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
-        [switch] $Header,
-        [Parameter(HelpMessage = "Adds compression to the target file via zip format.", Mandatory = $false)]
-        [switch] $Compress
+        [switch] $Header
     )
 
     try {
         # Initialize source connection
         $connDef = Get-PSYConnection -Name $Connection
 
-        # Extract the file name and prepare temp folder.
-        $tempFolder = Get-PSYVariable -Name 'PSYTempFolder'
-        if (-not $tempFolder) {
-            throw "PSYTempFolder environment variable isn't set. A folder to store temporary files is required when using Azure Blob functionality."
-        }
-        $fileName = Split-Path -Path $Path -Leaf
-        $tempChildFolder = Join-Path -Path $tempFolder -ChildPath "$(New-Guid)"
-        $downloadedPath = "$tempChildFolder\$fileName"
-        New-Item -ItemType Directory -Force -Path (Split-Path -Path $downloadedPath -Parent)
-
-        # Delegate the Import to the existing File Importer.
-        $InputObject | Import-PSYTextFile -Path $downloadedPath -Format $Format -Header:$Header -Compress:$Compress
-
-        # Update the file from temp folder to Azure Blob Storage.
+        # Create the Blob
         $ctx = New-AzureStorageContext -ConnectionString $connDef.ConnectionString
-        Set-AzureStorageBlobContent -File $downloadedPath -Container $Container -Blob $Path -Context $ctx -Force
-        Write-PSYInformationLog -Message "Uploaded $Format text data to Blob [$Connection]:$Container/$Path."
+        $c = Get-AzureStorageContainer -Name $Container -Context $ctx
+        $blob = $c.CloudBlobContainer.GetBlockBlobReference($Path)
+        $blobStream = $blob.OpenWrite()
 
-        # Removes the temp files.
-        Remove-Item -Path $tempChildFolder -Recurse
+        if ($Path.Contains('*') -or $Path.Contains('?')) {
+            throw "Wildcards not implemented."      # TODO: Support wildcards and multiple readers.
+        }
+
+        # If we're compressing
+        if ($Path.EndsWith('.gz')) {
+            $gzStream = [System.IO.Compression.GzipStream]::new($blobStream, [IO.Compression.CompressionMode]::Compress, $false)
+        }
+        else {
+            $gzStream = $blobStream
+        }
+
+        # Write the file
+        $writer = New-Object PowerSync.TextFileDataWriter($gzStream, $Format, $Header)
+        $writer.Write($InputObject.DataReaders[0])
+        Write-PSYInformationLog -Message "Uploaded $Format text data to Blob [$Connection]:$Container/$Path."
     }
     catch {
-        Remove-Item -Path $tempChildFolder -Recurse -ErrorAction SilentlyContinue       # try to clean again, just in case
         Write-PSYErrorLog $_
     }
     finally {

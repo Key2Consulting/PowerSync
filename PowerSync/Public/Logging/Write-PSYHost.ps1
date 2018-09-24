@@ -24,7 +24,7 @@ function Write-PSYHost {
     )
 
     # If the host supports Write-Host, use that since it provides nice color formatting.
-    if ($PSYSession.UserInteractive -and $false) {
+    if ($PSYSession.UserInteractive) {
         if ($ForegroundColor -and $BackgroundColor) {
             Write-Host -Object $Object -NoNewline:$NoNewline -Separator $Seperator -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
         }

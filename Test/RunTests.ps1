@@ -41,7 +41,6 @@ Set-PSYConnection -Name "TestSqlServerSource" -Provider SqlServer -ConnectionStr
 
 # Set environment variables
 Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot                         # needed so Stored Command finds our custom scripts
-Set-PSYVariable -Name 'PSYTempFolder' -Value "$PSScriptRoot\TempFiles"     # needed for Azure tests
 
 # Run required tests
 Write-PSYHost "RUNNING Test Scripts"
