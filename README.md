@@ -350,5 +350,19 @@ Find-PSYLog -Type 'ErrorLog' -Search '*MyTable*'        # search just error log 
 ```
 
 ## Quick Commands
-Except for [Quick Commands](#quick-commands), PowerSync commands require a connection to a repository to function.
-> Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution.
+Quick Commands are operationally focused shortcuts for performing specific and common tasks. They are designed in the spirit of PowerShell one-liner commands. Unlike all other PowerSync functions, Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution. Use a Quick Command when you simply need to copy some data leveraging the PowerSync framework capabilities.
+
+Imports CSV and TSV files into Sql Server.
+```PowerShell
+Copy-PSYTable -SProvider TextFile -SConnectionString "MyTextFile.csv" -SFormat CSV -SHeader `
+    -TProvider SqlServer -TServer 'MyServer' -TDatabase "MyDatabase" -TTable "dbo.QuickCSVCopy"
+
+Copy-PSYTable -SProvider TextFile -SConnectionString "MyTextFile.txt" -SFormat TSV -SHeader `
+    -TProvider SqlServer -TServer 'MyServer' -TDatabase "MyDatabase" -TTable "dbo.QuickTSVCopy"
+```
+
+Copies a table from one database to another, automatically creating the target table and adding a CCIX index.
+```PowerShell
+Copy-PSYTable -SProvider SqlServer -SServer 'MySourceServer' -SDatabase "MySourceDatabase" -STable "dbo.QuickTypedCSVCopy" `
+    -TProvider SqlServer -TServer 'MyTargetServer' -TDatabase "MyTargetDatabase" -TTable "dbo.QuickTypedCSVCopyOfCopy"
+```
