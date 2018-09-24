@@ -31,7 +31,7 @@ Get-PSYVariable -Name 'MyVar' -DefaultValue 500
 
 .EXAMPLE
 foreach ($var in (Get-PSYVariable -Name 'Table[?]')) {
-    Write-Host $var.Name
+    Write-PSYHost $var.Name
 }
 
 .NOTES

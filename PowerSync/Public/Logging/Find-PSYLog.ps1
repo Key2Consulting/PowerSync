@@ -60,22 +60,34 @@ function Find-PSYLog {
                 $queryLog = $this.FindEntity('QueryLog', 'Query', $Search, $true)
             }
 
-            $allLogs = $messageLog + $errorLog1 + $errorLog2 + $errorLog3 + $variableLog + $queryLog
-            
-            # Some log entries can be found multiple times, remove the duplicates
-            # TODO: CAN'T USE SELECT-OBJECT -UNQIUE AS IT DOESN'T WORK WITH OBJECT TYPES. INSTEAD, BUILD A NEW ARRAY AND ONLY ADD UNIQUE ITEMS TO IT.
+            $combinedLogs = $messageLog + $errorLog1 + $errorLog2 + $errorLog3 + $variableLog + $queryLog
             
             # If the caller wants to filter on log type, apply that here in addition to above since some logs use
             # shared storage.
             if ($Type) {
-                $allLogs | Where-Object {$_.Type -eq $Type}
+                $typeFiltered = $combinedLogs | Where-Object {$_.Type -eq $Type}
             }
             else {
-                $allLogs
+                $typeFiltered = $combinedLogs
             }
 
-            # TODO: Add date filter support (e.g. StartDate, EndDate)
+            # If the caller wants to filter on a date range, use the CreatedDateTime field which should
+            # exist for every log type.
+            $dateFiltered = $typeFiltered | Where-Object {
+                ((ConvertFrom-PSYCompatibleType -InputObject $_.CreatedDateTime -Type 'datetime') -ge $StartDate -or -not $StartDate) `
+                -and ((ConvertFrom-PSYCompatibleType -InputObject $_.CreatedDateTime -Type 'datetime') -le $EndDate -or -not $EndDate)
+            }
             
+            # Some log entries can be found multiple times, so remove the duplicates.
+            $uniqueLogs = New-Object System.Collections.ArrayList
+            foreach ($log in $dateFiltered) {
+                $existing = $uniqueLogs | Where-Object { $_.ID -eq $log.ID }
+                if (-not $existing) {
+                    [void] $uniqueLogs.Add($log)
+                }
+            }
+            
+            $uniqueLogs
         })
     }
     catch {

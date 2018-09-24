@@ -1,5 +1,7 @@
+*This project is under development.*
+
 # Introduction
-PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option for synchronizing data between platforms. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT model where transformations are best performed by the database system oppose to the integration framework. 
+PowerSync is a PowerShell based data integration system. It can be used as a complex and customizable data integration framework, or as a command-line option for synchronizing data between platforms. It's based on similar design concepts found in commercial data integration products, like connections, variables, activities, and export/import operations. PowerSync adheres to the ELT philosophy where transformations are best performed by the database system oppose to the integration framework.
 
 As it's rooted in PowerShell, PowerSync natively supports the plethora of PowerShell commands/cmdlets found in the community and included by the PowerShell platform. PowerShell is known for it's convenient and simplistic API for managing vast numbers of resources. It's PowerSync's goal to provide that same simplistic API for managing data resources.
 
@@ -113,10 +115,6 @@ An OleDb database repository is more complex option, but also more robust. It al
 
 The OleDb provider can use any OleDb compatible database. However, the use of a database repository requires the creation of a database which conforms to the structures and capabilities required by PowerSync. Since database systems and their proprietary syntax can vary significantly, PowerSync delegates creation and management of the database repository to your project. However, PowerSync does include *Kits* which contain pre-packaged and fully functional database repository projects ready to use. Once deployed, maintaining and upgrading database repositories based on those kits is the responsibility of the developer.
 
-TODO: We may need to reconsider this, since we want use to be as simple as possible.
-#### Usage
-TODO
-
 ## Activities
 PowerSync activities organize your data integration workload into atomic units of work. You execute an Activity with the `Start-PSYActivity` or `Start-PSYForEachActivity` functions. Although activities are not required, they provide certain benefits:
  - Log operations performed during an activity are associated to that activity.
@@ -211,7 +209,7 @@ Native PowerShell variables (i.e. `$myVar = 123`) have limited use in data integ
 
 Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, arrays). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). 
 
-One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, sequential activities do retain visibility to these variables. Furthermore, changes to enumerated objects during parallel execution (`Start-PSYForEachActivity`) will not affect the copy in the caller's process space.
+One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, *sequential* activities do retain visibility to these variables. Furthermore, changes to enumerated objects during parallel execution (`Start-PSYForEachActivity`) will not affect the copy in the caller's process space.
 ```PowerShell
 $readMe = 123
 Start-PSYActivity -ScriptBlock ({
@@ -289,6 +287,21 @@ WHERE
 ```
 
 ## Exporters and Importers
+Exporters and Importers together create flows of data from a source target to a target. An export function is always paired with an import function using the pipe `|` command, but they can each point to different data platforms.
+
+The following exports data from a CSV file and imports it into a SQL Server table, creating the table if it doesn't exist.
+```PowerShell
+Export-PSYTextFile -Connection "MySourceConnection" -Path "MySourceFile.csv" -Format CSV -Header `
+    | Import-PSYSqlServer -Connection "MyTargetConnection" -Table "dbo.MyTargetTable" -Create
+```
+
+Although the `|` command is used, data does not flow from exporters to importers row-by-row using PowerShell's piping system. Instead, the exporter returns one or more DataReaders, which are then consumed by the importer. Using .NET readers and writers are much faster than PowerShell piping.
+
+The following Exporters/Importers are currently implemented:
+ - **TextFile**: CSV or TSV formatted text files, with support for Gzip compression.
+ - **AzureBlobTextFile**: Same as TextFile, except stored in Azure Blob Storage.
+ - **SqlServer**: Microsoft SQL Server database, with options to automatically create/provision target table and add CCIX indexes.
+ - **OleDb**: Generic OleDb database (still in development).
 
 ## Logging
 Enterprise integration systems are inherently complex, with many moving parts and potential points of failure. Logging of a large-scale data integration system is one of the most important, and often overlooked capabilities. Comprehensive logging provides projects with insight into the runtime state of the framework, and is critical for monitoring, debugging, and performance tuning.
@@ -305,13 +318,12 @@ catch {
     Write-PSYErrorLog $_
 }
 ```
-TODO: Describe error action preference and nesting rules.
 
 ### Information and Verbose Log
 The Information and Verbose logs record similar information. The information log narrates the work being performed at a high level. The Verbose Log logs similar information, except at a more detailed level. You can enable verbose logging using the `-Verbose` common parameter.
 ```PowerShell
 Write-PSYInformationLog -Message "Completed synchronization of source and target."
-$workItems | Write-PSYVerboseLog -Message "Exported $($_.$RowCount) data from $($_.$TableName)."
+$workItems | ForEach-Object { Write-PSYVerboseLog -Message "Exported $($_.$RowCount) data from $($_.$TableName)." }
 ```
 
 ### Debug Log
@@ -342,9 +354,3 @@ Find-PSYLog -Type 'ErrorLog' -Search '*MyTable*'        # search just error log 
 ## Quick Commands
 Except for [Quick Commands](#quick-commands), PowerSync commands require a connection to a repository to function.
 > Quick Commands do not require the explicit configuration of a repository, but will create one internally for the duration of the command execution.
-# Advanced Topics
-## Type Conversion
-## Multiple File Readers
-## Adding Resiliency
-# References
- - ASCII based diagrams created with [asciiflow](http://asciiflow.com).

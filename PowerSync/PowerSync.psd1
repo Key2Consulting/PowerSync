@@ -10,7 +10,7 @@
     AliasesToExport = "*"
     
     # Use the following command to get the list of functions to export:  
-    # Get-ChildItem '.\PowerSync\Public\' -File -Recurse | ForEach-Object { Write-Host "'$($_.BaseName)'," }
+    # Get-ChildItem '.\PowerSync\Public\' -File -Recurse | ForEach-Object { Write-Output "'$($_.BaseName)'," }
     FunctionsToExport = 
         'Start-PSYActivity',
         'Start-PSYForEachActivity',
@@ -25,10 +25,13 @@
         'Export-PSYOleDb',
         'Export-PSYSqlServer',
         'Export-PSYTextFile',
+        'Export-PSYAzureBlobTextFile',
         'Import-PSYOleDb',
         'Import-PSYSqlServer',
         'Import-PSYTextFile',
+        'Import-PSYAzureBlobTextFile',
         'Find-PSYLog',
+        'Write-PSYHost',
         'Write-PSYDebugLog',
         'Write-PSYErrorLog',
         'Write-PSYInformationLog',
@@ -68,6 +71,7 @@
         "$PSScriptRoot\Public\Common\Import-PSYModule.ps1",
         "$PSScriptRoot\Public\Activity\Start-PSYActivity.ps1",
         "$PSScriptRoot\Public\Activity\Start-PSYForEachActivity.ps1",
+        "$PSScriptRoot\Public\Logging\Write-PSYHost.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYErrorLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYInformationLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYVerboseLog.ps1",
@@ -92,9 +96,11 @@
         "$PSScriptRoot\Public\Exporter\Export-PSYOleDb.ps1",
         "$PSScriptRoot\Public\Exporter\Export-PSYSqlServer.ps1",
         "$PSScriptRoot\Public\Exporter\Export-PSYTextFile.ps1",
+        "$PSScriptRoot\Public\Exporter\Export-PSYAzureBlobTextFile.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYOleDb.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYSqlServer.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYTextFile.ps1",
+        "$PSScriptRoot\Public\Importer\Import-PSYAzureBlobTextFile.ps1",
         "$PSScriptRoot\Public\QuickCommand\Copy-PSYTable.ps1"
         
     )

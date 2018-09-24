@@ -7,13 +7,15 @@ Exports data from a text file defined by the supplied connection. Exporters are 
 
 The full path to the file is a combination of the base ConnectionString and the Path. Either of those could be omitted, as long as the other supplies the full path.
 
-Supports Zip archives as well as multiple files via wildcards.
+If the file extension .gz is used, the file will be decompressed using Gzip compression.
 
 .PARAMETER Connection
 Name of the connection to extract from.
 
 .PARAMETER Path
 Path of the file or files to export (supports wildcards). A TextFile connection can supply the root path, which is then prefixed with this path parameter. If path is a Zip archive, will be uncompressed prior to execution.
+
+If the file extension .gz is used, the file will be decompressed using Gzip compression.
 
 .PARAMETER Format
 The format of the file (CSV, Tab).
@@ -42,49 +44,50 @@ function Export-PSYTextFile {
     
     try {
         # Initialize source connection
-        $connDef = Get-PSYConnection -Name $Connection
-        
-        # Construct the full path to the file, which for files is a combination of the base ConnectionString and the Path. Either
-        # of those could be omitted.
-        if ($connDef.ConnectionString -and $Path) {
-            $completefilePath = $connDef.ConnectionString.Trim('\') + '\' + $Path.TrimStart('\')
-        }
-        elseif ($Path) {
-            $completefilePath = $Path
-        }
-        elseif ($connDef.ConnectionString) {
-            $completefilePath = $connDef.ConnectionString
-        }
-
-        # If the file path points to a Zip archive, unzip it and update our file path.
-        if ($completefilePath.EndsWith('zip')) {
-            $expandedPath = $completefilePath.SubString(0, $completefilePath.Length - 4)
-            $expandedPath | Remove-Item -Recurse -ErrorAction SilentlyContinue
-            Expand-Archive -Path $completefilePath -DestinationPath $expandedPath
-            $filePath = $expandedPath + '\*.*'
+        if ($Connection) {
+            $connDef = Get-PSYConnection -Name $Connection
         }
         else {
-            $expandedPath = ""
-            $filePath = $completefilePath
+            $connDef = $null
         }
 
-        # The file path could point to multiple files. For each file, we spin up a reader. Throttling is
-        # handled on the import side.
-        $readers = New-Object System.Collections.ArrayList
-        $files = Get-ChildItem -Path $filePath
-        foreach ($file in $files) {
-            $reader = New-Object PowerSync.TextFileDataReader($file.FullName, $Format, $Header)
-            [void] $readers.Add($reader)
+        # Construct the full path to the file, which for files is a combination of the base ConnectionString and the Path. Either
+        # of those could be omitted.
+        if ($connDef -and $connDef.ConnectionString -and $Path) {
+            $filePath = $connDef.ConnectionString.Trim('\') + '\' + $Path.TrimStart('\')
+        }
+        elseif ($Path) {
+            $filePath = $Path
+        }
+        elseif ($connDef.ConnectionString) {
+            $filePath = $connDef.ConnectionString
         }
 
-        Write-PSYInformationLog -Message "Exported $Format text data from $completefilePath."
+        if ($filePath.Contains('*') -or $filePath.Contains('?')) {
+            throw "Wildcards not implemented."      # TODO: Support wildcards and multiple readers.
+        }
+
+        # Open the file stream.
+        $stream = [System.IO.File]::Open($filePath, [System.IO.FileMode]::Open)
+
+        # If the file path points to a Gzip archive.
+        if ($filePath.EndsWith('.gz')) {
+            $gzStream = [System.IO.Compression.GzipStream]::new($stream, [IO.Compression.CompressionMode]::Decompress, $false)
+        }
+        else {
+            $gzStream = $stream
+        }
+
+        $reader = New-Object PowerSync.TextFileDataReader($gzStream, $Format, $Header)
+
+        Write-PSYInformationLog -Message "Exported $Format text data from $filePath."
 
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer
         # of some basic contextual information, which can be used to make decisions on how best to import.
         @{
-            DataReaders = $readers
+            DataReaders = @($reader)
             Provider = [PSYDbConnectionProvider]::TextFile
-            FilePath = $completefilePath
+            FilePath = $filePath
             Format = $Format
             Header = $Header
             OnCompleteInputObject = $expandedPath

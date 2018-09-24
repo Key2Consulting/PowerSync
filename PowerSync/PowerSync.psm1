@@ -23,10 +23,10 @@
     Module = "$PSScriptRoot"                                    # where we're located
     UserModules = New-Object System.Collections.ArrayList       # loaded modules so subsequent jobs can bootstrap
     WorkingFolder = "$(Get-Location)"                           # where the PowerSync module is located
+    UserInteractive = [Environment]::UserInteractive            # determine if functions like Write-Host are available (although Write-Output is generally recommended over Write-host, it affects function output streams)
 }
 
 # Import CSharp Library Dependencies
-#
 Add-Type -IgnoreWarnings `
     -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
     -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TypeConversionDataReader.cs"))
@@ -38,9 +38,6 @@ Add-Type -IgnoreWarnings `
 Add-Type -IgnoreWarnings `
     -ReferencedAssemblies ('System.IO', 'System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
     -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TextFileDataWriter.cs"))
-
-# Import Local Module Dependencies
-#Import-Module "$PSScriptRoot\Private\Library\Newtonsoft.Json"
 
 # REFERENCES
 # https://github.com/PowerShell/PowerShell/issues/3173

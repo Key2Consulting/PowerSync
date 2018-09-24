@@ -43,6 +43,7 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
  - Enabling Parallel disables breakpoints in most IDEs, so consider disabling parallel execution when debugging an issue.
 #>
 function Start-PSYForEachActivity {
+    [CmdletBinding()]
     param
     (
         [parameter(HelpMessage = "TODO", Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
@@ -59,17 +60,34 @@ function Start-PSYForEachActivity {
         [switch] $WaitDebugger
     )
 
-    try {
-        # Log activity start
-        $a = Write-ActivityLog -ScriptAst $ScriptBlock.Ast.ToString() -Name $Name -Message "ForEach Activity '$Name' started" -Status 'Started'
+    # This routine supports pipe purely as syntactic sugar.
 
-        # Execute foreach (in parallel if specified)
-        $jobs = ($InputObject | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Throttle $Throttle -Name "$Name[{0}]" -ParentActivity $a -WaitDebugger:$WaitDebugger)
-        
-        # Log activity end
-        Write-ActivityLog -Name $Name -Message "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a
+    begin {
+        $workItems = [System.Collections.ArrayList]::new()
     }
-    catch {
-        Write-PSYErrorLog $_
+    
+    process {
+        if ($InputObject -is [array]) {
+            [void] $workItems.AddRange($InputObject)
+        }
+        else {
+            [void] $workItems.Add($InputObject)
+        }
+    }
+
+    end {
+        try {
+            # Log activity start
+            $a = Write-ActivityLog -ScriptAst $ScriptBlock.Ast.ToString() -Name $Name -Message "ForEach Activity '$Name' started" -Status 'Started'
+
+            # Execute foreach (in parallel if specified)
+            $jobs = ($workItems | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Throttle $Throttle -Name "$Name[{0}]" -ParentActivity $a -WaitDebugger:$WaitDebugger)
+            
+            # Log activity end
+            Write-ActivityLog -Name $Name -Message "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a
+        }
+        catch {
+            Write-PSYErrorLog $_
+        }
     }
 }

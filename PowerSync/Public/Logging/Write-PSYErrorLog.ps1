@@ -89,9 +89,9 @@ function Write-PSYErrorLog {
             })
         }
         # Print to Console
-        Write-Host $ErrorRecord.Exception.ToString() -ForegroundColor Red
-        Write-Host "$($handler.FunctionName) ($($handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1 -Compress))" -ForegroundColor DarkGreen
-        Write-Host $ErrorRecord.ScriptStackTrace -ForegroundColor DarkGray
+        Write-PSYHost $ErrorRecord.Exception.ToString() -ForegroundColor Red
+        Write-PSYHost "$($handler.FunctionName) ($($handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1 -Compress))" -ForegroundColor DarkGreen
+        Write-PSYHost $ErrorRecord.ScriptStackTrace -ForegroundColor DarkGray
 
         # Mark exception as non-originating for next throw
         $ErrorRecord.ErrorDetails = 'Non-originating'

@@ -14,7 +14,7 @@ function Export-PSYOleDb {
     )
 
     try {
-        # TODO
+        throw "Not implemented"
     }
     catch {
         Write-PSYErrorLog $_
