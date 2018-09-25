@@ -29,9 +29,7 @@ Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Target Database.sql" -Se
 
 # Initialize PowerSync repository
 Write-PSYHost "Resetting repository..."
-Remove-PSYJsonRepository $jsonRepo
-New-PSYJsonRepository $jsonRepo -ErrorAction SilentlyContinue
-Connect-PSYJsonRepository $jsonRepo
+Connect-PSYJsonRepository -Path $jsonRepo -Recreate
 
 # Create default connections
 Set-PSYConnection -Name "TestSqlServerTarget" -Provider SqlServer -ConnectionString "Server=$testDBServer;Integrated Security=true;Database=PowerSyncTestTarget"
