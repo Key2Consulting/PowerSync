@@ -8,7 +8,7 @@ PowerSync uses a repository to manage all of its configuration and state, and mu
 A Json repository is a convenient way to get up and running with PowerSync without much overhead. Json files are limited, so for more complex projects, use a database repository (i.e. Connect-PSYOleDbRepository).
 
 .PARAMETER Path
-Path of the Json file, the repository, to delete. If just a filename is specified, will resolve to the current working folder.
+Path of the Json repository to delete. If just a filename is specified, will resolve to the current working folder.
 
 .EXAMPLE
 Remove-PSYJsonRepository -Path 'MyLocalFile.json'
@@ -16,7 +16,7 @@ Remove-PSYJsonRepository -Path 'MyLocalFile.json'
 function Remove-PSYJsonRepository {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(HelpMessage = "Path of the Json repository to delete. If just a filename is specified, will resolve to the current working folder.", Mandatory = $true)]
         [string] $Path
     )
 

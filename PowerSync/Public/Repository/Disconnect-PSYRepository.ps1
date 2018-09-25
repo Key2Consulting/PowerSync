@@ -1,3 +1,7 @@
+<#
+.SYNOPSIS
+Disconnections from the current PowerSync repository.
+#>
 function Disconnect-PSYRepository {
     try {
         $global:PSYSession.RepositoryState = @{}
