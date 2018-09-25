@@ -42,8 +42,7 @@ Copy-PSYTable `
 Orchestrate a parallel, multi-table copy between different database systems.
 ```powershell
 # Create and Connect to PowerSync repository (stores all our runtime and persisted state).
-New-PSYJsonRepository 'PowerSyncRepo.json'
-Connect-PSYJsonRepository 'PowerSyncRepo.json'
+Connect-PSYJsonRepository -Path 'PowerSyncRepo.json' -Create
 
 # Create source and target connections (only need to do this once).
 Set-PSYConnection -Name "OracleSource" -Provider Oracle -ConnectionString "Data Source=MyOracleDB;Integrated Security=yes;"
