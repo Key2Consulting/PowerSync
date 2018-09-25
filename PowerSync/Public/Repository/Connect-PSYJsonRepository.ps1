@@ -39,13 +39,13 @@ function Connect-PSYJsonRepository {
         # Disconnect if already connected
         Disconnect-PSYRepository
 
-        # Auto create/clear.
+        # Auto create.
         if ($Recreate) {
             $null = Remove-Item $Path -ErrorAction SilentlyContinue
-            $null = New-Item $Path -ErrorAction SilentlyContinue
+            New-PSYJsonRepository -Path $Path -ErrorAction SilentlyContinue
         }
         elseif ($Create) {
-            $null = New-Item $Path -ErrorAction SilentlyContinue
+            New-PSYJsonRepository -Path $Path -ErrorAction SilentlyContinue
         }
 
         # Create the instance, passing it our session state. The class should set it's state properties to the session,
