@@ -1,25 +1,28 @@
 Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     
-    Set-PSYVariable -Name 'TestVariable' -Value "Initial value"
-
-    Start-PSYActivity -Name 'Test Parallel Race Execution' -Parallel -ScriptBlock ({
-        Write-PSYInformationLog 'Parallel nested script 1 is executing'
-        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 1"
-        Start-Sleep -Seconds 5
-        if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Parallel Race Execution'"}
-    }, {
-        Write-PSYInformationLog 'Parallel nested script 2 is executing'
-        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 2"
-        Start-Sleep -Seconds 3
-        if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Parallel Race Execution'"}
-    }, {
-        Write-PSYInformationLog 'Parallel nested script 3 is executing'
-        Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 3"
-        Start-Sleep -Seconds 0
-        Get-PSYVariable 'TestVariable'
-        if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Parallel Race Execution'"}
-    })
-
+   <#  Set-PSYVariable -Name 'TestVariable' -Value "Initial value"
+    (
+        (Start-PSYActivity -Name 'Test Async Race Execution 1' -Async -ScriptBlock {
+            Write-PSYInformationLog 'Async scriptblock 1 is executing'
+            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 1"
+            Start-Sleep -Seconds 5
+            if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Async Race Execution'"}
+        }), 
+        (Start-PSYActivity -Name 'Test Parallel Race Execution 2' -Async -ScriptBlock {
+            Write-PSYInformationLog 'Async scriptblock 2 is executing'
+            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 2"
+            Start-Sleep -Seconds 3
+            if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Async Race Execution'"}
+        }),
+        (Start-PSYActivity -Name 'Test Async Race Execution 3' -Async -ScriptBlock {
+            Write-PSYInformationLog 'Async scriptblock 3 is executing'
+            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 3"
+            Start-Sleep -Seconds 0
+            Get-PSYVariable 'TestVariable'
+            if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Async Race Execution'"}
+        })
+    ) | Wait-PSYActivity #>
+<# 
     Set-PSYVariable 'TestVariable' 0
     Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -InputObject (1..10) -Parallel -Throttle 5 -ScriptBlock {
         Set-PSYVariable 'TestVariable' ((Get-PSYVariable 'TestVariable') + 1)     # will not work as expected
@@ -37,7 +40,28 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     }
     if ((Get-PSYVariable 'TestVariable') -ne 10) {
         throw "Failed test 'Test ForEach Correct Concurrency Execution'"
-    }
+    } #>
+
+    $activities = (
+        (Start-PSYActivity -Name 'Test Queued Activity Execution 1' -Async -Queue 'Outgoing' -ScriptBlock {
+            Start-Sleep -Seconds 5
+            Set-PSYVariable -Name 'TestVariable' -Value "Queued activity 1 is executing"
+            Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
+        }),
+        (Start-PSYActivity -Name 'Test Queued Activity Execution 2' -Async -Queue 'Outgoing' -ScriptBlock {
+            Start-Sleep -Seconds 5
+            Set-PSYVariable -Name 'TestVariable' -Value "Queued activity 2 is executing"
+            Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
+        }),
+        (Start-PSYActivity -Name 'Test Queued Activity Execution 3' -Async -Queue 'Outgoing' -ScriptBlock {
+            Start-Sleep -Seconds 5
+            Set-PSYVariable -Name 'TestVariable' -Value "Queued activity 3 is executing"
+            Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
+        })
+    )
+
+    $job = Invoke-PSYActivityHandler -Queue 'Outgoing' -Throttle 3
+    $activities | Wait-PSYActivity
 
     Remove-PSYVariable 'TestVariable'
 }

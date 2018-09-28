@@ -78,13 +78,13 @@ function Start-PSYForEachActivity {
     end {
         try {
             # Log activity start
-            $a = Write-ActivityLog -ScriptAst $ScriptBlock.Ast.ToString() -Name $Name -Message "ForEach Activity '$Name' started" -Status 'Started'
+            $a = Write-PSYActivityLog -ScriptAst $ScriptBlock.Ast.ToString() -Name $Name -Message "ForEach Activity '$Name' started" -Status 'Started'
 
             # Execute foreach (in parallel if specified)
             $jobs = ($workItems | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Throttle $Throttle -Name "$Name[{0}]" -ParentActivity $a -WaitDebugger:$WaitDebugger)
             
             # Log activity end
-            Write-ActivityLog -Name $Name -Message "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a
+            Write-PSYActivityLog -Name $Name -Message "ForEach Activity '$Name' completed" -Status 'Completed' -Activity $a
         }
         catch {
             Write-PSYErrorLog $_

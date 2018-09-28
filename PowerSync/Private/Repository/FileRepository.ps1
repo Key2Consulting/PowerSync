@@ -12,6 +12,7 @@ class FileRepository : Repository {
             QueryLog = New-Object System.Collections.ArrayList
             Variable = New-Object System.Collections.ArrayList
             Connection = New-Object System.Collections.ArrayList
+            QueueMessage = New-Object System.Collections.ArrayList
         }
     }
 
@@ -101,6 +102,40 @@ class FileRepository : Repository {
             }
         }
         return $entityList
+    }
+
+    [void] CreateQueue([string] $Name) {
+        # Since flie repositories delineate different queues through a simple attribute, nothing physical needs to be created.
+    }
+    
+    [void] DeleteQueue([string] $Name) {
+        # Since flie repositories delineate different queues through a simple attribute, nothing physical needs to be created.
+    }
+    
+    [void] PutMessage([string] $Queue, [object] $Message) {
+        $Message.Queue = $Queue     # tag the queue name in the message itself
+        $this.CreateEntity('QueueMessage', $Message)
+    }
+    
+    [object] GetMessage([string] $Queue) {
+        # Get the next item off the queue (FIFO)
+        # TODO: THIS SHOULD REALLY JUST SET VISIBILITY TO FALSE FOR SOME PERIOD OF TIME.
+        $q = $this.State.TableList.QueueMessage
+        for ($i = 0; $i -lt $q.Count; $i++) {
+            $msg = $q[$i]
+            if ($msg.Queue -eq $Queue) {
+                $this.State.TableList.QueueMessage.Remove($msg)
+                return $msg
+            }
+        }
+        return $null
+    }
+
+    [void] DeleteMessage([string] $Queue, [object] $ID) {
+        $msg = $this.State.TableList.QueueMessage.Where({$_.ID -eq $ID})
+        if ($msg) {
+            $this.State.TableList.QueueMessage.Remove($msg)
+        }
     }
 
     # Overrides base class behavior to require the complete reloading and resaving of the JSON repository after after operation.

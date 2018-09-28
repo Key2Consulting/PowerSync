@@ -44,6 +44,28 @@ class Repository {
         throw "The repository FindEntity method should be overridden by derived classes."
     }
 
+    # Queue Routines
+    #
+    [void] CreateQueue([string] $Name) {
+        throw "Method should be overridden by derived classes."
+    }
+    
+    [void] DeleteQueue([string] $Name) {
+        throw "Method should be overridden by derived classes."
+    }
+    
+    [void] PutMessage([string] $Queue, [object] $Message) {
+        throw "Method should be overridden by derived classes."
+    }
+    
+    [object] GetMessage([string] $Queue) {
+        throw "Method should be overridden by derived classes."
+    }
+
+    [void] DeleteMessage([string] $Queue, [object] $ID) {
+        throw "Method should be overridden by derived classes."
+    }
+    
     # Common repository utility routines
     #
     

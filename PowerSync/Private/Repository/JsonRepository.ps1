@@ -20,6 +20,7 @@ class JsonRepository : FileRepository {
             $this.State.TableList.MessageLog = [System.Collections.ArrayList] $data.MessageLog
             $this.State.TableList.VariableLog = [System.Collections.ArrayList] $data.VariableLog
             $this.State.TableList.QueryLog = [System.Collections.ArrayList] $data.QueryLog
+            $this.State.TableList.QueueMessage = [System.Collections.ArrayList] $data.QueueMessage
         }
     }
 
@@ -33,6 +34,7 @@ class JsonRepository : FileRepository {
             MessageLog = $this.State.TableList.MessageLog
             VariableLog = $this.State.TableList.VariableLog
             QueryLog = $this.State.TableList.QueryLog
+            QueueMessage = $this.State.TableList.QueueMessage
         } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.State.Path -Force
     }
 }

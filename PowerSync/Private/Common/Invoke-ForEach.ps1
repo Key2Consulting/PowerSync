@@ -90,18 +90,19 @@ function Invoke-ForEach {
                     Set-Location -Path $PSYSession.WorkingFolder    # default to parent session's working folder
                    
                     # Without setting these preferences, this output won't get returned
-                    $DebugPreference = $workItem.DebugPreference
-                    $VerbosePreference = $workItem.VerbosePreference
+                    # TODO: WHY ARE THESE THROWING A RUNTIME ERROR ALL OF A SUDDEN?
+                    #$DebugPreference = $workItem.DebugPreference
+                    #$VerbosePreference = $workItem.VerbosePreference
                     $ProgressPreference = "SilentlyContinue"
 
                     # Execute the input scriptblock
                     $scriptBlock = [Scriptblock]::Create($workItem.ScriptBlock)     # only the text was serialized, not the object, so reconstruct
-                    Invoke-Command -ScriptBlock $scriptBlock -InputObject $workItem.InputObject     # run client code
+                    Invoke-Command -ScriptBlock $scriptBlock -InputObject $workItem.InputObject    # run client code
                 })
                 Write-PSYDebugLog ("$($Name): Job Running {1}" -f $workItem.Index, $workItem.Job.InstanceId)
                 # If this is being run as part of an activity, log each invocation as a separate activity
                 if ($ParentActivity) {
-                    $workItem.Activity = Write-ActivityLog -ScriptAst $workItem.ScriptBlock.Ast.ToString() -Name ($Name -f $workItem.Index) -Message ("Activity '$Name' started" -f $workItem.Index) -Status 'Started' -ParentActivity $ParentActivity
+                    $workItem.Activity = Write-PSYActivityLog -ScriptAst $workItem.ScriptBlock.Ast.ToString() -Name ($Name -f $workItem.Index) -Message ("Activity '$Name' started" -f $workItem.Index) -Status 'Started' -ParentActivity $ParentActivity
                 }
             }
             else {      # Else not parallel
@@ -121,8 +122,10 @@ function Invoke-ForEach {
                 Write-PSYDebugLog ("$($Name): Sequential" -f $workItem.Index)
             }
 
+            # If WaitDebugger was set, the remote jobs will be waiting for the debugger, but the main thread still needs
+            # to call Debug-Job to complete the cycle.
             if ($workItem.WaitDebugger -and $Parallel) {
-                Start-Sleep -Milliseconds 500       # isn't there a better way?
+                Start-Sleep -Milliseconds 500       # isn't there a better way? needed b/c of timing issue
                 Debug-Job $workItem.Job
             }
         }
@@ -147,7 +150,7 @@ function Invoke-ForEach {
                         Write-PSYDebugLog -Message ("$($Name): Completed (Processed {1} out of {2})" -f $_.Index, $completedJobs.Count, $workItems.Count)
                         # If this is being run as part of an activity, complete activity log
                         if ($ParentActivity) {
-                            Write-ActivityLog -Name ($Name -f $_.Index) -Message ("Activity '$Name' completed" -f $_.Index) -Status 'Completed' -Activity $_.Activity
+                            Write-PSYActivityLog -Name ($Name -f $_.Index) -Message ("Activity '$Name' completed" -f $_.Index) -Status 'Completed' -Activity $_.Activity
                         }
                     }
                 }

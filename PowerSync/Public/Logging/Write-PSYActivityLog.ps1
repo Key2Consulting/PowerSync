@@ -1,4 +1,4 @@
-function Write-ActivityLog {
+function Write-PSYActivityLog {
     [CmdletBinding()]
     param
     (
