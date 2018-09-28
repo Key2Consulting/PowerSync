@@ -45,22 +45,22 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     $activities = (
         (Start-PSYActivity -Name 'Test Queued Activity Execution 1' -Async -Queue 'Outgoing' -ScriptBlock {
             Start-Sleep -Seconds 5
-            Set-PSYVariable -Name 'TestVariable' -Value "Queued activity 1 is executing"
+            Set-PSYVariable -Name 'TestVariable' -Value "...inside queued activity 1..."
             Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
         }),
         (Start-PSYActivity -Name 'Test Queued Activity Execution 2' -Async -Queue 'Outgoing' -ScriptBlock {
             Start-Sleep -Seconds 5
-            Set-PSYVariable -Name 'TestVariable' -Value "Queued activity 2 is executing"
+            Set-PSYVariable -Name 'TestVariable' -Value "...inside queued activity 2..."
             Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
         }),
         (Start-PSYActivity -Name 'Test Queued Activity Execution 3' -Async -Queue 'Outgoing' -ScriptBlock {
             Start-Sleep -Seconds 5
-            Set-PSYVariable -Name 'TestVariable' -Value "Queued activity 3 is executing"
+            Set-PSYVariable -Name 'TestVariable' -Value "...inside queued activity 3..."
             Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
         })
     )
 
-    $job = Invoke-PSYActivityHandler -Queue 'Outgoing' -Throttle 3
+    $job = Receive-PSYQueueActivity -Queue 'Outgoing'
     $activities | Wait-PSYActivity
 
     Remove-PSYVariable 'TestVariable'

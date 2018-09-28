@@ -66,9 +66,6 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
     )
 
     try {
-        # Log activity start. We also lock the scriptblock AST for reference purposes.
-        $log = Write-PSYActivityLog -ScriptAst $ScriptBlock.Ast.ToString() -Name $Name -Message "Activity '$Name' started" -Status 'Started'
-
         # Avoids confirmation prompts during logging.
         if ($DebugPreference -eq 'Inquire') {
             $DebugPreference = 'Continue'
@@ -85,16 +82,14 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
         # Package up all the required execution information as an activity object. This object must be serializable.
         $activity = @{
             InputObject = $InputObject
-            ScriptBlock = $ScriptBlock
+            ScriptBlock = $ScriptBlock.Ast.ToString().TrimStart('{').TrimEnd('}')
             Name = $Name
-            Log = $log
             PSYSession = $PSYSession
             DebugPreference = $DebugPreference
             VerbosePreference = $VerbosePreference
             ErrorActionPreference = $ErrorActionPreference
             WaitDebugger = $WaitDebugger
-            Queue = $Queue
-        }        
+        }
 
         # If we're executing the activity now (i.e. not queuing).
         if (-not $Queue) {
@@ -110,19 +105,19 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
                     Import-Module $activity.PSYSession.Module
                     $global:PSYSession = $activity.PSYSession
                     $PSYSession.UserModules | ForEach-Object { Import-Module $_ }       # load any user modules
-                    Set-Location -Path $PSYSession.WorkingFolder    # default to parent session's working folder
+                    Set-Location -Path $PSYSession.WorkingFolder                        # default to parent session's working folder
+                    $PSYSession.UserInteractive = $false                                # force false since out-of-process jobs are unattended
                 
                     # Without setting these preferences, this output won't get returned
                     $DebugPreference = $activity.DebugPreference
                     $VerbosePreference = $activity.VerbosePreference
-                    $ProgressPreference = "SilentlyContinue"
+                    $ProgressPreference = 'SilentlyContinue'
 
                     # Execute the input scriptblock
+                    $log = Write-PSYActivityLog -ScriptAst $activity.ScriptBlock -Name $activity.Name -Message "Activity '$($activity.Name)' started" -Status 'Started'
                     $scriptBlock = [Scriptblock]::Create($activity.ScriptBlock)                     # only the text was serialized, not the object, so reconstruct
                     Invoke-Command -ScriptBlock $scriptBlock -InputObject $activity.InputObject     # run client code
-
-                    # Close out the log
-                    Write-PSYActivityLog -Name $activity.Name -Message "Activity '$($activity.Name)' completed" -Status 'Completed' -Activity $activity.Log
+                    Write-PSYActivityLog -Name $activity.Name -Message "Activity '$($activity.Name)' completed" -Status 'Completed' -Activity $log
                 })
                 
                 Write-PSYDebugLog -Message "Activity '$Name' executing asynchronously as job $($activity.Job.InstanceId)"
@@ -131,25 +126,27 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
                 # to call Debug-Job to complete the cycle.
                 if ($activity.WaitDebugger -and $Async) {
                     Start-Sleep -Milliseconds 500       # isn't there a better way? needed b/c of what appears to be timing issues
-                    Debug-Job $activity.Job
+                    $null = Debug-Job $activity.Job
                 }
             }
             else {
                 # Else, we're running sequentially, so avoid using jobs. One reason for this is to make debugging client
                 # scripts easier. We still need to imitate async processing and output the same values as before.
                 try {
-                    $r = Invoke-Command -ScriptBlock $activity.ScriptBlock -InputObject $activity.InputObject
+                    $log = Write-PSYActivityLog -ScriptAst $activity.ScriptBlock -Name $Name -Message "Activity '$Name' started" -Status 'Started'
+                    $r = Invoke-Command -ScriptBlock $ScriptBlock -InputObject $activity.InputObject
+                    Write-PSYActivityLog -Name $Name -Message "Activity '$Name' completed" -Status 'Completed' -Activity $log
                     $activity.Result = $r
                     $activity.HadErrors = $false
                     $activity.Errors = @()
                 }
                 catch {
+                    $activity.Result = $null
                     $activity.HadErrors = $true
                     $activity.Errors = $_
                     Write-PSYErrorLog $_
                 }
                 Write-PSYDebugLog -Message "Activity '$Name' executing synchronously $($activity.Job.InstanceId)"
-                Write-PSYActivityLog -Name $Name -Message "Activity '$Name' completed" -Status 'Completed' -Activity $log
             }
         }
         else {
@@ -162,17 +159,12 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
                 $this.CreateQueue($Name)
                 $msg = @{
                     ID = $null
-                    InputObject = $InputObject
-                    ScriptBlock = $msgScriptBlock
-                    Name = $Name
-                    Log = $log
-                    PSYSession = $PSYSession
+                    Activity = $activity
                 }
                 $this.PutMessage($Queue, $msg)
-                $activity.MessageID = $msg.ID
             })
 
-            Write-PSYDebugLog -Message "Activity '$Name' queued for asynchronous execution on $Queue"
+            Write-PSYInformationLog -Message "Activity '$Name' queued for asynchronous execution on '$Queue'"
         }
 
         if ($Async) {

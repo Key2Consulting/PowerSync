@@ -65,6 +65,10 @@ class Repository {
     [void] DeleteMessage([string] $Queue, [object] $ID) {
         throw "Method should be overridden by derived classes."
     }
+
+    [void] ClearMessages([string] $Queue) {
+        throw "Method should be overridden by derived classes."
+    }
     
     # Common repository utility routines
     #

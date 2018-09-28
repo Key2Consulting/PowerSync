@@ -18,6 +18,7 @@ function Wait-PSYActivity {
 
     begin {
         $activities = [System.Collections.ArrayList]::new()
+        $completed = [System.Collections.ArrayList]::new()       # completed activities will be moved here
     }
     
     process {
@@ -36,9 +37,8 @@ function Wait-PSYActivity {
                 $ProgressPreference = "SilentlyContinue"        # certain hosting environments will fail b/c they don't support Write-Progress
             }
 
-            # Control parameters
+            # Control variables
             $totalCount = $activities.Count
-            $completed = New-Object System.Collections.ArrayList        # completed activities will be moved here
             $queuePollingInterval = Get-PSYVariable -Name 'PSYQueuePollingInterval' -DefaultValue 5000
             $jobPollingInterval = 1000       # since it's local, we can poll more frequent
             $lastQueuePollTime = Get-Date
@@ -47,58 +47,61 @@ function Wait-PSYActivity {
             # While there are still incomplete activities.
             while ($activities.Count) {
                 $activities | ForEach-Object {
+                    $activity = $_
                     $justCompleted = $false
 
                     # If it was queued, monitor the return queue for completed messages.
-                    if ($_.Queue) {
+                    if ($activity.Queue) {
                         # If it's time to poll the queue again
                         if ($timeToPollQueue) {
                             $repo = New-FactoryObject -Repository
                             
                             # Since there's no way to fetch a message by ID from a queue, handlers must place
                             # their response on a return queue with the Message ID in the name.
-                            $returnQueue = "$($_.Queue):$($_.MessageID)"
+                            $returnQueue = "$($activity.Queue):$($activity.MessageID)"
                             $returnMsg = $repo.CriticalSection({
                                 $this.GetMessage($returnQueue)      # will automatically delete
                             })
 
                             if ($returnMsg) {
                                 # It's complete, so move it to completed, and finish up.
-                                $_.Result = $returnMsg.Result
+                                $activity.Result = $returnMsg.Result
+                                $activity.HadErrors = $returnMsg.HadErrors
+                                $activity.Error = $returnMsg.Error
+    
                                 $justCompleted = $true
                             }
                         }
                     }
                     else {
                         # Executing as local job, so check whether it's complete.
-                        if ($_.Job.State -ne "Running") {
-                            # It's complete, so move it to completed, and finish up.
-                            $job = Receive-Job -Job $_.Job -Verbose
-                            $_.Result = @{
-                                Output = $_.Job.ChildJobs[0].Output
-                                Error = $_.Job.ChildJobs[0].Error
-                                Information = $_.Job.ChildJobs[0].Information
-                                Debug = $_.Job.ChildJobs[0].Debug
-                                Verbose = $_.Job.ChildJobs[0].Verbose
-                            }
+                        if ($activity.Job.State -ne "Running") {
+                            Receive-Job -Job $activity.Job
+                            # Send any printable streams to the Console.
+                            $job = $activity.Job.ChildJobs[0]
+                            $job.Information | ForEach-Object { Write-PSYHost $_.MessageData }
+                            $job.Debug | ForEach-Object { Write-PSYHost $_.MessageData }
+                            $job.Verbose | ForEach-Object { Write-PSYHost $_.MessageData }
+
+                            # Append the results to the activity
+                            $activity.Result = if ($job.Output.Count) { $job.Output[0] } else { $null }
+                            $activity.HadErrors = [bool] $job.Error.Count
+                            $activity.Error = if ($job.Error.Count) { $job.Error[0] } else { $null }
+
+                            Remove-Job -Job $activity.Job -Force
                             $justCompleted = $true
                         }
                     }
 
                     # Regardless of queue or job, if the activity just completed, finish up processing.
                     if ($justCompleted) {
-                        [void] $completed.Add($_)
+                        [void] $completed.Add($activity)
                         Write-PSYDebugLog -Message "$($Name): Completed (Processed $($completed.Count) out of $totalCount)"
-                        Write-Progress -Activity $_.Name -PercentComplete ($completed.Count / $totalCount * 100)
-
-                        # Send any printable streams to the Console.
-                        $_.Result.Information | ForEach-Object { Write-PSYHost $_.MessageData }
-                        $_.Result.Debug | ForEach-Object { Write-PSYHost $_.MessageData }
-                        $_.Result.Verbose | ForEach-Object { Write-PSYHost $_.MessageData }
+                        Write-Progress -Activity $activity.Name -PercentComplete ($completed.Count / $totalCount * 100)
 
                         # If errors and the current error action is to stop, we should do just that. Otherwise processing would continue silently.
-                        if ($_.Result.Error.Count -gt 0 -and $ErrorActionPreference -eq "Stop") {
-                            throw $_.Result.Error[0]
+                        if ($activity.HasErrors -and $ErrorActionPreference -eq "Stop") {
+                            throw $activity.Error
                         }
                     }
                 }
@@ -118,6 +121,9 @@ function Wait-PSYActivity {
                     }
                 }
             }
+
+            # Return completed results to caller
+            $completed
         }
         catch {
             Write-PSYErrorLog $_

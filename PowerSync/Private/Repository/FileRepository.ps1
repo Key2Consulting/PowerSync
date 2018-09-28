@@ -138,6 +138,10 @@ class FileRepository : Repository {
         }
     }
 
+    [void] ClearMessages([string] $Queue) {
+        # TODO
+    }
+
     # Overrides base class behavior to require the complete reloading and resaving of the JSON repository after after operation.
     [object] CriticalSection([string] $LockName, [scriptblock] $ScriptBlock) {
         # The file repository doesn't read/write specific parts of the file like a database does. However, it
