@@ -1,3 +1,11 @@
+<#
+.SYNOPSIS
+Saves the current state of an activity.
+
+.DESCRIPTION
+TODO
+Should not need to call this API
+#>
 function Checkpoint-PSYActivity {
     [CmdletBinding()]
     param

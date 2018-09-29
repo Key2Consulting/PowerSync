@@ -110,7 +110,7 @@ function Invoke-ForEach {
                 # easier. We still need to imitate parallel processing and output the same values as before.
                 try {
                     $r = Invoke-Command -ScriptBlock $workItem.ScriptBlock -InputObject $workItem.InputObject
-                    $workItem.Result = $r
+                    $workItem.OutputObject = $r
                     $workItem.HadErrors = $false
                     $workItem.Errors = @()
                 }
@@ -145,7 +145,7 @@ function Invoke-ForEach {
                     }
                     elseif (-not $completedJobs.Contains($_.Job.InstanceId)) {
                         [void] $completedJobs.Add($_.Job.InstanceId)
-                        $_.Result = $_.Job.ChildJobs[0].Output
+                        $_.OutputObject = $_.Job.ChildJobs[0].Output
                         Write-Progress -Activity ("$($Name)" -f $_.Index) -PercentComplete ($completedJobs.Count / $workItems.Count * 100)
                         Write-PSYDebugLog -Message ("$($Name): Completed (Processed {1} out of {2})" -f $_.Index, $completedJobs.Count, $workItems.Count)
                         # If this is being run as part of an activity, complete activity log
@@ -160,7 +160,7 @@ function Invoke-ForEach {
                 $j = $item.Job.ChildJobs[0]     # actual job is stored as first element of ChildJobs
                 @{
                     InputObject = $item.InputObject
-                    Result = $item.Result
+                    Result = $item.OutputObject
                     HadErrors = [bool] $j.Error.Count
                     Errors = $j.Error
                 }
@@ -181,7 +181,7 @@ function Invoke-ForEach {
             foreach ($item in $workItems) {
                 @{
                     InputObject = $item.InputObject
-                    Result = $item.Result
+                    Result = $item.OutputObject
                     HadErrors = [bool] $item.HadErrors
                     Errors = $item.Errors
                 }

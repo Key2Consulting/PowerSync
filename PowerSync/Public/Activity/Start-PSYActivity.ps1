@@ -104,7 +104,7 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
                 ScriptFile = $MyInvocation.PSCommandPath
                 JobInstanceID = $null
                 # Results/Response Information
-                Result = $null
+                OutputObject = $null
                 HadErrors = $null
                 Error = $null
             }
@@ -168,10 +168,10 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
                     Checkpoint-PSYActivity $activity
 
                     try {
-                        $activity.Result = Invoke-Command -ScriptBlock $scriptBlock -InputObject $activity.InputObject     # run client code
+                        $activity.OutputObject = Invoke-Command -ScriptBlock $scriptBlock -InputObject $activity.InputObject     # run client code
                     }
                     catch {
-                        $activity.Result = $r
+                        $activity.OutputObject = $r
                         $activity.HadErrors = $true
                         $activity.Error = $_
                         Write-PSYErrorLog $_
@@ -205,21 +205,20 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
                     $activity.ExecutionServer = $env:COMPUTERNAME
                     Checkpoint-PSYActivity $activity
 
-                    $r = Invoke-Command -ScriptBlock $ScriptBlock -InputObject $activity.InputObject
+                    $activity.OutputObject = Invoke-Command -ScriptBlock $ScriptBlock -InputObject $activity.InputObject
                     
-                    $activity.Result = $r
                     $activity.HadErrors = $false
                     $activity.Status = 'Completed'
                     $activity.EndDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                    Checkpoint-PSYActivity -Name $Name -Message "Activity '$Name' completed" -Status 'Completed' -Activity $log
+                    Checkpoint-PSYActivity $activity
                 }
                 catch {
-                    $activity.Result = $null
+                    $activity.OutputObject = $null
                     $activity.HadErrors = $true
                     $activity.Error = $_
                     $activity.Status = 'Completed'
                     $activity.EndDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                    Checkpoint-PSYActivity -Name $Name -Message "Activity '$Name' completed" -Status 'Completed' -Activity $log
+                    Checkpoint-PSYActivity $activity
                     Write-PSYErrorLog $_
                 }
                 Write-PSYDebugLog -Message "Activity '$Name' executing synchronously $($activity.JobInstanceID)"
@@ -235,10 +234,10 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
             # Return activity to caller
             $activity
         }
-        else {
-            # If not running async, wait for activity to complete before returning control to the caller. This
+        elseif ($Queue) {
+            # If not running async, wait for queued activity to complete before returning control to the caller. This
             # is always the defaults case since it's a safer paradigm for client code.
-            $activity | Wait-PSYActivity
+            $temp = $activity | Wait-PSYActivity
         }
     }
     catch {

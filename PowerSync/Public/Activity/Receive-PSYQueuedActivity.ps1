@@ -85,7 +85,7 @@ function Receive-PSYQueuedActivity {
             # Check if any in-process activities have completed
             $completed = $processing | Where-Object { (Get-Job -InstanceId $_.JobInstanceID).JobStateInfo.State -ne "Running" }
             $completed | ForEach-Object {
-                $_ | Wait-PSYActivity
+                $temp = $_ | Wait-PSYActivity
                 $processing.Remove($_)
             }
 

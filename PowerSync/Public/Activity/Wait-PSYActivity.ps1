@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-
+TODO
 .DESCRIPTION
 
 .PARAMETER InputObject
@@ -101,7 +101,7 @@ function Wait-PSYActivity {
                         }
                         else {
                             # Can't find the job, so it's impossible to complete this request. Flag as error and mark as complete.
-                            $activity.Result = $null
+                            $activity.OutputObject = $null
                             $activity.HadErrors = $true
                             $activity.Error = "Activity '$($activity.Name)' could not be confirmed as Job InstanceId '$($activity.JobInstanceID)' does not exist."
                             $justCompleted = $true
@@ -116,7 +116,7 @@ function Wait-PSYActivity {
 
                         # Perform hard copy of activity data we just refreshed back to the input objects passed into 
                         # this function, which clients may still have references to. We return the refreshed/completed 
-                        # result, but updating their original objects is a nice touch.
+                        # results regardless, but updating their original objects is a nice touch and more robust.
                         $_.ID = $activity.ID
                         $_.ParentID = $activity.ParentID
                         $_.Name = $activity.Name
@@ -131,7 +131,7 @@ function Wait-PSYActivity {
                         $_.ScriptBlock = $activity.ScriptBlock
                         $_.ScriptFile = $activity.ScriptFile
                         $_.JobInstanceID = $activity.JobInstanceID
-                        $_.Result = $activity.Result
+                        $_.OutputObject = $activity.OutputObject
                         $_.HadErrors = $activity.HadErrors
                         $_.Error = $activity.Error
         
