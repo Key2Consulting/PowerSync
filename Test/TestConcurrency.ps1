@@ -78,6 +78,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
         Start-PSYActivity -Name "Queue ForEach" -ScriptBlock {
             (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Queued Execution' -Queue 'Outgoing' -ScriptBlock {
                 Write-PSYInformationLog -Message "...$Input..."
+                throw "test exception"
             }
         }
 

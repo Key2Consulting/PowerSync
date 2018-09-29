@@ -45,30 +45,33 @@ function Find-PSYLog {
 
         # Search all logs in the repository and return any that match
         return $repo.CriticalSection({
+            $logs = [System.Collections.ArrayList]::new()
             if (-not $Type -or $Type -eq 'Debug' -or $Type -eq 'Information' -or $Type -eq 'Verbose') {
-                $messageLog = $this.FindEntity('MessageLog', 'Message', $Search, $true)
+                $logs.AddRange($this.FindEntity('MessageLog', 'Message', $Search, $true))
+                $logs.AddRange($this.FindEntity('MessageLog', 'ActivityID', $Search, $false))
             }
             if (-not $Type -or $Type -eq 'Error') {
-                $errorLog1 = $this.FindEntity('ErrorLog', 'Message', $Search, $true)
-                $errorLog2 = $this.FindEntity('ErrorLog', 'Exception', $Search, $true)
-                $errorLog3 = $this.FindEntity('ErrorLog', 'StackTrace', $Search, $true)
+                $logs.AddRange($this.FindEntity('ErrorLog', 'Message', $Search, $true))
+                $logs.AddRange($this.FindEntity('ErrorLog', 'Exception', $Search, $true))
+                $logs.AddRange($this.FindEntity('ErrorLog', 'StackTrace', $Search, $true))
+                $logs.AddRange($this.FindEntity('ErrorLog', 'ActivityID', $Search, $false))
             }
             if (-not $Type -or $Type -eq 'Variable') {
-                $variableLog = $this.FindEntity('VariableLog', 'VariableName', $Search, $true)
+                $logs.AddRange($this.FindEntity('VariableLog', 'VariableName', $Search, $true))
+                $logs.AddRange($this.FindEntity('VariableLog', 'ActivityID', $Search, $false))
             }
             if (-not $Type -or $Type -eq 'Query') {
-                $queryLog = $this.FindEntity('QueryLog', 'Query', $Search, $true)
+                $logs.AddRange($this.FindEntity('QueryLog', 'Query', $Search, $true))
+                $logs.AddRange($this.FindEntity('QueryLog', 'ActivityID', $Search, $false))
             }
-
-            $combinedLogs = $messageLog + $errorLog1 + $errorLog2 + $errorLog3 + $variableLog + $queryLog
             
             # If the caller wants to filter on log type, apply that here in addition to above since some logs use
             # shared storage.
             if ($Type) {
-                $typeFiltered = $combinedLogs | Where-Object {$_.Type -eq $Type}
+                $typeFiltered = $logs | Where-Object {$_.Type -eq $Type}
             }
             else {
-                $typeFiltered = $combinedLogs
+                $typeFiltered = $logs
             }
 
             # If the caller wants to filter on a date range, use the CreatedDateTime field which should

@@ -56,7 +56,7 @@ function Start-PSYForEachActivity {
         [Parameter(HelpMessage = "Runs the ForEach in parallel", Mandatory = $false, ParameterSetName = 'Parallel')]
         [switch] $Parallel,
         [Parameter(HelpMessage = "Maximum number of parallel executions", Mandatory = $false, ParameterSetName = 'Parallel')]
-        [int] $Throttle = 3,
+        [int] $Throttle = 5,
         [Parameter(HelpMessage = "Submits the activity to a given queue for remote and scalable execution.", Mandatory = $false, ParameterSetName = 'Queued')]
         [string] $Queue,
         [Parameter(HelpMessage = "If set, forces remote jobs used in parallel processes to break into the debugger.", Mandatory = $false)]

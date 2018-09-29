@@ -76,6 +76,7 @@ function Write-PSYErrorLog {
             [void] $repo.CriticalSection({
                 $o = @{
                     ID = $null                          # let the repository assign the surrogate key
+                    Type = 'Error'
                     Message = $ErrorRecord.Exception.Message
                     Exception = $ErrorRecord.Exception.ToString()
                     StackTrace = $ErrorRecord.ScriptStackTrace

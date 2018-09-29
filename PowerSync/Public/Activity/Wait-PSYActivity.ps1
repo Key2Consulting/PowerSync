@@ -82,20 +82,12 @@ function Wait-PSYActivity {
                         if ($job) {
                             if ($job.JobStateInfo.State -ne "Running") {
                                 # Ensure it's completely done
-                                $j = $job | Wait-Job | Receive-Job
+                                $j = $job | Wait-Job | Receive-Job | Remove-Job
 
                                 # Refresh the activity information from the repo
                                 $activity = $repo.CriticalSection({
                                     $this.ReadEntity('Activity', $activity.ID)
                                 })
-
-                                # Send any printable streams to the Console.
-                                $job = $job.ChildJobs[0]
-                                $job.Information | ForEach-Object { Write-PSYHost $_.MessageData }
-                                $job.Debug | ForEach-Object { Write-PSYHost $_.MessageData }
-                                $job.Verbose | ForEach-Object { Write-PSYHost $_.MessageData }
-
-                                $j = Remove-Job -InstanceId $activity.JobInstanceID -Force
                                 $justCompleted = $true
                             }
                         }
@@ -111,6 +103,29 @@ function Wait-PSYActivity {
                     # Regardless of queue or job, if the activity just completed, finish up processing.
                     if ($justCompleted) {
                         [void] $completed.Add($activity)
+
+                        # Since these activities have executed remotely, nothing was printed to our console. Retrieve 
+                        # all log information pertaining to this activity to display within the current process. This
+                        # is primarily for development purposes since deployed environment are unattended.
+                        $logs = Find-PSYLog -Search $activity.ID
+                        $logs | ForEach-Object {
+                            if ($_.Type -eq 'Error') {
+                                Write-PSYHost $_.Message
+                            }                            
+                            elseif ($_.Type -eq 'Warning') {
+                                Write-PSYHost $_.Message
+                            }
+                            elseif ($_.Type -eq 'Information') {        # always display information
+                                Write-PSYHost $_.Message
+                            }
+                            elseif ($_.Type -eq 'Verbose' -and $VerbosePreference -ne 'SilentlyContinue') {
+                                Write-PSYHost $_.Message
+                            }
+                            elseif ($_.Type -eq 'Debug' -and $DebugPreference -ne 'SilentlyContinue') {
+                                Write-PSYHost $_.Message
+                            }
+                        }
+
                         Write-PSYDebugLog -Message "$($Name): Completed (Processed $($completed.Count) out of $totalCount)"
                         Write-Progress -Activity $activity.Name -PercentComplete ($completed.Count / $totalCount * 100)
 
