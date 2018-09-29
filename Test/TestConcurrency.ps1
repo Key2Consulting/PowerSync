@@ -25,9 +25,9 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
     Set-PSYVariable 'TestVariable' 0
     (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
-        $x = Get-PSYVariable 'TestVariable'
+        [int] $x = (Get-PSYVariable 'TestVariable') + 1
         Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)
-        Set-PSYVariable 'TestVariable' $x+1      # will not work as expected
+        Set-PSYVariable 'TestVariable' $x      # will not work as expected
     }
     if ((Get-PSYVariable 'TestVariable') -eq 10) {
         throw "Failed test 'Test ForEach Incorrect Concurrency Execution'"      # the code above isn't synchronized, so TestVariable should never equal 10
@@ -36,9 +36,9 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     Set-PSYVariable 'TestVariable' 0
     (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Correct Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
         Lock-PSYVariable 'TestVariable' {
-            $x = Get-PSYVariable 'TestVariable'
+            [int] $x = (Get-PSYVariable 'TestVariable') + 1
             Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)
-            Set-PSYVariable 'TestVariable' $x+1     # will work as expected since we're locking the variable prior to updating it
+            Set-PSYVariable 'TestVariable' $x     # will work as expected since we're locking the variable prior to updating it
         }
     }
     if ((Get-PSYVariable 'TestVariable') -ne 10) {
