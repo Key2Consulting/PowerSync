@@ -102,7 +102,7 @@ function Invoke-ForEach {
                 Write-PSYDebugLog ("$($Name): Job Running {1}" -f $workItem.Index, $workItem.Job.InstanceId)
                 # If this is being run as part of an activity, log each invocation as a separate activity
                 if ($ParentActivity) {
-                    $workItem.Activity = Write-PSYActivityLog -ScriptAst $workItem.ScriptBlock.Ast.ToString() -Name ($Name -f $workItem.Index) -Message ("Activity '$Name' started" -f $workItem.Index) -Status 'Started' -ParentActivity $ParentActivity
+                    $workItem.Activity = Checkpoint-PSYActivity -ScriptAst $workItem.ScriptBlock.Ast.ToString() -Name ($Name -f $workItem.Index) -Message ("Activity '$Name' started" -f $workItem.Index) -Status 'Started' -ParentActivity $ParentActivity
                 }
             }
             else {      # Else not parallel
@@ -150,7 +150,7 @@ function Invoke-ForEach {
                         Write-PSYDebugLog -Message ("$($Name): Completed (Processed {1} out of {2})" -f $_.Index, $completedJobs.Count, $workItems.Count)
                         # If this is being run as part of an activity, complete activity log
                         if ($ParentActivity) {
-                            Write-PSYActivityLog -Name ($Name -f $_.Index) -Message ("Activity '$Name' completed" -f $_.Index) -Status 'Completed' -Activity $_.Activity
+                            Checkpoint-PSYActivity -Name ($Name -f $_.Index) -Message ("Activity '$Name' completed" -f $_.Index) -Status 'Completed' -Activity $_.Activity
                         }
                     }
                 }

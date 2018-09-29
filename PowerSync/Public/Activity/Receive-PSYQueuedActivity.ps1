@@ -31,7 +31,7 @@ Receive-Job -Job $job
 .NOTES
 TODO
 #>
-function Receive-PSYQueueActivity {
+function Receive-PSYQueuedActivity {
     [CmdletBinding()]
     param
     (
@@ -54,20 +54,21 @@ function Receive-PSYQueueActivity {
         }
 
         # Control variables
-        $queuePollingInterval = Get-PSYVariable -Name 'PSYQueuePollingInterval' -DefaultValue 5000
+        $queuePollingInterval = Get-PSYVariable -Name 'PSYQueuePollingInterval' -DefaultValue 500
         $repo = New-FactoryObject -Repository
 
+        # Force initial iteration
         $continueProcessing = $true
-        while ($continueProcessing -or $msg) {
 
-            # While there are still messages on the queue
-            if ($msg) {
+        # While there are still unprocessed activities on the queue
+        while ($continueProcessing -or $queuedActivity) {
+
+            if ($queuedActivity) {
                 # Execute the activity
-                $scriptBlock = [Scriptblock]::Create($msg.Activity.ScriptBlock)
-                $msg.Activity = Start-PSYActivity -Name "$($msg.Activity.Name) (Remote Execution)" -Async -ScriptBlock $scriptBlock -WaitDebugger:$msg.Activity.WaitDebugger.IsPresent
-                $processing.Add($msg)
+                $queuedActivity = Start-PSYActivity -QueuedActivity $queuedActivity -Async
+                $processing.Add($queuedActivity)
 
-                # If we've met our throttle limit, wait until one of them finishes
+                # If we've met our throttle limit, wait until at least one of them finishes before continuing.
                 while (@(Get-Job -State Running).Count -ge $Throttle) {
                     $now = Get-Date
                     foreach ($job in @(Get-Job -State Running)) {
@@ -82,25 +83,19 @@ function Receive-PSYQueueActivity {
             }
 
             # Check if any in-process activities have completed
-            $completed = $processing | Where-Object { $_.Activity.Job.State -ne "Running" } 
+            $completed = $processing | Where-Object { (Get-Job -InstanceId $_.JobInstanceID).JobStateInfo.State -ne "Running" }
             $completed | ForEach-Object {
-                # Send the response back to the caller via a return queue.
-                $activity = $_.Activity | Wait-PSYActivity
-                $returnQueue = "$($Queue):$($_.ID)"
-                $repo.CriticalSection({
-                    $this.CreateQueue($returnQueue)
-                    $this.PutMessage($returnQueue, $activity)
-                })
+                $_ | Wait-PSYActivity
                 $processing.Remove($_)
             }
 
             # If continous, wait for more work to arrive.
             if ($Continous) {
-                # Out of messages, so wait for our next polling interval to check again.
+                # Out of activities, so wait for our next polling interval to check again.
                 Start-Sleep -Milliseconds $queuePollingInterval
             }
             else {
-                # If we're not processing continously, exit immediately once no more messages are available on the queue and we're done processing.
+                # If we're not processing continously, exit immediately once no more activities are available on the queue and we're done processing.
                 if ($processing.Count -eq 0) {
                     $continueProcessing = $false
                 }
@@ -110,9 +105,9 @@ function Receive-PSYQueueActivity {
                 }
             }
 
-            # Get next message
+            # Get next queued activity
             Start-Sleep -Milliseconds 500
-            $msg = $repo.CriticalSection({ $this.GetMessage($Queue) })
+            $queuedActivity = $repo.CriticalSection({ $this.DequeueActivity($Queue) })
         }
     }
     catch {

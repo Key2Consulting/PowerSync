@@ -21,19 +21,19 @@ class Repository {
     # CRUD operations. Note that deserializers like JSON convert into a PSObject, so we can't use strong typing. Instead, we
     # use a simple string representing the type.
     [void] CreateEntity([string] $EntityType, [object] $Entity) {
-        throw "The repository CreateEntity method should be overridden by derived classes."
+        throw "Method should be overridden by derived classes."
     }
     
     [object] ReadEntity([string] $EntityType, [object] $EntityID) {
-        throw "The repository ReadEntity method should be overridden by derived classes."
+        throw "Method should be overridden by derived classes."
     }
     
     [void] UpdateEntity([string] $EntityType, [object] $Entity) {
-        throw "The repository UpdateEntity method should be overridden by derived classes."
+        throw "Method should be overridden by derived classes."
     }
 
     [void] DeleteEntity([string] $EntityType, [object] $EntityID) {
-        throw "The repository DeleteEntity method should be overridden by derived classes."
+        throw "Method should be overridden by derived classes."
     }
 
     [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue) {
@@ -41,35 +41,14 @@ class Repository {
     }
     
     [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue, [bool] $Wildcards) {
-        throw "The repository FindEntity method should be overridden by derived classes."
-    }
-
-    # Queue Routines
-    #
-    [void] CreateQueue([string] $Name) {
         throw "Method should be overridden by derived classes."
     }
     
-    [void] DeleteQueue([string] $Name) {
-        throw "Method should be overridden by derived classes."
-    }
-    
-    [void] PutMessage([string] $Queue, [object] $Message) {
-        throw "Method should be overridden by derived classes."
-    }
-    
-    [object] GetMessage([string] $Queue) {
+    # Activities
+    [object] DequeueActivity([string] $Queue) {
         throw "Method should be overridden by derived classes."
     }
 
-    [void] DeleteMessage([string] $Queue, [object] $ID) {
-        throw "Method should be overridden by derived classes."
-    }
-
-    [void] ClearMessages([string] $Queue) {
-        throw "Method should be overridden by derived classes."
-    }
-    
     # Common repository utility routines
     #
     

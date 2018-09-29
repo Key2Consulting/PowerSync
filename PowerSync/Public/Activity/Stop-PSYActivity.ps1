@@ -35,7 +35,7 @@ function Stop-PSYActivity {
                             Write-PSYDebugLog -Message ("$($Name): Completed (Processed {1} out of {2})" -f $_.Index, $completedJobs.Count, $workItems.Count)
                             # If this is being run as part of an activity, complete activity log
                             if ($ParentActivity) {
-                                Write-PSYActivityLog -Name ($Name -f $_.Index) -Message ("Activity '$Name' completed" -f $_.Index) -Status 'Completed' -Activity $_.Activity
+                                Checkpoint-PSYActivity -Name ($Name -f $_.Index) -Message ("Activity '$Name' completed" -f $_.Index) -Status 'Completed' -Activity $_.Activity
                             }
                         }
                     }

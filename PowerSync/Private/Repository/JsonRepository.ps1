@@ -15,12 +15,11 @@ class JsonRepository : FileRepository {
         if ($data) {
             $this.State.TableList.Variable = [System.Collections.ArrayList] $data.Variable
             $this.State.TableList.Connection = [System.Collections.ArrayList] $data.Connection
-            $this.State.TableList.ActivityLog = [System.Collections.ArrayList] $data.ActivityLog
+            $this.State.TableList.Activity = [System.Collections.ArrayList] $data.Activity
             $this.State.TableList.ErrorLog = [System.Collections.ArrayList] $data.ErrorLog
             $this.State.TableList.MessageLog = [System.Collections.ArrayList] $data.MessageLog
             $this.State.TableList.VariableLog = [System.Collections.ArrayList] $data.VariableLog
             $this.State.TableList.QueryLog = [System.Collections.ArrayList] $data.QueryLog
-            $this.State.TableList.QueueMessage = [System.Collections.ArrayList] $data.QueueMessage
         }
     }
 
@@ -29,12 +28,11 @@ class JsonRepository : FileRepository {
         @{
             Variable = $this.State.TableList.Variable
             Connection = $this.State.TableList.Connection
-            ActivityLog = $this.State.TableList.ActivityLog
+            Activity = $this.State.TableList.Activity
             ErrorLog = $this.State.TableList.ErrorLog
             MessageLog = $this.State.TableList.MessageLog
             VariableLog = $this.State.TableList.VariableLog
             QueryLog = $this.State.TableList.QueryLog
-            QueueMessage = $this.State.TableList.QueueMessage
         } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.State.Path -Force
     }
 }

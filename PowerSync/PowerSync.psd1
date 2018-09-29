@@ -16,7 +16,9 @@
         'Start-PSYForEachActivity',
         'Wait-PSYActivity',
         'Stop-PSYActivity',
-        'Receive-PSYQueueActivity',
+        'Receive-PSYQueuedActivity',
+        'Get-PSYActivity',
+        'Checkpoint-PSYActivity',
         'Invoke-PSYCmd',
         'Resolve-PSYCmd',
         'ConvertFrom-PSYCompatibleType',
@@ -42,7 +44,6 @@
         'Write-PSYVariableLog',
         'Write-PSYVerboseLog',
         'Write-PSYQueryLog',
-        'Write-PSYActivityLog',
         'Connect-PSYOleDbRepository',
         'Connect-PSYJsonRepository',
         'Disconnect-PSYRepository',
@@ -76,7 +77,9 @@
         "$PSScriptRoot\Public\Activity\Start-PSYForEachActivity.ps1",
         "$PSScriptRoot\Public\Activity\Wait-PSYActivity.ps1",
         "$PSScriptRoot\Public\Activity\Stop-PSYActivity.ps1",
-        "$PSScriptRoot\Public\Activity\Receive-PSYQueueActivity.ps1",
+        "$PSScriptRoot\Public\Activity\Get-PSYActivity.ps1",
+        "$PSScriptRoot\Public\Activity\Checkpoint-PSYActivity.ps1",
+        "$PSScriptRoot\Public\Activity\Receive-PSYQueuedActivity.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYHost.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYErrorLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYInformationLog.ps1",
@@ -84,7 +87,6 @@
         "$PSScriptRoot\Public\Logging\Write-PSYVariableLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYDebugLog.ps1",
         "$PSScriptRoot\Public\Logging\Write-PSYQueryLog.ps1",
-        "$PSScriptRoot\Public\Logging\Write-PSYActivityLog.ps1",
         "$PSScriptRoot\Public\Logging\Find-PSYLog.ps1",
         "$PSScriptRoot\Public\Connection\Get-PSYConnection.ps1",
         "$PSScriptRoot\Public\Connection\Set-PSYConnection.ps1",
@@ -108,7 +110,7 @@
         "$PSScriptRoot\Public\Importer\Import-PSYSqlServer.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYTextFile.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYAzureBlobTextFile.ps1",
-        "$PSScriptRoot\Public\QuickCommand\Copy-PSYTable.ps1"
+        "$PSScriptRoot\Public\QuickCommand\Copy-PSYTable.ps1"#>
         
     )
 }

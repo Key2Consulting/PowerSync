@@ -49,7 +49,7 @@ function Write-PSYQueryLog {
                     $o.Param = $o.Param.Substring(0, 2000);
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
-                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
+                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
                 }
                 $this.CreateEntity('QueryLog', $o)
             })

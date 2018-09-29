@@ -34,7 +34,7 @@ function Write-PSYDebugLog {
                     CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
                 }
                 if ($PSYSession.ActivityStack.Count -gt 0) {
-                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
+                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
                 }
                 $this.CreateEntity('MessageLog', $o)
             })
