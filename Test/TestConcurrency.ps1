@@ -1,5 +1,13 @@
 Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
+    (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Sequential Execution' -ScriptBlock {
+        Write-PSYInformationLog "...$Input..."
+    }
+
+    Start-PSYActivity -Name 'Test Sequential Execution' -InputObject "Sequential Activity" -ScriptBlock {
+        Write-PSYInformationLog "...$Input..."
+    }
+
     Set-PSYVariable -Name 'TestVariable' -Value "Initial value"
     (
         (Start-PSYActivity -Name 'Test Async Race Execution 1' -Async -ScriptBlock {

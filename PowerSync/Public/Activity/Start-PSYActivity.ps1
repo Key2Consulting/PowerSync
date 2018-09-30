@@ -56,17 +56,17 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
     (
         [parameter(HelpMessage = 'Parameters passed to the activity. Use the $Input automatic variable in the value of the ScriptBlock parameter to represent the input objects.', Mandatory = $false, ParameterSetName = 'Default')]
         [object] $InputObject,
-        [Parameter(HelpMessage = "The script to execute as part of the activity.", Mandatory = $true, ParameterSetName = 'Default')]
+        [Parameter(HelpMessage = "The script to execute as part of the activity.", Mandatory = $true)]
         [scriptblock] $ScriptBlock,
-        [Parameter(HelpMessage = "The name of the activity for logging and readability purposes.", Mandatory = $false, ParameterSetName = 'Default')]
+        [Parameter(HelpMessage = "The name of the activity for logging and readability purposes.", Mandatory = $false)]
         [string] $Name,
         [Parameter(HelpMessage = "Starts activity execution and immediately returns handles to the running activities. Use Wait-PSYActivity to await their completion.", Mandatory = $false)]
         [switch] $Async,
-        [Parameter(HelpMessage = "Submits the activity to a given queue for remote and scalable execution.", Mandatory = $false, ParameterSetName = 'Default')]
+        [Parameter(HelpMessage = "Submits the activity to a given queue for remote and scalable execution.", Mandatory = $false)]
         [string] $Queue,
         [Parameter(HelpMessage = "If set, forces remote jobs used in parallel processes to break into the debugger.", Mandatory = $false)]
         [switch] $WaitDebugger,
-        [parameter(HelpMessage = 'An activity previously queued for execution.', Mandatory = $false, ParameterSetName = 'Queued')]
+        [parameter(HelpMessage = 'An activity previously queued for execution.', Mandatory = $false)]
         [object] $QueuedActivity
     )
 

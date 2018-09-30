@@ -53,11 +53,11 @@ function Start-PSYForEachActivity {
         [scriptblock] $ScriptBlock,
         [Parameter(HelpMessage = "The name of the activity for logging and readability purposes.", Mandatory = $false)]
         [string] $Name,
-        [Parameter(HelpMessage = "Runs the ForEach in parallel", Mandatory = $false, ParameterSetName = 'Parallel')]
+        [Parameter(HelpMessage = "Runs the ForEach in parallel", Mandatory = $false)]
         [switch] $Parallel,
-        [Parameter(HelpMessage = "Maximum number of parallel executions", Mandatory = $false, ParameterSetName = 'Parallel')]
+        [Parameter(HelpMessage = "Maximum number of parallel executions", Mandatory = $false)]
         [int] $Throttle = 5,
-        [Parameter(HelpMessage = "Submits the activity to a given queue for remote and scalable execution.", Mandatory = $false, ParameterSetName = 'Queued')]
+        [Parameter(HelpMessage = "Submits the activity to a given queue for remote and scalable execution.", Mandatory = $false)]
         [string] $Queue,
         [Parameter(HelpMessage = "If set, forces remote jobs used in parallel processes to break into the debugger.", Mandatory = $false)]
         [switch] $WaitDebugger
@@ -66,6 +66,14 @@ function Start-PSYForEachActivity {
     begin {
         $processing = [System.Collections.ArrayList]::new()
         $itemIndex = 0
+
+        # If either Parallel or Queue is specified, we're running Start-PSYactivity asynchronously.
+        if ($Parallel -or $Queue) {
+            $async = $true
+        }
+        else {
+            $async = $false
+        }
 
         # If throttling only allows a single execution, don't use remote jobs since they have overhead.
         if ($Throttle -eq 1) {
@@ -76,32 +84,34 @@ function Start-PSYForEachActivity {
     process {
         try {
             # Start the activity
-            $activity = Start-PSYActivity -Name "$Name[$($itemIndex)]" -InputObject $InputObject -ScriptBlock $ScriptBlock -Async -Queue $Queue
+            $activity = Start-PSYActivity -Name "$Name[$($itemIndex)]" -InputObject $InputObject -ScriptBlock $ScriptBlock -Async:$async -Queue $Queue
             [void] $processing.Add($activity)
             $itemIndex++
 
-            # If we've met our throttle limit, wait until at least one of them finishes before continuing. Does not apply to queued activities
-            # since the remote reciver processing those activities has its own throttling.
-            while (@(Get-Job -State Running).Count -ge $Throttle -and -not $Queue) {
-                $now = Get-Date
-                foreach ($job in @(Get-Job -State Running)) {
-                    if ($Timeout) {
-                        if ($now - (Get-Job -Id $job.id).PSBeginTime -gt [TimeSpan]::FromSeconds($Timeout)) {
-                            Stop-Job $job
+            if ($async) {
+                # If we've met our throttle limit, wait until at least one of them finishes before continuing. Does not apply to queued activities
+                # since the remote reciver processing those activities has its own throttling.
+                while (@(Get-Job -State Running).Count -ge $Throttle -and -not $Queue) {
+                    $now = Get-Date
+                    foreach ($job in @(Get-Job -State Running)) {
+                        if ($Timeout) {
+                            if ($now - (Get-Job -Id $job.id).PSBeginTime -gt [TimeSpan]::FromSeconds($Timeout)) {
+                                Stop-Job $job
+                            }
                         }
                     }
+                    Start-Sleep -Milliseconds 500
                 }
-                Start-Sleep -Milliseconds 500
-            }
 
-            # Check if any in-process activities have completed. If we're queuing, there's no easy way to check this without
-            # fetching all of the activities from the database, but that would be too resource intensive when we already do 
-            # that during our End event processing.
-            if (-not $Queue) {
-                $completed = $processing | Where-Object { (Get-Job -InstanceId $_.JobInstanceID).JobStateInfo.State -ne "Running" }
-                $completed | ForEach-Object {
-                    $temp = $_ | Wait-PSYActivity
-                    $processing.Remove($_)
+                # Check if any in-process activities have completed. If we're queuing, there's no easy way to check this without
+                # fetching all of the activities from the database, but that would be too resource intensive when we already do 
+                # that during our End event processing.
+                if (-not $Queue) {
+                    $completed = $processing | Where-Object { (Get-Job -InstanceId $_.JobInstanceID).JobStateInfo.State -ne "Running" }
+                    $completed | ForEach-Object {
+                        $temp = $_ | Wait-PSYActivity
+                        $processing.Remove($_)
+                    }
                 }
             }
         }
@@ -112,6 +122,8 @@ function Start-PSYForEachActivity {
 
     end {
         # Ensure everything's complete and results are returned before exiting (it's a safer paradigm for client code).
-        $temp = $processing | Wait-PSYActivity
+        if ($async) {
+            $temp = $processing | Wait-PSYActivity
+        }
     }
 }

@@ -42,11 +42,11 @@ Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot                         
 
 # Run required tests
 Write-PSYHost "RUNNING Test Scripts"
-#.\Test\TestQuickCommand.ps1
-#.\Test\TestGeneral.ps1
-#.\Test\TestVariables.ps1
+.\Test\TestQuickCommand.ps1
+.\Test\TestGeneral.ps1
+.\Test\TestVariables.ps1
 .\Test\TestConcurrency.ps1
-#.\Test\TestCSVToSQL.ps1
-#.\Test\TestSQLToSQL.ps1
+.\Test\TestCSVToSQL.ps1
+.\Test\TestSQLToSQL.ps1
 #.\Test\TestAzure.ps1
 Write-PSYHost "FINISHED Runing Test Scripts"
