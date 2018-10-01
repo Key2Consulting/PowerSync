@@ -59,7 +59,7 @@ function Export-PSYSqlServer {
         $cmd = $conn.CreateCommand()
         $cmd.CommandText = $ExtractQuery
         $cmd.CommandTimeout = Select-Coalesce @(($Timeout), (Get-PSYVariable 'PSYDefaultCommandTimeout'))
-        $readers = New-Object System.Collections.ArrayList
+        $readers = [System.Collections.ArrayList]::new()
         $readers.Add($cmd.ExecuteReader())
         
         # Log

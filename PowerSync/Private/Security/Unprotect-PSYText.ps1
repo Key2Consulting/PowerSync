@@ -7,7 +7,7 @@ function Unprotect-PSYText {
 
     $secureText = $InputObject | ConvertTo-SecureString
     
-    $cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'dummy', $secureText
+    $cred = [System.Management.Automation.PSCredential]::new('dummy', $secureText)
     $cred.GetNetworkCredential().Password
 
 }

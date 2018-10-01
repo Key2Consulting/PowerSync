@@ -18,7 +18,7 @@ if ($InstallForAllUsers) {
     $installPath = "$PSHome\Modules\PowerSync\"
 
     # Installing for all users requires administrator privileges, so verify before continuing.
-    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    $currentPrincipal = [Security.Principal.WindowsPrincipal]::new([Security.Principal.WindowsIdentity]::GetCurrent())
     $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     if (-not $isAdmin) {
         throw 'Install-PowerSync for all users must run as an administrator.'

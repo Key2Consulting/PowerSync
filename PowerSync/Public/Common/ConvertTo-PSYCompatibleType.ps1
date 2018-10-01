@@ -45,7 +45,7 @@ function ConvertTo-PSYCompatibleType {
                 return $hash
             }
             elseif ($type -eq 'arraylist') {                                 # ArrayList is our native type, but it's values may not be, so enumerate
-                $new = New-Object System.Collections.ArrayList
+                $new = [System.Collections.ArrayList]::new()
                 foreach ($o in $InputObject) {
                     [void] $new.Add((ConvertTo-PSYCompatibleType $o))
                 }

@@ -6,13 +6,13 @@ class FileRepository : Repository {
     FileRepository ([int] $LockTimeout, [hashtable] $State) : base([hashtable] $State) {
         $this.State.LockTimeout = $LockTimeout      # number of milliseconds to keep trying to acquire exclusive lock to the file repository
         $this.State.TableList = @{                  # a list of lists, simulating in-memory tables of a database
-            Activity = New-Object System.Collections.ArrayList
-            ErrorLog = New-Object System.Collections.ArrayList
-            MessageLog = New-Object System.Collections.ArrayList
-            VariableLog = New-Object System.Collections.ArrayList
-            QueryLog = New-Object System.Collections.ArrayList
-            Variable = New-Object System.Collections.ArrayList
-            Connection = New-Object System.Collections.ArrayList
+            Activity = [System.Collections.ArrayList]::new()
+            ErrorLog = [System.Collections.ArrayList]::new()
+            MessageLog = [System.Collections.ArrayList]::new()
+            VariableLog = [System.Collections.ArrayList]::new()
+            QueryLog = [System.Collections.ArrayList]::new()
+            Variable = [System.Collections.ArrayList]::new()
+            Connection = [System.Collections.ArrayList]::new()
         }
     }
 
@@ -95,7 +95,7 @@ class FileRepository : Repository {
 
     [object] FindEntity([string] $EntityType, [string] $EntityField, [object] $EntityFieldValue, [bool] $Wildcards) {
         $entities = $this.CriticalSection({
-            $entityList = New-Object System.Collections.ArrayList
+            $entityList = [System.Collections.ArrayList]::new()
             $table = $this.GetEntityTable($EntityType)
             if ($Wildcards) {
                 $eQuery = $table.Where({$_."$EntityField" -like $EntityFieldValue})
@@ -160,7 +160,7 @@ class FileRepository : Repository {
             }
             
             # Some log entries can be found multiple times, so remove the duplicates.
-            $uniqueLogs = New-Object System.Collections.ArrayList
+            $uniqueLogs = [System.Collections.ArrayList]::new()
             foreach ($log in $dateFiltered) {
                 $existing = $uniqueLogs | Where-Object { $_.ID -eq $log.ID }
                 if (-not $existing) {
@@ -213,7 +213,7 @@ class FileRepository : Repository {
             else {
                 $LockName = "GlobalFileRepositoryLock"
             }
-            $mutex = New-Object System.Threading.Mutex($false, "Global\PSY-$LockName")
+            $mutex = [System.Threading.Mutex]::new($false, "Global\PSY-$LockName")
             $acquired = $mutex.WaitOne($this.State.LockTimeout)
             if (-not $acquired) {
                 throw "Unable to acquire lock in FileRepository after waiting $($this.State.LockTimeout) milliseconds."

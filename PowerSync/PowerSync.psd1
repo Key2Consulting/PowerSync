@@ -64,7 +64,6 @@
         "$PSScriptRoot\Public\Common\ConvertTo-PSYCompatibleType.ps1",
         "$PSScriptRoot\Public\Common\ConvertFrom-PSYCompatibleType.ps1",
         "$PSScriptRoot\Private\Common\Select-PSYTablePart.ps1",
-        "$PSScriptRoot\Private\Common\Copy-Object.ps1",
         "$PSScriptRoot\Private\Security\Protect-PSYText.ps1",
         "$PSScriptRoot\Private\Security\Unprotect-PSYText.ps1",
         "$PSScriptRoot\Private\Repository\Repository.ps1",
@@ -72,7 +71,6 @@
         "$PSScriptRoot\Private\Repository\FileRepository.ps1",
         "$PSScriptRoot\Private\Repository\JsonRepository.ps1",
         "$PSScriptRoot\Private\Repository\OleDbRepository.ps1",
-        "$PSScriptRoot\Private\Common\Invoke-ForEach.ps1",
         "$PSScriptRoot\Public\Common\Import-PSYModule.ps1",
         "$PSScriptRoot\Public\Activity\Start-PSYActivity.ps1",
         "$PSScriptRoot\Public\Activity\Start-PSYForEachActivity.ps1",
@@ -112,7 +110,6 @@
         "$PSScriptRoot\Public\Importer\Import-PSYSqlServer.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYTextFile.ps1",
         "$PSScriptRoot\Public\Importer\Import-PSYAzureBlobTextFile.ps1",
-        "$PSScriptRoot\Public\QuickCommand\Copy-PSYTable.ps1"#>
-        
+        "$PSScriptRoot\Public\QuickCommand\Copy-PSYTable.ps1"
     )
 }

@@ -40,7 +40,7 @@ function Lock-PSYVariable {
 
     try {
         # Grab an exclusive lock on the variable name
-        [object] $mutex = New-Object System.Threading.Mutex($false, "Global\PSY-$Name")
+        [object] $mutex = [System.Threading.Mutex]::new($false, "Global\PSY-$Name")
         [void] $mutex.WaitOne($Timeout)
         Write-PSYDebugLog -Message "Acquired mutex Global\PSY-$Name"
         

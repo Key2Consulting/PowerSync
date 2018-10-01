@@ -126,9 +126,9 @@ function Import-PSYSqlServer {
         # NOTE: Type conversion is required by data types that require special conversion rules (e.g. Geography) during transport or persistence.
         foreach ($col in $targetSchemaTable) {
             if ($col['TransportDataTypeName'] -isnot [System.DBNull]) {
-                $typedReaders = New-Object System.Collections.ArrayList
+                $typedReaders = [System.Collections.ArrayList]::new()
                 foreach ($reader in $readers) {
-                    [void] $typedReaders.Add((New-Object PowerSync.TypeConversionDataReader($reader, $targetSchemaTable[0].Table)))
+                    [void] $typedReaders.Add(([PowerSync.TypeConversionDataReader]::new($reader, $targetSchemaTable[0].Table)))
                 }
                 $readers = $typedReaders
                 break
@@ -143,10 +143,10 @@ function Import-PSYSqlServer {
         # If we're not using PolyBase, use SqlBulkCopy to import the data, the fastest option aside from BCP and PolyBase.
         if (-not $PolyBase) {
             # Import all of the readers asynchronously
-            $tasks = New-Object System.Collections.ArrayList
+            $tasks = [System.Collections.ArrayList]::new()
             foreach ($reader in $readers) {
                 # Load via SqlBulkCopy
-                $blk = New-Object Data.SqlClient.SqlBulkCopy($conn.ConnectionString, [Data.SqlClient.SqlBulkCopyOptions]::TableLock)        # [Data.SqlClient.SqlBulkCopyOptions]::TableLock -bor [Data.SqlClient.SqlBulkCopyOptions]::UseInternalTransaction 
+                $blk = [Data.SqlClient.SqlBulkCopy]::new($conn.ConnectionString, [Data.SqlClient.SqlBulkCopyOptions]::TableLock)        # [Data.SqlClient.SqlBulkCopyOptions]::TableLock -bor [Data.SqlClient.SqlBulkCopyOptions]::UseInternalTransaction 
                 $blk.DestinationTableName = if ($Consistent) { $loadTableFQN } else { $finalTableFQN }
                 $blk.BulkCopyTimeout = $timeout
                 $blk.BatchSize = $batchSize
