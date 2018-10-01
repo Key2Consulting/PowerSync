@@ -146,7 +146,7 @@ class OleDbRepository : Repository {
         return $null
     }
 
-    [object] SearchLogs([string[]] $SearchTerms, [bool] $Wildcards) {
+    [object] SearchLogs([string] $Search, [bool] $Wildcards) {
         throw "Method should be overridden by derived classes."
     }
 

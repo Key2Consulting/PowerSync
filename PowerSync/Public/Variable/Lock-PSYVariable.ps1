@@ -1,9 +1,14 @@
 <#
 .SYNOPSIS
-Locks a PowerSync State Variable in the connected repository for exclusive access. The lock uses a mutex, which spans processes on the same computer.
+Locks a PowerSync State Variable in the connected repository for exclusive access.
+
+.DESCRIPTION
+This function is designed to provide synchronization between processes. The lock uses a mutex, which spans processes on the same computer. 
+
+The current version only supports local concurrency, but will not synchronize remote processing.
 
 .PARAMETER Name
-Name of the variable. Variable names must be unique.
+Name of the variable. Variable names must be unique. The variable name can be an actual PowerSync variable, or any contrived identifier you want to hold the lock.
 
 .PARAMETER ScriptBlock
 The scriptblock to execute for the duration of the lock.
@@ -20,7 +25,7 @@ Lock-PSYVariable -Name 'MyVar' -ScriptBlock {
 Set-PSYVariable -Name 'MyVar' -Value @{Prop1 = 123; Prop2 = 456}
 
 .NOTES
-A variable should be locked for the shortest amount of time possible. Think milliseconds, and not seconds or minutes.
+A variable should be locked for the shortest amount of time possible. Think seconds, not minutes.
 #>
 function Lock-PSYVariable {
     param
@@ -30,12 +35,10 @@ function Lock-PSYVariable {
         [Parameter(HelpMessage = "The scriptblock to execute for the duration of the lock.", Mandatory = $true)]
         [scriptblock] $ScriptBlock,
         [Parameter(HelpMessage = "The duration to wait to acquire a lock on a variable. If timeout is exceeded, the lock will fail.", Mandatory = $false)]
-        [int] $Timeout = 5000
+        [int] $Timeout = 10000
     )
 
     try {
-        $repo = New-FactoryObject -Repository
-        
         # Grab an exclusive lock on the variable name
         [object] $mutex = New-Object System.Threading.Mutex($false, "Global\PSY-$Name")
         [void] $mutex.WaitOne($Timeout)

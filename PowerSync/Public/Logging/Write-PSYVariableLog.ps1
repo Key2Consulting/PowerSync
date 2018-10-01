@@ -26,23 +26,21 @@ The new value of the variable.
         
         # Write Log and output to screen
         if ($PSYSession.Initialized) {
-            [void] $repo.CriticalSection({
-                $logValue = ConvertTo-Json -InputObject $Value -Compress
-                if ($logValue) {
-                    $logValue = $Value
-                }
-                $o = @{
-                    ID = $null                          # let the repository assign the surrogate key
-                    Type = 'Variable'
-                    VariableName = $Name
-                    VariableValue = $logValue
-                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                }
-                if ($PSYSession.ActivityStack.Count -gt 0) {
-                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
-                }
-                $this.CreateEntity('VariableLog', $o)
-            })
+            $logValue = ConvertTo-Json -InputObject $Value -Compress
+            if ($logValue) {
+                $logValue = $Value
+            }
+            $o = @{
+                ID = $null                          # let the repository assign the surrogate key
+                Type = 'Variable'
+                VariableName = $Name
+                VariableValue = $logValue
+                CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+            }
+            if ($PSYSession.ActivityStack.Count -gt 0) {
+                $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
+            }
+            [void] $repo.CreateEntity('VariableLog', $o)
         }
         Write-Debug -Message "Variable: $Name = $Value"
     }

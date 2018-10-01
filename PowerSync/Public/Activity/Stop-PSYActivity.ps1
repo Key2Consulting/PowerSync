@@ -26,31 +26,27 @@ function Stop-PSYActivity {
             $activityID = $InputObject
         }
 
-        # Attempt to execute the stop logic within a critical section. This should prevent local concurrency issues, but will
-        # not synchronize remote processing.
-        $activity = $repo.CriticalSection({
+        # Attempt to execute the stop logic within a variable lock. Although designed for locking real PowerSync variables,
+        # we can still use it with any made up variable name.
+        Lock-PSYVariable -Name "Activity$($activity.ID)" -ScriptBlock {
             # Get an updated copy.
-            $activity = $this.ReadEntity('Activity', $activityID)
+            $activity = $repo.ReadEntity('Activity', $activityID)
             
             # If the activity hasn't started, cancel it.
             if ($activity.Status -eq 'Started') {
-                $activity = $repo.CriticalSection({
-                    $activity.Status = 'Stopped'
-                    $this.UpdateEntity('Activity', $activity)
-                })
+                $activity.Status = 'Stopped'
+                $activity = $repo.UpdateEntity('Activity', $activity)
             }
             # If it's a local job, terminate it via Stop-Job
             elseif ($activity.JobInstanceID -and $activity.ExecutionServer -eq $env:COMPUTERNAME) {
                 $temp = Get-Job -InstanceId $activity.JobInstanceID | Stop-Job | Remove-Job -Force
-                $activity = $repo.CriticalSection({
-                    $activity.Status = 'Stopped'
-                    $this.UpdateEntity('Activity', $activity)
-                })
+                $activity.Status = 'Stopped'
+                $activity = $repo.UpdateEntity('Activity', $activity)
             }
             else {
                 throw "Unable to stop activity '$($activity.Name)' with ID $($activity.ID)."
             }
-        })
+        }
     }
     catch {
         Write-PSYErrorLog $_

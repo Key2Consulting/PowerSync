@@ -16,9 +16,7 @@ function Get-PSYActivity {
     try {
         # Fetch the activity
         $repo = New-FactoryObject -Repository
-        $repo.CriticalSection({
-            $this.ReadEntity('Activity', $ID)
-        })
+        $repo.ReadEntity('Activity', $ID)
     }
     catch {
         Write-PSYErrorLog $_

@@ -25,19 +25,17 @@ function Write-PSYDebugLog {
 
         # Write Log and output to screen    
         if ($PSYSession.Initialized) {
-            [void] $repo.CriticalSection({
-                $o = @{
-                    ID = $null                          # let the repository assign the surrogate key
-                    Type = 'Debug'
-                    Category = $Category
-                    Message = $Message
-                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                }
-                if ($PSYSession.ActivityStack.Count -gt 0) {
-                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
-                }
-                $this.CreateEntity('MessageLog', $o)
-            })
+            $o = @{
+                ID = $null                          # let the repository assign the surrogate key
+                Type = 'Debug'
+                Category = $Category
+                Message = $Message
+                CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+            }
+            if ($PSYSession.ActivityStack.Count -gt 0) {
+                $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
+            }
+            [void] $repo.CreateEntity('MessageLog', $o)
         }
         $logCategory = if ($Category) {"($Category) "} else {""}
         Write-Debug -Message "Debug: $logCategory$Message"

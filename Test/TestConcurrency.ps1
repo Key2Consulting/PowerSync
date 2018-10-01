@@ -43,7 +43,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
     Set-PSYVariable 'TestVariable' 0
     (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Correct Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
-        Lock-PSYVariable 'TestVariable' {
+        Lock-PSYVariable -Name 'TestVariable' {
             [int] $x = (Get-PSYVariable 'TestVariable') + 1
             Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)
             Set-PSYVariable 'TestVariable' $x     # will work as expected since we're locking the variable prior to updating it
@@ -54,7 +54,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     }
  
     Start-PSYActivity -Name 'Test Queued Execution' -ScriptBlock {
-        
+
         # Simulate a remote activity execution by self-hosting the receiver. Normally this would be done by a remote process.
         $receiver = Start-PSYActivity -Name 'Self-Hosted Receiver' -Async -ScriptBlock {
             Receive-PSYQueuedActivity -Queue 'Outgoing' -Continous

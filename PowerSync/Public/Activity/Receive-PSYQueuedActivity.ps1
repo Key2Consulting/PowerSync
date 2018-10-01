@@ -56,7 +56,8 @@ function Receive-PSYQueuedActivity {
         # Control variables
         $queuePollingInterval = Get-PSYVariable -Name 'PSYQueuePollingInterval' -DefaultValue 500
         $repo = New-FactoryObject -Repository
-
+        $async = if ($Throttle -eq 1) { $false } else { $true }
+        
         # Force initial iteration
         $continueProcessing = $true
 
@@ -65,8 +66,13 @@ function Receive-PSYQueuedActivity {
 
             if ($queuedActivity) {
                 # Execute the activity
-                $queuedActivity = Start-PSYActivity -QueuedActivity $queuedActivity -Async
-                $processing.Add($queuedActivity)
+                if ($async) {
+                    $queuedActivity = Start-PSYActivity -QueuedActivity $queuedActivity -Async -ScriptBlock {}
+                    $processing.Add($queuedActivity)
+                }
+                else {
+                    Start-PSYActivity -QueuedActivity $queuedActivity -ScriptBlock {}
+                }
 
                 # If we've met our throttle limit, wait until at least one of them finishes before continuing.
                 while (@(Get-Job -State Running).Count -ge $Throttle) {
@@ -83,19 +89,24 @@ function Receive-PSYQueuedActivity {
             }
 
             # Check if any in-process activities have completed
-            $completed = $processing | Where-Object { (Get-Job -InstanceId $_.JobInstanceID).JobStateInfo.State -ne "Running" }
-            $completed | ForEach-Object {
-                $temp = $_ | Wait-PSYActivity
-                $processing.Remove($_)
+            if ($async) {
+                $completed = $processing | Where-Object { (Get-Job -InstanceId $_.JobInstanceID).JobStateInfo.State -ne "Running" }
+                $completed | ForEach-Object {
+                    $temp = $_ | Wait-PSYActivity
+                    $processing.Remove($_)
+                }
             }
 
-            # If continous, wait for more work to arrive.
-            if ($Continous) {
+            # Get next queued activity
+            $queuedActivity = $repo.DequeueActivity($Queue)
+            if (-not $queuedActivity) {
                 # Out of activities, so wait for our next polling interval to check again.
                 Start-Sleep -Milliseconds $queuePollingInterval
+                $queuedActivity = $repo.DequeueActivity($Queue)
             }
-            else {
-                # If we're not processing continously, exit immediately once no more activities are available on the queue and we're done processing.
+
+            # If we're not processing continously, exit immediately once no more activities are available on the queue and we're done processing.
+            if (-not $Continous -and -not $queuedActivity) {
                 if ($processing.Count -eq 0) {
                     $continueProcessing = $false
                 }
@@ -104,10 +115,6 @@ function Receive-PSYQueuedActivity {
                     $continueProcessing = $true
                 }
             }
-
-            # Get next queued activity
-            Start-Sleep -Milliseconds 500
-            $queuedActivity = $repo.CriticalSection({ $this.DequeueActivity($Queue) })
         }
     }
     catch {

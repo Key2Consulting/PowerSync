@@ -32,7 +32,7 @@ function Connect-PSYJsonRepository {
         [Parameter(HelpMessage = "Automatically recreates the repository if it doesn't exist, clearing any previous contents.", Mandatory = $false)]
         [switch] $Recreate,
         [Parameter(HelpMessage = "The timeout, in milliseconds, to wait for exclusive access to the repository before failing. You normally do not need to specify this parameter.", Mandatory = $false)]
-        [string] $LockTimeout = 5000
+        [string] $LockTimeout = 30000
     )
 
     try {

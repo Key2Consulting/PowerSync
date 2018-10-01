@@ -14,6 +14,8 @@ function Wait-PSYActivity {
     (
         [parameter(HelpMessage = 'Return value from Start-PSYActivity.', Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [object] $InputObject
+        # TODO [Parameter(HelpMessage = "Seconds of no activity before abandoning the wait.", Mandatory = $false)]
+        # [int] $Timeout = 60
     )
 
     begin {
@@ -67,9 +69,7 @@ function Wait-PSYActivity {
                             }
                             else {
                                 # Get the most updated activity from the repository (our instance would be out of date) and check again. 
-                                $activity = $repo.CriticalSection({
-                                    $this.ReadEntity('Activity', $activity.ID)
-                                })
+                                $activity = $repo.ReadEntity('Activity', $activity.ID)
                                 if ($activity.Status -eq 'Completed') {
                                     $justCompleted = $true
                                 }
@@ -85,9 +85,7 @@ function Wait-PSYActivity {
                                 $j = $job | Wait-Job | Receive-Job | Remove-Job
 
                                 # Refresh the activity information from the repo
-                                $activity = $repo.CriticalSection({
-                                    $this.ReadEntity('Activity', $activity.ID)
-                                })
+                                $activity = $repo.ReadEntity('Activity', $activity.ID)
                                 $justCompleted = $true
                             }
                         }

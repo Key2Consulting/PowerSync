@@ -19,39 +19,38 @@ function Checkpoint-PSYActivity {
 
         if (-not $Activity.ID) {
             # Save to the repository
-            [void] $repo.CriticalSection({        # execute the operation as a critical section to ensure proper concurrency
-                $this.CreateEntity('Activity', $Activity)
-            })
+            [void] $repo.CreateEntity('Activity', $Activity)
     
             # Log
             Write-PSYInformationLog -Message "Activity '$($Activity.Name)' $($Activity.Status)"
         }
         elseif ($Activity.Status -eq 'Completed') {
             # Save to the repository
-            [void] $repo.CriticalSection({
-                $this.UpdateEntity('Activity', $Activity)
-            })
+            [void] $repo.UpdateEntity('Activity', $Activity)
             
             # Log
             $startTime = [DateTime]::Parse($Activity.StartDateTime);
+            if ($Activity.ExecutionDateTime) {
+                $execTime = [DateTime]::Parse($Activity.ExecutionDateTime);
+            }
+            else {
+                $execTime = [DateTime]::Parse($Activity.StartDateTime);
+            }
             $endTime = [DateTime]::Parse($Activity.EndDateTime);
-            [TimeSpan] $duration = $endTime.Subtract($startTime)
-            Write-PSYInformationLog -Message "Activity '$($Activity.Name)' $($Activity.Status) in $($duration.TotalSeconds) sec"
+            [TimeSpan] $totalDuration = $endTime.Subtract($startTime)
+            [TimeSpan] $execDuration = $endTime.Subtract($execTime)
+            Write-PSYInformationLog -Message "Activity '$($Activity.Name)' $($Activity.Status) in $($totalDuration.TotalSeconds) sec (executed in $($execDuration.TotalSeconds) sec)."
         }
         elseif ($Activity.Status -eq 'Executing') {
             # Save to the repository
-            [void] $repo.CriticalSection({
-                $this.UpdateEntity('Activity', $Activity)
-            })
+            [void] $repo.UpdateEntity('Activity', $Activity)
 
             # Log
             Write-PSYVerboseLog -Message "Activity '$($Activity.Name)' $($Activity.Status) at $($Activity.ExecutionDateTime.ToString())"
         }
         else {
             # Save to the repository
-            [void] $repo.CriticalSection({
-                $this.UpdateEntity('Activity', $Activity)
-            })
+            [void] $repo.UpdateEntity('Activity', $Activity)
         }
     }
     catch {
