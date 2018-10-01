@@ -34,7 +34,7 @@ function Lock-PSYVariable {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
         
         # Grab an exclusive lock on the variable name
         [object] $mutex = New-Object System.Threading.Mutex($false, "Global\PSY-$Name")

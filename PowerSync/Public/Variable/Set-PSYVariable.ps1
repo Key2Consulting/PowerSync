@@ -49,7 +49,7 @@ function Set-PSYVariable {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
         
         # Set the in the repository.  If it doesn't exist, it will be created.
         [void] $repo.CriticalSection({

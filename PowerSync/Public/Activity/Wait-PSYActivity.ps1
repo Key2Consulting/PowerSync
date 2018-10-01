@@ -107,7 +107,7 @@ function Wait-PSYActivity {
                         # Since these activities have executed remotely, nothing was printed to our console. Retrieve 
                         # all log information pertaining to this activity to display within the current process. This
                         # is primarily for development purposes since deployed environment are unattended.
-                        $logs = Find-PSYLog -Search $activity.ID
+                        $logs = Search-PSYLog -Search $activity.ID
                         $logs | ForEach-Object {
                             if ($_.Type -eq 'Error') {
                                 Write-PSYHost $_.Message
@@ -144,7 +144,7 @@ function Wait-PSYActivity {
                         $_.ExecutionServer = $activity.ExecutionServer
                         $_.InputObject = $activity.InputObject
                         $_.ScriptBlock = $activity.ScriptBlock
-                        $_.ScriptFile = $activity.ScriptFile
+                        $_.ScriptPath = $activity.ScriptPath
                         $_.JobInstanceID = $activity.JobInstanceID
                         $_.OutputObject = $activity.OutputObject
                         $_.HadErrors = $activity.HadErrors

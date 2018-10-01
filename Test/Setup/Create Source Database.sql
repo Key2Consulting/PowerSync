@@ -1,6 +1,6 @@
-CREATE DATABASE [PowerSyncTestSource]
+CREATE DATABASE [PSYTestSource]
 GO
-USE [PowerSyncTestSource]
+USE [PSYTestSource]
 GO
 CREATE TABLE [dbo].[OddTypes](
 	[ID] [int] NULL,

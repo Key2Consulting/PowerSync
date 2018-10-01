@@ -101,7 +101,7 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
                 # Invocation Information
                 InputObject = $InputObject
                 ScriptBlock = $ScriptBlock.Ast.ToString().TrimStart('{').TrimEnd('}')       # without trim, Invoke-Command will just return a scriptblock
-                ScriptFile = $MyInvocation.PSCommandPath
+                ScriptPath = $MyInvocation.PSCommandPath
                 JobInstanceID = $null
                 # Results/Response Information
                 OutputObject = $null

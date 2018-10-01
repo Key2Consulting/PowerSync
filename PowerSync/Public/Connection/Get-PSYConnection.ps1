@@ -19,7 +19,7 @@ function Get-PSYConnection {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
 
         # Get the from the repository.
         return $repo.CriticalSection({

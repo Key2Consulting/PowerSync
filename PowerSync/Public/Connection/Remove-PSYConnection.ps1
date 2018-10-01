@@ -19,7 +19,7 @@ function Remove-PSYConnection {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
         
         # Log
         Write-PSYVariableLog "Connection.$Name" $null

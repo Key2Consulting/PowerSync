@@ -22,7 +22,7 @@ The new value of the variable.
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
         
         # Write Log and output to screen
         if ($PSYSession.Initialized) {

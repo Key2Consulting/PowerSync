@@ -19,32 +19,47 @@ class Repository {
     }
 
     # CRUD operations. Note that deserializers like JSON convert into a PSObject, so we can't use strong typing. Instead, we
-    # use a simple string representing the type.
+    # use a simple string representing the type (i.e. $EntityType).
+    #
+
+    # Creates an entity.
     [void] CreateEntity([string] $EntityType, [object] $Entity) {
         throw "Method should be overridden by derived classes."
     }
     
+    # Reads (or gets) and entity by ID.
     [object] ReadEntity([string] $EntityType, [object] $EntityID) {
         throw "Method should be overridden by derived classes."
     }
     
+    # Updates an entity.
     [void] UpdateEntity([string] $EntityType, [object] $Entity) {
         throw "Method should be overridden by derived classes."
     }
 
+    # Deletes an entity by ID.
     [void] DeleteEntity([string] $EntityType, [object] $EntityID) {
         throw "Method should be overridden by derived classes."
     }
 
-    [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue) {
-        return $this.FindEntity($EntityType, $SearchField, $SearchValue, $false)
+    # Finds an entity by an alternate key (i.e. Name) instead of ID. Can return multiple results.
+    [object] FindEntity([string] $EntityType, [string] $EntityField, [object] $EntityFieldValue) {
+        return $this.FindEntity($EntityType, $EntityField, $EntityFieldValue, $false)
     }
     
-    [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue, [bool] $Wildcards) {
+    [object] FindEntity([string] $EntityType, [string] $EntityField, [object] $EntityFieldValue, [bool] $Wildcards) {
         throw "Method should be overridden by derived classes."
     }
     
-    # Activities
+    # Special Purpose Operations (required for optimization, concurrency, or complexity).
+    #
+    
+    # Search and returns logs containing a term.
+    [object] SearchLogs([string[]] $SearchTerms, [bool] $Wildcards) {
+        throw "Method should be overridden by derived classes."
+    }
+
+    # Removes an activity from a queue, blocking other concurrent processes which might be doing the same.
     [object] DequeueActivity([string] $Queue) {
         throw "Method should be overridden by derived classes."
     }

@@ -33,7 +33,7 @@ function Remove-PSYVariable {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
         
         # Log
         Write-PSYVariableLog "Variable.$Name" $null

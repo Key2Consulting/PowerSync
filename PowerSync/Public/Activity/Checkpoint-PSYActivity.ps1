@@ -15,7 +15,7 @@ function Checkpoint-PSYActivity {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
 
         if (-not $Activity.ID) {
             # Save to the repository

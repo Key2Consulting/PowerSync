@@ -2,11 +2,17 @@ function Connect-PSYOleDbRepository {
     param
     (
         [Parameter(HelpMessage = "TODO", Mandatory = $true)]
-        [string] $ConnectionString
+        [string] $ConnectionString,
+        
+        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [string] $Schema
     )
 
     try {
-
+        # Create the instance, passing it our session state. The class should set it's state properties to the session,
+        # making the connection available on subsequent requests.
+        $repo = New-Object OleDBRepository $ConnectionString, $Schema, $PSYSession.RepositoryState
+        $global:PSYSession.Initialized = $true
     }
     catch {
         Write-PSYErrorLog $_

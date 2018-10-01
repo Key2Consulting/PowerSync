@@ -84,14 +84,14 @@ class FileRepository : Repository {
         $table.Remove($match[0])
     }
 
-    [object] FindEntity([string] $EntityType, [string] $SearchField, [object] $SearchValue, [bool] $Wildcards) {
+    [object] FindEntity([string] $EntityType, [string] $EntityField, [object] $EntityFieldValue, [bool] $Wildcards) {
         $entityList = New-Object System.Collections.ArrayList
         $table = $this.GetEntityTable($EntityType)
         if ($Wildcards) {
-            $eQuery = $table.Where({$_."$SearchField" -like $SearchValue})
+            $eQuery = $table.Where({$_."$EntityField" -like $EntityFieldValue})
         }
         else {
-            $eQuery = $table.Where({$_."$SearchField" -eq $SearchValue})
+            $eQuery = $table.Where({$_."$EntityField" -eq $EntityFieldValue})
         }
         if ($eQuery) {
             foreach ($entity in $eQuery) {
@@ -101,6 +101,57 @@ class FileRepository : Repository {
             }
         }
         return $entityList
+    }
+    [object] SearchLogs([string[]] $SearchTerms, [bool] $Wildcards) {
+        # Search all logs in the repository and return any that match
+        return $this.CriticalSection({
+            $logs = [System.Collections.ArrayList]::new()
+            if (-not $Type -or $Type -eq 'Debug' -or $Type -eq 'Information' -or $Type -eq 'Verbose') {
+                $logs.AddRange($this.FindEntity('MessageLog', 'Message', $Search, $true))
+                $logs.AddRange($this.FindEntity('MessageLog', 'ActivityID', $Search, $false))
+            }
+            if (-not $Type -or $Type -eq 'Error') {
+                $logs.AddRange($this.FindEntity('ErrorLog', 'Message', $Search, $true))
+                $logs.AddRange($this.FindEntity('ErrorLog', 'Exception', $Search, $true))
+                $logs.AddRange($this.FindEntity('ErrorLog', 'StackTrace', $Search, $true))
+                $logs.AddRange($this.FindEntity('ErrorLog', 'ActivityID', $Search, $false))
+            }
+            if (-not $Type -or $Type -eq 'Variable') {
+                $logs.AddRange($this.FindEntity('VariableLog', 'VariableName', $Search, $true))
+                $logs.AddRange($this.FindEntity('VariableLog', 'ActivityID', $Search, $false))
+            }
+            if (-not $Type -or $Type -eq 'Query') {
+                $logs.AddRange($this.FindEntity('QueryLog', 'Query', $Search, $true))
+                $logs.AddRange($this.FindEntity('QueryLog', 'ActivityID', $Search, $false))
+            }
+            
+            # If the caller wants to filter on log type, apply that here in addition to above since some logs use
+            # shared storage.
+            if ($Type) {
+                $typeFiltered = $logs | Where-Object {$_.Type -eq $Type}
+            }
+            else {
+                $typeFiltered = $logs
+            }
+
+            # If the caller wants to filter on a date range, use the CreatedDateTime field which should
+            # exist for every log type.
+            $dateFiltered = $typeFiltered | Where-Object {
+                ((ConvertFrom-PSYCompatibleType -InputObject $_.CreatedDateTime -Type 'datetime') -ge $StartDate -or -not $StartDate) `
+                -and ((ConvertFrom-PSYCompatibleType -InputObject $_.CreatedDateTime -Type 'datetime') -le $EndDate -or -not $EndDate)
+            }
+            
+            # Some log entries can be found multiple times, so remove the duplicates.
+            $uniqueLogs = New-Object System.Collections.ArrayList
+            foreach ($log in $dateFiltered) {
+                $existing = $uniqueLogs | Where-Object { $_.ID -eq $log.ID }
+                if (-not $existing) {
+                    [void] $uniqueLogs.Add($log)
+                }
+            }
+            
+            $uniqueLogs
+        })
     }
 
     [object] DequeueActivity([string] $Queue) {

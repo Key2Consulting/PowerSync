@@ -21,7 +21,7 @@ An optional category to help organize different messages.
     )
 
     try {
-        $repo = New-FactoryObject -Repository               # instantiate repository
+        $repo = New-FactoryObject -Repository        
 
         # Write Log and output to screen    
         if ($PSYSession.Initialized) {
