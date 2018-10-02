@@ -227,10 +227,9 @@ Debugging parallel execution in PowerShell is tricky. Enabling parallel executio
 ## State Variables
 PowerSync State Variables are discrete state managed by PowerSync. State Variables are simple name/value pairs which are stored in the repository. The value can be a primitive type (e.g. numbers or text), or complex types (e.g. hashtables or arrays). The primary benefits of using State Variables over only using native PowerShell variables is that they are
  - Persisted
- - Work with parallel processes
+ - Work with asynchronous/parallel processes
  - State changes are logged
- - Can be synchronized across parallel processes
- 
+
 ```PowerShell
 Set-PSYVariable -Name 'MyVar' -Value 'Hello World'                          # scalar
 Set-PSYVariable -Name 'MyComplexVar' -Value @{Hello = 'World'; Abc = 123}   # hashtable
@@ -267,6 +266,9 @@ Native PowerShell variables (i.e. `$myVar = 123`) have limited use in data integ
 Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, arrays). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). 
 
 One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, *sequential* activities do retain visibility to these variables. Furthermore, changes to enumerated objects during asynchronous or parallel execution (`-Async` & `-Parallel`) will not affect the copy in the caller's process space. To communicate with asynchronous activities, pipe data into the activity (i.e. parameters) and return data from the activity.
+
+Alternatively, you can pass variables into and get results back out of activities. In this approach, state is managed by the main activity/thread. However, in the case of a system crash, you might lose all state information.
+
 ```PowerShell
 $readMe = 123
 Start-PSYActivity -ScriptBlock {

@@ -1,10 +1,10 @@
 function Connect-PSYOleDbRepository {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $ConnectionString,
         
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Schema
     )
 

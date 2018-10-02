@@ -15,9 +15,9 @@ The new value of the variable.
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "The variable name.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Name,
-        [Parameter(HelpMessage = "The new value of the variable.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [object] $Value
     )
 

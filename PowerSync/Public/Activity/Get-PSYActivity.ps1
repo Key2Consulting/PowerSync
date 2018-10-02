@@ -9,7 +9,7 @@ function Get-PSYActivity {
     [CmdletBinding()]
     param
     (
-        [parameter(HelpMessage = 'TODO', Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [object] $ID
     )
 

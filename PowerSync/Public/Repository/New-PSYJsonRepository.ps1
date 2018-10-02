@@ -17,7 +17,7 @@ function New-PSYJsonRepository {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "Path of the Json repository to create. If just a filename is specified, will resolve to the current working folder.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Path
     )
 

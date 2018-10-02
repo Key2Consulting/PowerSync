@@ -40,11 +40,11 @@ For example:
 function Set-PSYVariable {
     param
     (
-        [Parameter(HelpMessage = "Name of the variable. Variable names must be unique.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Name,
-        [Parameter(HelpMessage = "The value assigned to the variable. Support primitive or complex types as long as they support PowerShell serialization.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [object] $Value,
-        [Parameter(HelpMessage = "An optional and custom name given by the user describing the type of this variable. Can be used to control the physical storage location in a database repository, or as additional metadata.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Category
     )
 

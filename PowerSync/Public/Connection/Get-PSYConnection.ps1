@@ -14,7 +14,7 @@ Get-PSYConnection -Name 'MySource'
 function Get-PSYConnection {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Name
     )
 

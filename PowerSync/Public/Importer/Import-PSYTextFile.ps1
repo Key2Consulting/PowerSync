@@ -32,17 +32,17 @@ Export-PSYTextFile -Connection "TestSource" -Path "Sample100.csv" -Format CSV -H
  #>
 function Import-PSYTextFile {
     param (
-        [Parameter(HelpMessage = "Piped data from Exporter (containing data reader and export provider information)", Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
-        [Parameter(HelpMessage = "Name of the connection to import into.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Connection,
-        [Parameter(HelpMessage = "Path of the file to import. A TextFile connection can supply the root path, which is then prefixed with this path parameter.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Path,
-        [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [PSYTextFileFormat] $Format,
-        [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Header,
-        [Parameter(HelpMessage = "Adds compression to the target file via zip format.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Compress
     )
 

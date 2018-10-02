@@ -30,13 +30,13 @@ See https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/string-wi
 function Search-PSYLog {
     [CmdletBinding()]
     param (
-        [Parameter(HelpMessage = "Restricts search to a specific log type.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Type,
-        [Parameter(HelpMessage = "The terms to search for. Supports wildcards (i.e. *, ?).", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string[]] $SearchTerms,
-        [Parameter(HelpMessage = "Filters logs dated later than StartDate.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [datetime] $StartDate,
-        [Parameter(HelpMessage = "Filters logs dated earlier than EndDate.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [datetime] $EndDate
     )
 

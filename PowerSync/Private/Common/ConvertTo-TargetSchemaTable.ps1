@@ -25,11 +25,11 @@ PowerSync `
 # https://msdn.microsoft.com/en-us/library/office/ff195814.aspx?f=255&MSPPError=-2147217396
 function ConvertTo-TargetSchemaTable {
     param (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [PSYDbConnectionProvider] $SourceProvider,
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [PSYDbConnectionProvider] $TargetProvider,
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.Data.DataTable] $SchemaTable
     )
 

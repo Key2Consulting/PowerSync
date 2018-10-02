@@ -31,19 +31,19 @@ Set-PSYConnection -Name 'MySource' -Provider SqlServer -ConnectionString 'Server
 #>
 function Set-PSYConnection {
     param (
-        [Parameter(HelpMessage = "The name of the connection.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Name,
-        [Parameter(HelpMessage = "The provider of the connection (e.g. SQLServer, TextFile, Json, MySql).", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [PSYDbConnectionProvider] $Provider,
-        [Parameter(HelpMessage = "A Connection String used by the given provider.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $ConnectionString,
-        [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $Server,
-        [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $Database,
-        [Parameter(HelpMessage = "Additional properties used by the provider. These vary from provider to provider.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [hashtable] $Properties,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [System.Management.Automation.PSCredential] $Credentials
     )
 

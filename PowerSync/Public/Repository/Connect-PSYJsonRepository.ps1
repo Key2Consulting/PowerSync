@@ -25,13 +25,13 @@ Connect-PSYJsonRepository -Path 'MyLocalFile.json'
 function Connect-PSYJsonRepository {
     param
     (
-        [Parameter(HelpMessage = "Path of the Json repository to connect to. If just a filename is specified, will resolve to the current working folder.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Path,
-        [Parameter(HelpMessage = "Automatically creates the repository if it doesn't exist.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Create,
-        [Parameter(HelpMessage = "Automatically recreates the repository if it doesn't exist, clearing any previous contents.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Recreate,
-        [Parameter(HelpMessage = "The timeout, in milliseconds, to wait for exclusive access to the repository before failing. You normally do not need to specify this parameter.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $LockTimeout = 30000
     )
 

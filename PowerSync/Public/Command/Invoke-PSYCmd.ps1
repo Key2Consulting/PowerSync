@@ -29,11 +29,11 @@ Invoke-PSYCmd -Connection 'MyConnection' -Name "PublishMyDataSets" -Param @{Proc
 function Invoke-PSYCmd {
     param
     (
-        [Parameter(HelpMessage = "The connection to execute the Stored Query against.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Connection,
-        [Parameter(HelpMessage = "The name of the Stored Command used to find the SQL file. The extension can be omitted.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Name,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [hashtable] $Param
     )
 

@@ -1,7 +1,7 @@
 function Protect-PSYText {
     [CmdletBinding()]
     param (
-        [parameter(HelpMessage = "TODO", Mandatory = $false, ValueFromPipeline = $true)]
+        [parameter(Mandatory = $false, ValueFromPipeline = $true)]
         [string] $InputObject
     )
 

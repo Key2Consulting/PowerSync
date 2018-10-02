@@ -35,7 +35,7 @@ Internally, all PowerSync functions should use throw when detecting and reportin
 function Write-PSYErrorLog {
     [CmdletBinding()]
     param (
-        [Parameter(HelpMessage = 'The thrown error caught by PowerShell (i.e. the $_ variable).', Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
             [System.Management.Automation.ErrorRecord] $ErrorRecord
     )
     

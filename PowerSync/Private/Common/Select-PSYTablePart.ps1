@@ -1,11 +1,11 @@
 function Select-TablePart {
     [CmdletBinding()]
     param(
-        [parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $Table,
-        [parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $Part,
-        [parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [switch] $Clean
     )
 

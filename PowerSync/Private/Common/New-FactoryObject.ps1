@@ -2,11 +2,11 @@ function New-FactoryObject {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Repository,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Connection,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $TypeName
     )
 
