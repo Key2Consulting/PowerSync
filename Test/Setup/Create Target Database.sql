@@ -1,6 +1,6 @@
-CREATE DATABASE [PowerSyncTestTarget]
+CREATE DATABASE [PSYTestTarget]
 GO
-USE [PowerSyncTestTarget]
+USE [PSYTestTarget]
 GO
 
 CREATE TABLE [dbo].[QuickTypedCSVCopy]

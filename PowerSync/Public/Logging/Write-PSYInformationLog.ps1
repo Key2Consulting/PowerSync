@@ -24,23 +24,21 @@ function Write-PSYInformationLog {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
 
         # Write Log and output to screen
         if ($PSYSession.Initialized) {
-            [void] $repo.CriticalSection({
-                $o = @{
-                    ID = $null                          # let the repository assign the surrogate key
-                    Type = 'Information'
-                    Category = $Category
-                    Message = $Message
-                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                }
-                if ($PSYSession.ActivityStack.Count -gt 0) {
-                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
-                }
-                $this.CreateEntity('MessageLog', $o)
-            })
+            $o = @{
+                ID = $null                          # let the repository assign the surrogate key
+                Type = 'Information'
+                Category = $Category
+                Message = $Message
+                CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+            }
+            if ($PSYSession.ActivityStack.Count -gt 0) {
+                $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
+            }
+            [void] $repo.CreateEntity('MessageLog', $o)
         }
         $logCategory = if ($Category) {"($Category) "} else {""}
         Write-PSYHost "Information: $logCategory$Message"           # print to console

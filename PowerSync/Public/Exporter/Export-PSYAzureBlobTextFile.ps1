@@ -71,7 +71,7 @@ Export-PSYAzureBlobTextFile -Connection "TestAzureBlob" -Container 'data' -Path 
             $gzStream = $blobStream
         }
 
-        $reader = New-Object PowerSync.TextFileDataReader($gzStream, $Format, $Header)
+        $reader = [PowerSync.TextFileDataReader]::new($gzStream, $Format, $Header)
 
         Write-PSYInformationLog -Message "Exported $Format text data from $Container/$Path."
 

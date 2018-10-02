@@ -22,13 +22,13 @@ function New-FactoryObject {
         }
         elseif ($Connection) {
             if ($TypeName -eq 'SqlServer') {
-                return New-Object System.Data.SqlClient.SqlConnection
+                return [System.Data.SqlClient.SqlConnection]::new()
             }
             elseif ($TypeName -eq 'OleDb') {
-                return New-Object System.Data.OleDb.OleDbConnection
+                return [System.Data.OleDb.OleDbConnection]::new()
             }
             elseif ($TypeName -eq 'ODBC') {
-                return New-Object System.Data.Odbc.OdbcConnection
+                return [System.Data.Odbc.OdbcConnection]::new()
             }
         }
         else {

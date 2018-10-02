@@ -19,9 +19,9 @@
 [hashtable] $global:PSYSession = @{
     Initialized = $false                                        # indicates whether PowerSync is ready for use
     RepositoryState = @{}                                       # stores connection information when connecting to a repository
-    ActivityStack = New-Object System.Collections.ArrayList     # all activity logs in stack formation
+    ActivityStack = [System.Collections.ArrayList]::new()       # a stack of all executing activity IDs for correlation purposes
     Module = "$PSScriptRoot"                                    # where we're located
-    UserModules = New-Object System.Collections.ArrayList       # loaded modules so subsequent jobs can bootstrap
+    UserModules = [System.Collections.ArrayList]::new()         # loaded modules so subsequent jobs can bootstrap
     WorkingFolder = "$(Get-Location)"                           # where the PowerSync module is located
     UserInteractive = [Environment]::UserInteractive            # determine if functions like Write-Host are available (although Write-Output is generally recommended over Write-host, it affects function output streams)
 }

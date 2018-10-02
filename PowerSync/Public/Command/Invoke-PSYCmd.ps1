@@ -53,7 +53,7 @@ function Invoke-PSYCmd {
         $r = $cmd.ExecuteReader()
         
         # Copy results into arraylist of hashtables
-        $results = New-Object System.Collections.ArrayList
+        $results = [System.Collections.ArrayList]::new()
         if ($r.HasRows) {
             while ($r.Read()) {
                 $result = [ordered] @{}

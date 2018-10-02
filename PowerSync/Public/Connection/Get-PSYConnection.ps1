@@ -19,19 +19,16 @@ function Get-PSYConnection {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
 
         # Get the from the repository.
-        return $repo.CriticalSection({
-            $existing = $this.FindEntity('Connection', 'Name', $Name)
-            if ($existing.Count -eq 0) {
-                throw "No connection entry found with name '$Name'."
-            }
-            else {
-                return $existing[0]
-            }
-
-        })
+        $existing = $repo.FindEntity('Connection', 'Name', $Name)
+        if ($existing.Count -eq 0) {
+            throw "No connection entry found with name '$Name'."
+        }
+        else {
+            return $existing[0]
+        }
     }
     catch {
         Write-PSYErrorLog $_

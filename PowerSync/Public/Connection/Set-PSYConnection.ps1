@@ -48,7 +48,7 @@ function Set-PSYConnection {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
         
         # Log
         Write-PSYVariableLog "Connection.$Name" "Provider = $Provider, ConnectionString = $ConnectionString, Properties = $Properties"
@@ -63,40 +63,35 @@ function Set-PSYConnection {
             }
         }
 
-        # Set the in the repository.  If it doesn't exist, it will be created.
-        [void] $repo.CriticalSection({
-            
-            # Determine if existing
-            $existing = $this.FindEntity('Connection', 'Name', $Name)
-            if ($existing.Count -eq 0) {
-                $existing = $null
-            }
-            else {
-                $existing = $existing[0]
-            }
+        # Determine if existing
+        $existing = $repo.FindEntity('Connection', 'Name', $Name)
+        if ($existing.Count -eq 0) {
+            $existing = $null
+        }
+        else {
+            $existing = $existing[0]
+        }
 
-            # If not exists then create, otherwise update.
-            if (-not $existing) {
-                $o = @{
-                    ID = $null                          # let the repository assign the surrogate key
-                    Name = $Name
-                    Provider = $Provider
-                    ConnectionString = $ConnectionString
-                    Properties = $Properties
-                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                    ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                }
-                $this.CreateEntity('Connection', $o)
-                return $o
+        # If not exists then create, otherwise update.
+        if (-not $existing) {
+            $o = @{
+                ID = $null                          # let the repository assign the surrogate key
+                Name = $Name
+                Provider = $Provider
+                ConnectionString = $ConnectionString
+                Properties = $Properties
+                CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
             }
-            else {
-                $existing.Provider = $Provider
-                $existing.ConnectionString = $ConnectionString
-                $existing.Properties = $Properties
-                $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                return $this.UpdateEntity('Connection', $existing)
-            }
-        })
+            [void] $repo.CreateEntity('Connection', $o)
+        }
+        else {
+            $existing.Provider = $Provider
+            $existing.ConnectionString = $ConnectionString
+            $existing.Properties = $Properties
+            $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+            [void] $repo.UpdateEntity('Connection', $existing)
+        }
     }
     catch {
         Write-PSYErrorLog $_

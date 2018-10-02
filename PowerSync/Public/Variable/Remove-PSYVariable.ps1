@@ -33,27 +33,23 @@ function Remove-PSYVariable {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
         
         # Log
         Write-PSYVariableLog "Variable.$Name" $null
 
         if ($Wildcards) {throw "Remove-PSYVariable Wildcards Not Implemented"}      # can use Get-PSYVariable and delete each one
+           
+        # Determine if existing
+        $existing = $repo.FindEntity('Variable', 'Name', $Name)
+        if ($existing.Count -eq 0) {
+            return
+        }
+        else {
+            $existing = $existing[0]
+        }
 
-        # Set the in the repository.  If it doesn't exist, it will be created.
-        return $repo.CriticalSection({
-            
-            # Determine if existing
-            $existing = $this.FindEntity('Variable', 'Name', $Name)
-            if ($existing.Count -eq 0) {
-                return
-            }
-            else {
-                $existing = $existing[0]
-            }
-
-            $this.DeleteEntity('Variable', $existing.ID)
-        })
+        $repo.DeleteEntity('Variable', $existing.ID)
     }
     catch {
         Write-PSYErrorLog $_

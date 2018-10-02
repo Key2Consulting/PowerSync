@@ -45,10 +45,29 @@ function ConvertTo-PSYCompatibleType {
                 return $hash
             }
             elseif ($type -eq 'arraylist') {                                 # ArrayList is our native type, but it's values may not be, so enumerate
-                $new = New-Object System.Collections.ArrayList
+                $new = [System.Collections.ArrayList]::new()
                 foreach ($o in $InputObject) {
                     [void] $new.Add((ConvertTo-PSYCompatibleType $o))
                 }
+            }
+            elseif ($type -eq 'OleDbDataReader' -or $type -eq 'SqlDataReader') {
+                $reader = $InputObject
+                if ($reader.HasRows) {
+                    $recordList = [System.Collections.ArrayList]::new()
+                    if ($reader.HasRows) {
+                        while ($reader.Read()) {
+                            $result = [ordered] @{}
+                            for ($i=0;$i -lt $reader.FieldCount; $i++) {
+                                $col = $reader.GetName($i)
+                                $result."$col" = $reader[$i]
+                            }
+                            [void] $recordList.Add($result)
+                        }
+                    }
+                    if ($recordList.Count -gt 0) {
+                        return $recordList
+                    }
+                }                
             }
             else {
                 # Assume it's a primitive type TODO: SHOULD EXPLICITLY CHECK FOR PRIMITIVE TYPES

@@ -49,39 +49,35 @@ function Set-PSYVariable {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
         
-        # Set the in the repository.  If it doesn't exist, it will be created.
-        [void] $repo.CriticalSection({
-            
-            # Determine if existing
-            $existing = $this.FindEntity('Variable', 'Name', $Name)
-            if ($existing.Count -eq 0) {
-                $existing = $null
-            }
-            else {
-                $existing = $existing[0]
-            }
+        # Determine if existing
+        $existing = $repo.FindEntity('Variable', 'Name', $Name)
+        if ($existing.Count -eq 0) {
+            $existing = $null
+        }
+        else {
+            $existing = $existing[0]
+        }
 
-            # If not exists then create, otherwise update.
-            if (-not $existing) {
-                $o = @{
-                    ID = $null                          # let the repository assign the surrogate key
-                    Name = $Name
-                    Value = $Value
-                    Category = $Category
-                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                    ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                    ReadDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                }
-                $this.CreateEntity('Variable', $o)
+        # If not exists then create, otherwise update.
+        if (-not $existing) {
+            $o = @{
+                ID = $null                          # let the repository assign the surrogate key
+                Name = $Name
+                Value = $Value
+                Category = $Category
+                CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                ReadDateTime = Get-Date | ConvertTo-PSYCompatibleType
             }
-            else {
-                $existing.Value = $Value
-                $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                return $this.UpdateEntity('Variable', $existing)
-            }
-        })
+            $repo.CreateEntity('Variable', $o)
+        }
+        else {
+            $existing.Value = $Value
+            $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+            return $repo.UpdateEntity('Variable', $existing)
+        }
 
         # Log
         Write-PSYVariableLog -Name $Name -Value $Value

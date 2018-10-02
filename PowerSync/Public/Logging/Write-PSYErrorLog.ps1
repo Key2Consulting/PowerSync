@@ -73,20 +73,19 @@ function Write-PSYErrorLog {
         }
         # Log
         if ($repo) {
-            [void] $repo.CriticalSection({
-                $o = @{
-                    ID = $null                          # let the repository assign the surrogate key
-                    Message = $ErrorRecord.Exception.Message
-                    Exception = $ErrorRecord.Exception.ToString()
-                    StackTrace = $ErrorRecord.ScriptStackTrace
-                    Invocation = "$($handler.FunctionName) ($($handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1 -Compress))"     # we could be as verbose as we wanted here, and include BoundParameters all the way up the stack
-                    CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                }
-                if ($PSYSession.ActivityStack.Count -gt 0) {
-                    $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1].ID
-                }
-                $this.CreateEntity('ErrorLog', $o)
-            })
+            $o = @{
+                ID = $null                          # let the repository assign the surrogate key
+                Type = 'Error'
+                Message = $ErrorRecord.Exception.Message
+                Exception = $ErrorRecord.Exception.ToString()
+                StackTrace = $ErrorRecord.ScriptStackTrace
+                Invocation = "$($handler.FunctionName) ($($handler.InvocationInfo.BoundParameters | ConvertTo-Json -Depth 1 -Compress))"     # we could be as verbose as we wanted here, and include BoundParameters all the way up the stack
+                CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
+            }
+            if ($PSYSession.ActivityStack.Count -gt 0) {
+                $o.ActivityID = $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1]
+            }
+            [void] $repo.CreateEntity('ErrorLog', $o)
         }
         # Print to Console
         Write-PSYHost $ErrorRecord.Exception.ToString() -ForegroundColor Red

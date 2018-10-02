@@ -42,8 +42,7 @@ Copy-PSYTable `
 Orchestrate a parallel, multi-table copy between different database systems.
 ```powershell
 # Create and Connect to PowerSync repository (stores all our runtime and persisted state).
-New-PSYJsonRepository 'PowerSyncRepo.json'
-Connect-PSYJsonRepository 'PowerSyncRepo.json'
+Connect-PSYJsonRepository -Path 'PowerSyncRepo.json' -Create
 
 # Create source and target connections (only need to do this once).
 Set-PSYConnection -Name "OracleSource" -Provider Oracle -ConnectionString "Data Source=MyOracleDB;Integrated Security=yes;"
@@ -342,11 +341,11 @@ Write-PSYQueryLog -Name 'Transform Target' -Query 'UPDATE MyTable SET Abc = 123'
 ```
 
 ### Reading the Logs
-PowerSync logs are searchable using `Find-PSYLog`, which executes a holistc search across all log types. Search terms support the use of wildcards (e.g. `*` and `?`). Of course, projects using a database repository are free to use whatever RDBMS tools are provided to search the log tables.
+PowerSync logs are searchable using `Search-PSYLog`, which executes a holistc search across all log types. Search terms support the use of wildcards (e.g. `*` and `?`). Of course, projects using a database repository are free to use whatever RDBMS tools are provided to search the log tables.
 
 ```PowerShell
-Find-PSYLog -Search '*MyTable*' -StartDate '1/1/2018'   # search all logs for MyTable reference
-Find-PSYLog -Type 'ErrorLog' -Search '*MyTable*'        # search just error log for MyTable reference
+Search-PSYLog -Search '*MyTable*' -StartDate '1/1/2018'   # search all logs for MyTable reference
+Search-PSYLog -Type 'ErrorLog' -Search '*MyTable*'        # search just error log for MyTable reference
 ```
 
 ## Quick Commands

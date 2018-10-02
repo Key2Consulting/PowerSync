@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-Write to the debug log, and displays in the console if -Debug is set.
+Write to the warning log, and displays in the console.
 
 .DESCRIPTION
-The debug log should be used to log technical operations internal to the system, and useful for debugging purposes.
+The warning log should be used to log significant issues with processing, but which don't necessitate termination.
 
 .PARAMETER Message
 The primary text describing something useful regarding the log.
@@ -11,7 +11,7 @@ The primary text describing something useful regarding the log.
 .PARAMETER Category
 An optional category to help organize different messages.
  #>
-function Write-PSYDebugLog {
+ function Write-PSYWarningLog {
     [CmdletBinding()]
     param (
         [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true)]
@@ -27,7 +27,7 @@ function Write-PSYDebugLog {
         if ($PSYSession.Initialized) {
             $o = @{
                 ID = $null                          # let the repository assign the surrogate key
-                Type = 'Debug'
+                Type = 'Warning'
                 Category = $Category
                 Message = $Message
                 CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
@@ -38,7 +38,7 @@ function Write-PSYDebugLog {
             [void] $repo.CreateEntity('MessageLog', $o)
         }
         $logCategory = if ($Category) {"($Category) "} else {""}
-        Write-Debug -Message "Debug: $logCategory$Message"
+        Write-Warning -Message "Warning: $logCategory$Message"
     }
     catch {
         Write-PSYErrorLog $_

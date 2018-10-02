@@ -51,33 +51,31 @@ function Get-PSYVariable {
     )
 
     try {
-        $repo = New-FactoryObject -Repository       # instantiate repository
+        $repo = New-FactoryObject -Repository
 
         # Get the from the repository.
-        return $repo.CriticalSection({
-            $existing = $this.FindEntity('Variable', 'Name', $Name, $Wildcards)
-            if ($existing.Count -eq 0) {
-                Write-PSYVerboseLog -Message "No variable entry found with name '$Name'."
-                return $DefaultValue
+        $existing = $repo.FindEntity('Variable', 'Name', $Name, $Wildcards)
+        if ($existing.Count -eq 0) {
+            Write-PSYVerboseLog -Message "No variable entry found with name '$Name'."
+            return $DefaultValue
+        }
+        elseif (-not $Wildcards -and $existing.Count -gt 1) {
+            throw "Multiple variables found with name $Name."
+        }
+        
+        # Flag as read and return
+        foreach ($entity in $existing) {
+            $entity.ReadDateTime = Get-Date | ConvertTo-PSYCompatibleType
+            $repo.UpdateEntity('Variable', $entity)
+            # If not showing extended properties, just output the value
+            if (-not $Extended) {
+                $entity.Value
             }
-            elseif (-not $Wildcards -and $existing.Count -gt 1) {
-                throw "Multiple variables found with name $Name."
+            else {
+                # Otherwise, caller wants additional information about the variable (i.e. modified date, ID, etc).
+                $entity
             }
-            
-            # Flag as read and return
-            foreach ($entity in $existing) {
-                $entity.ReadDateTime = Get-Date | ConvertTo-PSYCompatibleType
-                $this.UpdateEntity('Variable', $entity)
-                # If not showing extended properties, just output the value
-                if (-not $Extended) {
-                    $entity.Value
-                }
-                else {
-                    # Otherwise, caller wants additional information about the variable (i.e. modified date, ID, etc).
-                    $entity
-                }
-            }
-        })
+        }
     }
     catch {
         Write-PSYErrorLog $_

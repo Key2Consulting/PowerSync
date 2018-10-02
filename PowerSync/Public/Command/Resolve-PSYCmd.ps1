@@ -32,7 +32,7 @@ function Resolve-PSYCmd {
     try {
         # Determine paths to search for stored commands
         $storedCommandPath = Get-PSYVariable 'PSYCmdPath'
-        $searchPaths = New-Object System.Collections.ArrayList
+        $searchPaths = [System.Collections.ArrayList]::new()
         if ($storedCommandPath) {
             [void] $searchPaths.AddRange($storedCommandPath.Split(';'))
         }

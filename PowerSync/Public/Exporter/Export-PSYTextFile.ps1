@@ -78,7 +78,7 @@ function Export-PSYTextFile {
             $gzStream = $stream
         }
 
-        $reader = New-Object PowerSync.TextFileDataReader($gzStream, $Format, $Header)
+        $reader = [PowerSync.TextFileDataReader]::new($gzStream, $Format, $Header)
 
         Write-PSYInformationLog -Message "Exported $Format text data from $filePath."
 

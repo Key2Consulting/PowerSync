@@ -8,20 +8,30 @@ PowerSync activities organize your data integration workload into atomic units o
  - Automatic error handling and logging.
  - Sequential or parallel execution (using remote jobs).
 
+ By default, activities execute sequentially unless the -Async switch is set.
+
+.PARAMETER InputObject
+Parameters passed to the activity. Use the $Input automatic variable in the value of the ScriptBlock parameter to represent the input objects.
+
 .PARAMETER ScriptBlock
-The script to execute as part of the activity. Can be a single script, or an array of scripts.
+The script to execute as part of the activity.
 
 .PARAMETER Name
 The name of the activity for logging and readability purposes.
 
-.PARAMETER Parallel
-Runs the scriptblocks in parallel when multiple scriptblocks are defined.
+.PARAMETER Async
+Starts activity execution and immediately returns handles to the running activities. Use Wait-PSYActivity to await their completion.
 
-.PARAMETER Throttle
-Maximum number of parallel executions.
+.PARAMETER Queue
+Submits the activity to a given queue for remote and scalable execution. The queue must be monitored by one or more external agents using Receive-PSYActivity.
+
+The queue name is automatically created within the repository if it doesn't exist.
 
 .PARAMETER WaitDebugger
 If set, forces remote jobs used in parallel processes to break into the debugger.
+
+.PARAMETER QueuedActivity
+An activity previously queued for execution. See Receive-PSYQueuedActivity for more information.
 
 .EXAMPLE
 Start-PSYActivity -Name 'Simple Activity' -ScriptBlock {
@@ -41,36 +51,200 @@ Start-PSYActivity -Name 'Test Parallel Execution' -Parallel -ScriptBlock ({
  - Enabling Parallel disables breakpoints in most IDEs, so consider disabling parallel execution when debugging an issue.
 #>
  function Start-PSYActivity {
+    [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "The script to execute as part of the activity. Can be a single script, or an array of scripts.", Mandatory = $true)]
-        [object] $ScriptBlock,
+        [parameter(HelpMessage = 'Parameters passed to the activity. Use the $Input automatic variable in the value of the ScriptBlock parameter to represent the input objects.', Mandatory = $false, ParameterSetName = 'Default')]
+        [object] $InputObject,
+        [Parameter(HelpMessage = "The script to execute as part of the activity.", Mandatory = $true)]
+        [scriptblock] $ScriptBlock,
         [Parameter(HelpMessage = "The name of the activity for logging and readability purposes.", Mandatory = $false)]
         [string] $Name,
-        [Parameter(HelpMessage = "Runs the scriptblocks in parallel when multiple scriptblocks are defined.", Mandatory = $false)]
-        [switch] $Parallel,
-        [Parameter(HelpMessage = "Maximum number of parallel executions", Mandatory = $false)]
-        [int] $Throttle = 3,
+        [Parameter(HelpMessage = "Starts activity execution and immediately returns handles to the running activities. Use Wait-PSYActivity to await their completion.", Mandatory = $false)]
+        [switch] $Async,
+        [Parameter(HelpMessage = "Submits the activity to a given queue for remote and scalable execution.", Mandatory = $false)]
+        [string] $Queue,
         [Parameter(HelpMessage = "If set, forces remote jobs used in parallel processes to break into the debugger.", Mandatory = $false)]
-        [switch] $WaitDebugger
+        [switch] $WaitDebugger,
+        [parameter(HelpMessage = 'An activity previously queued for execution.', Mandatory = $false)]
+        [object] $QueuedActivity
     )
 
     try {
-        # Log activity start. We also lock the scriptblock AST for reference purposes.  If multiple scriptblocks are
-        # defined, just log the first one.
-        $scriptAst = $ScriptBlock | ForEach-Object { $_.Ast.ToString() }
-        $scriptAst = '[' + ($scriptAst -join ',') + ']'
-        
-        $a = Write-ActivityLog -ScriptAst $scriptAst -Name $Name -Message "Activity '$Name' started" -Status 'Started'
-        $parentActivity = if ($ScriptBlock -is [array]) {$a} else {$null}       # only log a child activity if an array of scriptblocks need processing
+        # Avoids confirmation prompts during logging.
+        if ($DebugPreference -eq 'Inquire') {
+            $DebugPreference = 'Continue'
+        }
+        if ($VerbosePreference -eq 'Inquire') {
+            $VerbosePreference = 'Continue'
+        }
+        # Progress doesn't work well in an unattended environment.
+        if (-not $PSYSession.UserInteractive) {
+            $ProgressPreference = "SilentlyContinue"        # certain hosting environments will fail b/c they don't support Write-Progress
+        }
+        #$ErrorActionPreference = 'Stop'        # let the caller decide how to deal with exceptions
 
-        # Execute foreach (in parallel if specified)
-        $job = ($ScriptBlock | Invoke-ForEach -ScriptBlock $ScriptBlock -Parallel:$Parallel -Throttle $Throttle -Name "$Name[{0}]" -ParentActivity $parentActivity -WaitDebugger:$WaitDebugger)
-        
-        # Log activity end
-        Write-ActivityLog -Name $Name -Message "Activity '$Name' completed" -Status 'Completed' -Activity $a
+        if (-not $QueuedActivity) {
+            # Package up all the required execution information as an activity object. This object must be serializable.
+            $activity = @{
+                # Activity Information
+                ID = $null                      # set by repository
+                ParentID = if ($PSYSession.ActivityStack.Count -gt 0) { $PSYSession.ActivityStack[$PSYSession.ActivityStack.Count - 1] } else { $null }
+                Name = $Name
+                Status = 'Started'
+                StartDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                ExecutionDateTime = $null
+                EndDateTime = $null
+                Queue = $Queue                  # if set, activity is executed remotely by a receiver monitoring this queue name
+                OriginatingServer = $env:COMPUTERNAME
+                ExecutionServer = $null
+                # Invocation Information
+                InputObject = $InputObject
+                ScriptBlock = $ScriptBlock.Ast.ToString().TrimStart('{').TrimEnd('}')       # without trim, Invoke-Command will just return a scriptblock
+                ScriptPath = $MyInvocation.PSCommandPath
+                JobInstanceID = $null
+                # Results/Response Information
+                OutputObject = $null
+                HadErrors = $null
+                Error = $null
+            }
+
+            Checkpoint-PSYActivity -Activity $activity
+        }
+        else {
+            $activity = $QueuedActivity
+        }
+
+        # Push activity to stack
+        [void] $PSYSession.ActivityStack.Add($activity.ID)
+
+        # If we're executing the activity now (i.e. not queuing).
+        if (-not $Queue) {
+            # If we're running asynchronously, use remote jobs.
+            if ($Async) {
+
+                # Environment Information
+                $environmentInfo = @{
+                    PSYSession = $PSYSession
+                    DebugPreference = $DebugPreference.ToString()
+                    VerbosePreference = $VerbosePreference.ToString()
+                    ErrorActionPreference = $ErrorActionPreference.ToString()
+                    WaitDebugger = [bool] $WaitDebugger
+                }
+
+                # Execute the job
+                $job = (Start-Job -ArgumentList $activity.ID, $environmentInfo -Verbose -Debug -ScriptBlock {
+                    param ($activityID, $environmentInfo)
+                    
+                    # Initialize environment
+                    if ($environmentInfo.WaitDebugger) {
+                        Wait-Debugger       # WaitDebugger was set, step into Invoke-Command below to debug client code
+                    }
+                    Import-Module $environmentInfo.PSYSession.Module
+                    $global:PSYSession = $environmentInfo.PSYSession
+                    $PSYSession.UserModules | ForEach-Object { Import-Module $_ }       # load any user modules
+                    Set-Location -Path $PSYSession.WorkingFolder                        # default to parent session's working folder
+                    $PSYSession.UserInteractive = $false                                # force false since out-of-process jobs are unattended
+                
+                    # Without setting these preferences, this output won't get returned
+                    $DebugPreference = $environmentInfo.DebugPreference
+                    $VerbosePreference = $environmentInfo.VerbosePreference
+                    $ProgressPreference = 'SilentlyContinue'
+
+                    # Fetch the activity
+                    $activity = Get-PSYActivity -ID $activityID
+                    if (-not $activity) {
+                        throw "Cannot find activity '$activityID'"
+                    }
+                    elseif (-not $activity.JobInstanceID) {
+                        throw "Synchronization error with activity '$($activity.Name)'. JobInstanceID not set."     # hopefully this never happens
+                    }
+
+                    # Execute the input scriptblock
+                    $scriptBlock = [Scriptblock]::Create($activity.ScriptBlock)                     # only the text was serialized, not the object, so reconstruct
+                    $activity.Status = 'Executing'
+                    $activity.ExecutionDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                    $activity.ExecutionServer = $env:COMPUTERNAME
+                    Checkpoint-PSYActivity $activity
+
+                    try {
+                        $activity.OutputObject = Invoke-Command -ScriptBlock $scriptBlock -InputObject $activity.InputObject     # run client code
+                    }
+                    catch {
+                        $activity.OutputObject = $r
+                        $activity.HadErrors = $true
+                        $activity.Error = $_
+                        Write-PSYErrorLog $_
+                    }
+
+                    $activity.Status = 'Completed'
+                    $activity.EndDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                    Checkpoint-PSYActivity $activity
+                })
+                
+                # Save the JobInstanceID immediately. This *could* cause a synchronization error if the job somehow started before we were
+                # able to save the JobInstanceID.
+                $activity.JobInstanceID = $job.InstanceId
+                Checkpoint-PSYActivity -Activity $activity
+
+                Write-PSYDebugLog -Message "Activity '$Name' executing asynchronously as job $($activity.Job.InstanceId)"
+
+                # If WaitDebugger was set, the remote jobs will be waiting for the debugger, but the main thread still needs
+                # to call Debug-Job to complete the cycle.
+                if ($WaitDebugger -and $Async) {
+                    Start-Sleep -Milliseconds 500       # isn't there a better way? needed b/c of what appears to be timing issues
+                    $null = Debug-Job $job
+                }
+            }
+            else {
+                # Else, we're running sequentially, so avoid using jobs. One reason for this is to make debugging client
+                # scripts easier. We still need to imitate async processing and output the same values as before.
+                try {
+                    $activity.Status = 'Executing'
+                    $activity.ExecutionDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                    $activity.ExecutionServer = $env:COMPUTERNAME
+                    Checkpoint-PSYActivity $activity
+
+                    $activity.OutputObject = Invoke-Command -ScriptBlock $ScriptBlock -InputObject $activity.InputObject
+                    
+                    $activity.HadErrors = $false
+                    $activity.Status = 'Completed'
+                    $activity.EndDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                    Checkpoint-PSYActivity $activity
+                }
+                catch {
+                    $activity.OutputObject = $null
+                    $activity.HadErrors = $true
+                    $activity.Error = $_
+                    $activity.Status = 'Completed'
+                    $activity.EndDateTime = Get-Date | ConvertTo-PSYCompatibleType
+                    Checkpoint-PSYActivity $activity
+                    Write-PSYErrorLog $_
+                }
+                Write-PSYDebugLog -Message "Activity '$Name' executing synchronously $($activity.JobInstanceID)"
+            }
+        }
+        else {
+            # Allow execution on a remote process monitoring the queue. Since the activity is already saved
+            # to the repository, there's nothing more to do.
+            Write-PSYDebugLog -Message "Activity '$Name' queued for asynchronous execution on '$($activity.Queue)'"
+        }
+
+        if ($Async) {
+            # Return activity to caller
+            $activity
+        }
+        elseif ($Queue) {
+            # If not running async, wait for queued activity to complete before returning control to the caller. This
+            # is always the defaults case since it's a safer paradigm for client code.
+            $temp = $activity | Wait-PSYActivity
+        }
     }
     catch {
         Write-PSYErrorLog $_
+    }
+    finally {
+        # Pop activity from stack
+        [void] $PSYSession.ActivityStack.Remove($activity.ID)
     }
 }

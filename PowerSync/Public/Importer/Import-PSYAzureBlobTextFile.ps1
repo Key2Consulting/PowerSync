@@ -70,7 +70,7 @@ function Import-PSYAzureBlobTextFile {
         }
 
         # Write the file
-        $writer = New-Object PowerSync.TextFileDataWriter($gzStream, $Format, $Header)
+        $writer = [PowerSync.TextFileDataWriter]::new($gzStream, $Format, $Header)
         $writer.Write($InputObject.DataReaders[0])
         Write-PSYInformationLog -Message "Uploaded $Format text data to Blob [$Connection]:$Container/$Path."
     }
