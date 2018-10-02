@@ -6,6 +6,9 @@ TODO
 .PARAMETER InputObject
 Parameters passed to the activity. Use the $Input automatic variable in the value of the ScriptBlock parameter to represent the input objects.
 
+.PARAMETER Timeout
+Timeout (in seconds) to wait. Changes to any activity sent to this function will reset the timeout.
+
 .EXAMPLE
 #>
 function Wait-PSYActivity {
@@ -13,9 +16,9 @@ function Wait-PSYActivity {
     param
     (
         [parameter(HelpMessage = 'Return value from Start-PSYActivity.', Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
-        [object] $InputObject
-        # TODO [Parameter(HelpMessage = "Seconds of no activity before abandoning the wait.", Mandatory = $false)]
-        # [int] $Timeout = 60
+        [object] $InputObject,
+        [Parameter(HelpMessage = "Seconds of inactivity before abandoning the wait.", Mandatory = $false)]
+        [int] $Timeout = 3600       # default to 1 hour
     )
 
     begin {
@@ -45,6 +48,7 @@ function Wait-PSYActivity {
             $jobPollingInterval = 1000       # since it's local, we can poll more frequently
             $lastQueuePollTime = Get-Date
             $timeToPollQueue = $true
+            $timeoutStartTime = Get-Date
             $repo = New-FactoryObject -Repository
 
             # While there are still incomplete activities.
@@ -101,6 +105,7 @@ function Wait-PSYActivity {
                     # Regardless of queue or job, if the activity just completed, finish up processing.
                     if ($justCompleted) {
                         [void] $completed.Add($activity)
+                        $timeoutStartTime = Get-Date      # reset the timeout clock
 
                         # Since these activities have executed remotely, nothing was printed to our console. Retrieve 
                         # all log information pertaining to this activity to display within the current process. This
@@ -147,7 +152,6 @@ function Wait-PSYActivity {
                         $_.OutputObject = $activity.OutputObject
                         $_.HadErrors = $activity.HadErrors
                         $_.Error = $activity.Error
-        
                     }
                 }
                 
@@ -159,6 +163,11 @@ function Wait-PSYActivity {
                 }
 
                 if ($activities.Count) {
+                    $timeoutDuration = New-TimeSpan -Start $timeoutStartTime -End (Get-Date)
+                    if ($timeoutDuration.TotalSeconds -gt $Timeout) {
+                        throw "Wait-PSYActivity exceeded timeout of $Timeout ($($completed.Count) completed, $($activities.Count) remaining)."
+                    }
+
                     Start-Sleep -Milliseconds $jobPollingInterval
                     $lastQueuePollDuration = New-TimeSpan -Start $lastQueuePollTime -End (Get-Date)
                     if ($lastQueuePollDuration.TotalMilliseconds -ge $queuePollingInterval) {
