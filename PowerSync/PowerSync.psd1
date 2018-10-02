@@ -13,7 +13,6 @@
     # Get-ChildItem '.\PowerSync\Public\' -File -Recurse | ForEach-Object { Write-Output "'$($_.BaseName)'," }
     FunctionsToExport = 
         'Start-PSYActivity',
-        'Start-PSYForEachActivity',
         'Wait-PSYActivity',
         'Stop-PSYActivity',
         'Receive-PSYQueuedActivity',
@@ -73,7 +72,6 @@
         "$PSScriptRoot\Private\Repository\OleDbRepository.ps1",
         "$PSScriptRoot\Public\Common\Import-PSYModule.ps1",
         "$PSScriptRoot\Public\Activity\Start-PSYActivity.ps1",
-        "$PSScriptRoot\Public\Activity\Start-PSYForEachActivity.ps1",
         "$PSScriptRoot\Public\Activity\Wait-PSYActivity.ps1",
         "$PSScriptRoot\Public\Activity\Stop-PSYActivity.ps1",
         "$PSScriptRoot\Public\Activity\Get-PSYActivity.ps1",

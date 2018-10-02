@@ -3,7 +3,7 @@
 Receives and executes a PowerSync Activity from a queue.
 
 .DESCRIPTION
-TODO
+This function is called by a remote process to monitor a given queue and process activities as they're submitted.
 
 Multiple receivers can monitor the same queue for scalability purposes. Receivers can be hosted in variety of hosting platforms, including:
  - WebJobs

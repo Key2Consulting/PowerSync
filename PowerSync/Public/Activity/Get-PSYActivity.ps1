@@ -2,8 +2,8 @@
 .SYNOPSIS
 Gets a PowerSync activity from the repository.
 
-.DESCRIPTION
-TODO
+.PARAMETER ID
+The ID of the activity to retrieve.
 #>
 function Get-PSYActivity {
     [CmdletBinding()]

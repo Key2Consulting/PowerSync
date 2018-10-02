@@ -43,7 +43,7 @@ function Invoke-Tests {
         Connect-PSYOleDbRepository -ConnectionString $oleDbRepoCS -Schema '[PSY]'
         #$PSYCmdPath = "$rootPath" + "PowerSync\Asset\StoredQuery\Repository"
     }
-
+    
     # Create default connections
     Set-PSYConnection -Name "TestSqlServerTarget" -Provider SqlServer -ConnectionString "Server=$testSqlServer;Integrated Security=true;Database=PSYTestTarget"
     Set-PSYConnection -Name "TestDbOleDb" -Provider OleDb -ConnectionString "Provider=SQLNCLI11;Server=$testSqlServer;Database=PSYTestTarget;Trusted_Connection=yes;"

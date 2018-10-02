@@ -1,11 +1,11 @@
 Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
-    (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Sequential Execution' -ScriptBlock {
-        Write-PSYInformationLog "...$Input..."
+    "Sequential Activity" | Start-PSYActivity -Name 'Test Simple Sequential Execution' -ScriptBlock {
+        "...$($_)..."
     }
 
-    Start-PSYActivity -Name 'Test Sequential Execution' -InputObject "Sequential Activity" -ScriptBlock {
-        Write-PSYInformationLog "...$Input..."
+    (1..10) | Start-PSYActivity -Name 'Test Simple ForEach Sequential Execution' -ScriptBlock {
+        "...$($_)..."
     }
 
     Set-PSYVariable -Name 'TestVariable' -Value "Initial value"
@@ -32,7 +32,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     ) | Wait-PSYActivity
 
     Set-PSYVariable 'TestVariable' 0
-    (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Incorrect Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
+    (1..10) | Start-PSYActivity -Name 'Test ForEach Incorrect Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
         [int] $x = (Get-PSYVariable 'TestVariable') + 1
         Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)
         Set-PSYVariable 'TestVariable' $x      # will not work as expected
@@ -42,7 +42,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     }
 
     Set-PSYVariable 'TestVariable' 0
-    (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Correct Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
+    (1..10) | Start-PSYActivity -Name 'Test ForEach Correct Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
         Lock-PSYVariable -Name 'TestVariable' {
             [int] $x = (Get-PSYVariable 'TestVariable') + 1
             Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)
@@ -61,21 +61,21 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
         }
 
       $activities = (
-            (Start-PSYActivity -Name 'Test Queued Activity Execution 1' -InputObject "input 1" -Async -Queue 'Outgoing' -ScriptBlock {
+            ("input 1" | Start-PSYActivity -Name 'Test Queued Activity Execution 1' -Async -Queue 'Outgoing' -ScriptBlock {
                 Start-Sleep -Seconds 5
-                Set-PSYVariable -Name 'TestVariable' -Value "...$Input..."
+                Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
                 Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
                 "Hello 1"
             }),
-            (Start-PSYActivity -Name 'Test Queued Activity Execution 2' -InputObject "input 2" -Async -Queue 'Outgoing' -ScriptBlock {
+            ("input 2" | Start-PSYActivity -Name 'Test Queued Activity Execution 2' -Async -Queue 'Outgoing' -ScriptBlock {
                 Start-Sleep -Seconds 3
-                Set-PSYVariable -Name 'TestVariable' -Value "...$Input..."
+                Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
                 Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
                 "Hello 2"
             }),
-            (Start-PSYActivity -Name 'Test Queued Activity Execution 3' -InputObject "input 3" -Async -Queue 'Outgoing' -ScriptBlock {
+            ("input 3" | Start-PSYActivity -Name 'Test Queued Activity Execution 3' -Async -Queue 'Outgoing' -ScriptBlock {
                 Start-Sleep -Seconds 0
-                Set-PSYVariable -Name 'TestVariable' -Value "...$Input..."
+                Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
                 Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
                 "Hello 3"
             })
@@ -89,8 +89,8 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
  
         # Queued ForEach
         Start-PSYActivity -Name "Queue ForEach" -ScriptBlock {
-            (1..10) | Start-PSYForEachActivity -Name 'Test ForEach Queued Execution' -Queue 'Outgoing' -ScriptBlock {
-                Write-PSYInformationLog -Message "...$Input..."
+            (1..10) | Start-PSYActivity -Name 'Test ForEach Queued Execution' -Queue 'Outgoing' -ScriptBlock {
+                Write-PSYInformationLog -Message "...$($_)..."
             }
         }
 

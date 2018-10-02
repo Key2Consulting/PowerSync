@@ -1,16 +1,12 @@
 <#
 .SYNOPSIS
-Saves the current state of an activity.
-
-.DESCRIPTION
-TODO
-Should not need to call this API
+Saves the current state of an activity. You should not need to call this API directly.
 #>
 function Checkpoint-PSYActivity {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [object] $Activity
     )
 

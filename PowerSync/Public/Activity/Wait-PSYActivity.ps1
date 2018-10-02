@@ -6,6 +6,9 @@ TODO
 .PARAMETER InputObject
 Parameters passed to the activity. Use the $Input automatic variable in the value of the ScriptBlock parameter to represent the input objects.
 
+.PARAMETER Passthru
+Returns the activities after they complete.
+
 .PARAMETER Timeout
 Timeout (in seconds) to wait. Changes to any activity sent to this function will reset the timeout.
 
@@ -15,9 +18,11 @@ function Wait-PSYActivity {
     [CmdletBinding()]
     param
     (
-        [parameter(HelpMessage = 'Return value from Start-PSYActivity.', Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [parameter(Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [object] $InputObject,
-        [Parameter(HelpMessage = "Seconds of inactivity before abandoning the wait.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
+        [switch] $Passthru,
+        [Parameter(Mandatory = $false)]
         [int] $Timeout = 3600       # default to 1 hour
     )
 
@@ -27,12 +32,7 @@ function Wait-PSYActivity {
     }
     
     process {
-        if ($InputObject -is [array]) {
-            [void] $activities.AddRange($InputObject)
-        }
-        else {
-            [void] $activities.Add($InputObject)
-        }
+        [void] $activities.Add($InputObject)
     }
 
     end {
@@ -130,7 +130,7 @@ function Wait-PSYActivity {
                         }
 
                         Write-PSYDebugLog -Message "$($Name): Completed (Processed $($completed.Count) out of $totalCount)"
-                        Write-Progress -Activity $activity.Name -PercentComplete ($completed.Count / $totalCount * 100)
+                        Write-Progress -Activity 'Awaiting activities' -PercentComplete ($completed.Count / $totalCount * 100)
 
                         # Perform hard copy of activity data we just refreshed back to the input objects passed into 
                         # this function, which clients may still have references to. We return the refreshed/completed 
@@ -197,8 +197,19 @@ function Wait-PSYActivity {
                 throw $ex
             }
 
-            # Return completed results to caller
-            $completed
+            # If Passthru, caller receives the complete activity array.
+            if ($Passthru) {
+                $completed
+            }
+            else {
+                # Otherwise, output anything returned by the activity, or nothing if not. This option keeps client code
+                # from having to set the output to a temp variable, even when they're not expecting one.
+                $completed | ForEach-Object {
+                    if ($_.OutputObject) {
+                        $_.OutputObject
+                    }
+                }    
+            }
         }
         catch {
             Write-PSYErrorLog $_

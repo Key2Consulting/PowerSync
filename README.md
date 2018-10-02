@@ -49,9 +49,9 @@ Set-PSYConnection -Name "OracleSource" -Provider Oracle -ConnectionString "Data 
 Set-PSYConnection -Name "SqlServerTarget" -Provider SqlServer -ConnectionString "Server=TargetServer;Integrated Security=true;Database=DatabaseB"
 
 # Start a parallel activity which copies the tables.
-@('Table1', 'Table2', 'Table3') | Start-PSYForEachActivity -Name 'Multi-Table Copy' -Parallel -Throttle 3 -ScriptBlock {
-        Export-PSYOracle -Connection "OracleSource" -Table $Input `
-            | Import-PSYSqlServer -Connection "SqlServerTarget" -Table $Input -Create -Index
+('Table1', 'Table2', 'Table3') | Start-PSYActivity -Name 'Multi-Table Copy' -Parallel -Throttle 3 -ScriptBlock {
+        Export-PSYOracle -Connection "OracleSource" -Table $_ `
+            | Import-PSYSqlServer -Connection "SqlServerTarget" -Table $_ -Create -Index
     }
 ```
 ## Installing and Importing the Module
@@ -113,54 +113,114 @@ An OleDb database repository is more complex option, but also more robust. It al
 The OleDb provider can use any OleDb compatible database. However, the use of a database repository requires the creation of a database which conforms to the structures and capabilities required by PowerSync. Since database systems and their proprietary syntax can vary significantly, PowerSync delegates creation and management of the database repository to your project. However, PowerSync does include *Kits* which contain pre-packaged and fully functional database repository projects ready to use. Once deployed, maintaining and upgrading database repositories based on those kits is the responsibility of the developer.
 
 ## Activities
-PowerSync activities organize your data integration workload into atomic units of work. You execute an Activity with the `Start-PSYActivity` or `Start-PSYForEachActivity` functions. Although activities are not required, they provide certain benefits:
+PowerSync activities organize your data integration workload into atomic units of work. You execute an Activity with the `Start-PSYActivity` function. Although activities are not required, they provide certain benefits:
  - Log operations performed during an activity are associated to that activity.
  - Automatic logging of errors.
  - Sequential or parallel execution (using remote jobs).
+ - Scalable and decoupled execution of activities on remote servers using queues.
 
-Activities are nestable, giving projects the ability to decompose complex workloads into smaller, simpler units of work.
+Activities are nestable, giving projects the ability to decompose complex workloads into smaller, simpler units of work. You can even pass parameters to activities and reference it within activity using the `$_` variable, and get results back.
 ```PowerShell
 Start-PSYActivity -Name 'Outer Activity' -ScriptBlock {
     Start-PSYActivity -Name 'Inner Activity' -ScriptBlock {
-        Write-Host 'Hello Inner World'
+        Write-Host "Hello World"
     }
-    Write-Host 'Hello Outer World'
+}
+
+'Hello World' | Start-PSYActivity -Name 'Outer Activity' -ScriptBlock {
+    $out = $_ | Start-PSYActivity -Name 'Inner Activity' -ScriptBlock {
+        "$($_) Inner"
+    }
+    Write-Host "$out from Outer"
 }
 ```
-You can also execute multiple scriptblocks within the same activity:
+
+Activities are synchronous unless you set the `-Async` switch, which you can await later on. 
 ```PowerShell
-Start-PSYActivity -Name 'Multiple Activities' -ScriptBlock ({
-    Write-Host 'One'
-}, {
-    Write-Host 'Two'
-}, {
-    Write-Host 'Three'
-})
+# Async with parameter but no return value
+$async = 'Hello World' | Start-PSYActivity -Name 'Asynchronous Activity' -Async -ScriptBlock {
+    Write-Host $_
+}
+Write-Host 'Some long running task'
+$async | Wait-PSYActivity       # echos any log information collected during the activity
+
+# Async with parameter and return value
+$async = 'Hello World' | Start-PSYActivity -Name 'Asynchronous Activity' -Async -ScriptBlock {
+    "$($_) Async"
+}
+Write-Host 'Some long running task'
+$x = $async | Wait-PSYActivity       # equals Hello World Async
+
+# Async with parameter, but returns full activity information after await
+$activity = 'Hello World' | Start-PSYActivity -Name 'Asynchronous Activity' -Async -ScriptBlock {
+    "$($_) Async"
+} | Wait-PSYActivity -Passthru
+Write-Host $activity.OutputObject
+
+# Executes several script blocks asynchronously
+$out = (
+    ("input 1" | Start-PSYActivity -Name 'Asynchronous Activity 1' -Async -ScriptBlock {
+        "Hello 1"
+    }),
+    ("input 2" | Start-PSYActivity -Name 'Test Queued Activity Execution 2' -Async -ScriptBlock {
+        "Hello 2"
+    }),
+    ("input 3" | Start-PSYActivity -Name 'Test Queued Activity Execution 3' -Async -ScriptBlock {
+        "Hello 3"
+    })
+) | Wait-PSYActivity
 ```
-You can execute the same activity for a list of items, foreach style (use the variable `$Input` to retrieve the current item):
+
+You can execute the same activity for a list of items, foreach style (use the variable `$_` to retrieve the current item).
 ```PowerShell
 (1, 2, 3) | Start-PSYActivity -Name 'ForEach Activity' -ScriptBlock {
-    Write-Host "Hello Item $Input"
+    Write-Host "Hello Item $($_)"
 }
 ```
-By default, activities execute in a sequential manner. However, setting the `-Parallel` switch will execute the activity in parallel (where applicable) and can be throttled via the `-Throttle` parameter.
+
+ForEach activities execute in a sequential manner by default. However, setting the `-Parallel` switch will execute the activity in parallel (where applicable) and can be throttled via the `-Throttle` parameter.
 ```PowerShell
-# Prints Three, Two, One
-Start-PSYActivity -Name 'Multiple Activities' -Parallel -Throttle 5 -ScriptBlock ({
-    Start-Sleep -Seconds 3
-    Write-Host 'One'
-}, {
-    Start-Sleep -Seconds 2
-    Write-Host 'Two'
-}, {
-    Start-Sleep -Seconds 1
-    Write-Host 'Three'
-})
-# Can print in any order.
-(1, 2, 3) | Start-PSYForEachActivity -Name 'ForEach Activity' -Parallel -Throttle 5 -ScriptBlock {
-    Write-Host "Hello Item $Input"
+# Prints 1, 2, 3
+(1, 2, 3) | Start-PSYActivity -Name 'Multiple Activities' -ScriptBlock {
+    Start-Sleep -Seconds (3 - $_)
+    Write-Host $_
+}
+# Prints 3, 2, 1
+(1, 2, 3) | Start-PSYActivity -Name 'Multiple Activities' -Parallel -Throttle 5 -ScriptBlock {
+    Start-Sleep -Seconds (3 - $_)
+    Write-Host $_
 }
 ```
+
+Parallel activities do not support the `-Async` switch since there's no way to throttle the execution of each enumerated value. Upon completion of a ForEach, you are guaranteed all its activities have completed, even though within the ForEach the activities may have executed asynchronously.
+
+Activities can be placed in a queue and executed by remote servers monitoring the queue. This allows for scalable execution of activities, while retaining centralization of your application logic.
+```PowerShell
+'Foo' | Start-PSYActivity -Name 'Queued Activity' -Queue 'MyWorkQueue' -ScriptBlock {
+    Write-Host 'Some long running task: ' + $_
+} | Wait-PSYActivity
+
+(1..1000) | Start-PSYActivity -Name 'Queued Activity' -Queue 'MyWorkQueue' -ScriptBlock {
+    Write-Host 'This may take a while: Item' + $_
+} | Wait-PSYActivity
+```
+
+Processing of queued activities takes place on any remote server by monitoring the queue and receiving the activity.
+```PowerShell
+Receive-PSYQueuedActivity -Queue 'MyWorkQueue' -Continous       # never exits
+```
+
+You can also simulate a remote receiver in your application.
+```PowerShell
+$receiver = Start-PSYActivity -Name 'Self-Hosted Receiver' -Async -ScriptBlock {
+    Receive-PSYQueuedActivity -Queue 'MyWorkQueue' -Continous
+}
+
+# ...do lots of stuff
+
+Stop-PSYActivity $receiver
+```
+
 ### Debugging Parallel Processes
 Debugging parallel execution in PowerShell is tricky. Enabling parallel execution disables breakpoints in most IDEs. You can leverage the PowerSync logs to help pinpoint the issue, but sometimes stepping through the code is the best and only option. When initially developing or debugging an issue, consider disabling parallel execution by temporarily removing the `-Parallel` switch. If the problem only occurs during parallel execution, the `WaitDebugger` switch will force each remote job to break in the debugger. Howevever, it will break within an internal PowerSync function so you'll need to step through until you reach your code.
 
@@ -206,24 +266,24 @@ Native PowerShell variables (i.e. `$myVar = 123`) have limited use in data integ
 
 Since remote jobs are used for parallel execution, any PowerShell variable passed into the parallel activity must support PowerShell serialization (primitives, hashtables, arrays). Otherwise, the data won't get marshalled across correctly and you'll get unexpected results. You may want to avoid using PowerShell classes altogether as these can be difficult to serialize (it's worth mentioning they also have notorious thread safety issues). 
 
-One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, *sequential* activities do retain visibility to these variables. Furthermore, changes to enumerated objects during parallel execution (`Start-PSYForEachActivity`) will not affect the copy in the caller's process space.
+One very important point is that PowerShell variables are not automatically marshalled across to parallel processes. Although, *sequential* activities do retain visibility to these variables. Furthermore, changes to enumerated objects during asynchronous or parallel execution (`-Async` & `-Parallel`) will not affect the copy in the caller's process space. To communicate with asynchronous activities, pipe data into the activity (i.e. parameters) and return data from the activity.
 ```PowerShell
 $readMe = 123
-Start-PSYActivity -ScriptBlock ({
+Start-PSYActivity -ScriptBlock {
     $x = $readMe     # $x equals 123
 }
-Start-PSYActivity -Parallel -ScriptBlock ({     # set Parallel switch
+Start-PSYActivity -Parallel -ScriptBlock {
     $x = $readMe     # $x equals null
-})
-
-$obj = @{WriteMe = 123}
-($obj) | Start-PSYForEachActivity -ScriptBlock {
-    $obj.WriteMe = 456      # updates caller's obj
 }
-($obj) | Start-PSYForEachActivity -Parallel -ScriptBlock {      # set Parallel switch
-    $obj.WriteMe = 789      # $obj is now remote, does not update caller's obj
-}
-$x = $obj.WriteMe           # still 456
+Start-PSYActivity -Async -ScriptBlock {
+    $x = $readMe     # $x equals null
+} | Wait-PSYActivity
+```
+Here's the correct way to pass data (or use PowerSync variables).
+```PowerShell
+$x = $x | Start-PSYActivity -Async -ScriptBlock {
+    $_ + 1
+} | Wait-PSYActivity
 ```
 ## Connections
 Connections define all of the required information required to establish a connection to a source or target system. Connections are persisted in the repository, only need to be created once, and then referenced by name in downstream functions.
