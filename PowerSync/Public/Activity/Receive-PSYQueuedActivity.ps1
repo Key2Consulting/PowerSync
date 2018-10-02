@@ -3,7 +3,7 @@
 Receives and executes a PowerSync Activity from a queue.
 
 .DESCRIPTION
-TODO
+This function is called by a remote process to monitor a given queue and process activities as they're submitted.
 
 Multiple receivers can monitor the same queue for scalability purposes. Receivers can be hosted in variety of hosting platforms, including:
  - WebJobs
@@ -35,13 +35,13 @@ function Receive-PSYQueuedActivity {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "The queue to monitor.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Queue,
-        [Parameter(HelpMessage = "Will continously monitor the queue indefinitely.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Continous,
-        [Parameter(HelpMessage = "Maximum number of parallel executions", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [int] $Throttle = 5,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [int] $Timeout = 0
     )
 

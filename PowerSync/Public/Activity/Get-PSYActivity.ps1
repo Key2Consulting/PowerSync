@@ -2,14 +2,14 @@
 .SYNOPSIS
 Gets a PowerSync activity from the repository.
 
-.DESCRIPTION
-TODO
+.PARAMETER ID
+The ID of the activity to retrieve.
 #>
 function Get-PSYActivity {
     [CmdletBinding()]
     param
     (
-        [parameter(HelpMessage = 'TODO', Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [object] $ID
     )
 

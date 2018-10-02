@@ -13,7 +13,7 @@ function Stop-PSYActivity {
     [CmdletBinding()]
     param
     (
-        [parameter(HelpMessage = 'Return value from Start-PSYActivity.', Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [parameter(Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
         [object] $InputObject
     )
 

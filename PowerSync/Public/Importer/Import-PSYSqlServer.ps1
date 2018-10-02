@@ -45,25 +45,25 @@ Export-PSYTextFile -Connection "TestSource" -Path "Sample100.csv" -Format CSV -H
  #>
 function Import-PSYSqlServer {
     param (
-        [Parameter(HelpMessage = "Piped data from Exporter (containing data reader and export provider information)", Mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
-        [Parameter(HelpMessage = "Name of the connection to import into.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Connection,
-        [Parameter(HelpMessage = "The table to import into.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Table,
-        [Parameter(HelpMessage = "Automatically creates the target table, if it doesn't exist, based on the exported data's schema.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Create,
-        [Parameter(HelpMessage = "Overwrites the target data, oppose to appending it. If Create is set, the entire table is recreated. Use this option if new columns may appear in source data.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Overwrite,
-        [Parameter(HelpMessage = "Automatically creates a clustered or nonclustered columnstore index. Used in conjunction with Create flag.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Index,
-        [Parameter(HelpMessage = "Adds compression to the target table. Used in conjunction with Create flag.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Compress,
-        [Parameter(HelpMessage = "Performs the append or overwrite in a transactionally consistent manner by first importing into a new table and then publishing from there within a transaction.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Consistent,
-        [Parameter(HelpMessage = "Timeout before aborting the import operation.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [int] $Timeout,
-        [Parameter(HelpMessage = "Uses PolyBase to import the data instead of SqlBulkCopy.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $PolyBase
     )
 

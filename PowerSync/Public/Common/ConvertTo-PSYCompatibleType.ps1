@@ -14,7 +14,7 @@ ConvertFrom-PSYCompatibleType -Object (Get-Date)
 function ConvertTo-PSYCompatibleType {
     [CmdletBinding()]
     param(
-        [parameter(HelpMessage = "The object to convert to a compatible type.", Mandatory = $false, ValueFromPipeline = $true)]
+        [parameter(Mandatory = $false, ValueFromPipeline = $true)]
         [object] $InputObject
     )
 

@@ -40,13 +40,13 @@ See https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/string-wi
 function Get-PSYVariable {
     param
     (
-        [Parameter(HelpMessage = "Name of the variable. Variable names must be unique.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Name,
-        [Parameter(HelpMessage = "If the variable is not found, the default value is returned.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [object] $DefaultValue,
-        [Parameter(HelpMessage = "Determines whether to use wildcards when searching the variable name. Supports wildcards (i.e. *, ?).", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Wildcards,
-        [Parameter(HelpMessage = "Returns all known information about a variable as a hashtable.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Extended
     )
 

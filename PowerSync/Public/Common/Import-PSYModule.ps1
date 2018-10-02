@@ -11,7 +11,7 @@ The name of the module to import. See PowerShell's Import-Module for more inform
 function Import-PSYModule {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Name
     )
 

@@ -17,9 +17,9 @@ ConvertFrom-PSYCompatibleType -Object '2018-09-02T21:35:01.378Z' -Type [DateTime
 function ConvertFrom-PSYCompatibleType {
     [CmdletBinding()]
     param (
-        [parameter(HelpMessage = "The object to convert from a compatible type.", Mandatory = $false, ValueFromPipeline = $true, ParameterSetName = 'Pipe')]
+        [parameter(Mandatory = $false, ValueFromPipeline = $true, ParameterSetName = 'Pipe')]
         [object] $InputObject,
-        [Parameter(HelpMessage = "The desired type.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [type] $Type
     )
 

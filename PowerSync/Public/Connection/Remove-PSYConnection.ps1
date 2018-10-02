@@ -14,7 +14,7 @@ Remove-PSYConnection -Name 'MySource'
 function Remove-PSYConnection {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Name
     )
 

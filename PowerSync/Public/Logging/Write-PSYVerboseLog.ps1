@@ -15,9 +15,9 @@ function Write-PSYVerboseLog {
     [CmdletBinding()]
     param
     (
-        [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Message,
-        [Parameter(HelpMessage = "An optional category to help organize different messages.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Category
     )
 

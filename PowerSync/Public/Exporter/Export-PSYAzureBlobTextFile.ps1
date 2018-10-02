@@ -36,17 +36,17 @@ Export-PSYAzureBlobTextFile -Connection "TestAzureBlob" -Container 'data' -Path 
  #>
  function Export-PSYAzureBlobTextFile {
     param (
-        [Parameter(HelpMessage = "Name of the connection to extract from.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Connection,
-        [Parameter(HelpMessage = "Azure blob storage container.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Container,
-        [Parameter(HelpMessage = "Path of the file or files to export (supports wildcards).", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Path,
-        [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [PSYTextFileFormat] $Format,
-        [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Header,
-        [Parameter(HelpMessage = "Streams the file from Blob storage, oppose to downloading it by default.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Stream
     )
     

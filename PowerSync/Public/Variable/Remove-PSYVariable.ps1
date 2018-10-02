@@ -26,9 +26,9 @@ Remove-PSYVariable -Name 'MyList[*]' -Wildcards
 function Remove-PSYVariable {
     param
     (
-        [Parameter(HelpMessage = "Name of the variable. Variable names must be unique.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Name,
-        [Parameter(HelpMessage = "Determines whether to use wildcards when searching the variable name. Supports wildcards (i.e. *, ?).", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Wildcards
     )
 

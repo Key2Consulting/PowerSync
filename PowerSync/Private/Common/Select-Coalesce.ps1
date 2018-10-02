@@ -1,6 +1,6 @@
 function Select-Coalesce {
     param (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [object[]] $InputObject
     )
 

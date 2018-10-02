@@ -32,13 +32,13 @@ If the file is a compressed as a ZIP file, it will be decompressed prior to the 
  #>
 function Export-PSYTextFile {
     param (
-        [Parameter(HelpMessage = "Name of the connection to extract from.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Connection,
-        [Parameter(HelpMessage = "Path of the file or files to export (supports wildcards).", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Path,
-        [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [PSYTextFileFormat] $Format,
-        [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Header
     )
     

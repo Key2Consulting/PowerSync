@@ -16,7 +16,7 @@ Remove-PSYJsonRepository -Path 'MyLocalFile.json'
 function Remove-PSYJsonRepository {
     param
     (
-        [Parameter(HelpMessage = "Path of the Json repository to delete. If just a filename is specified, will resolve to the current working folder.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Path
     )
 

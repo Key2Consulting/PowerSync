@@ -23,9 +23,9 @@ Invoke-PSYCmd -Connection 'MyConnection' -Name "PublishMyDataSets" -Param @{Proc
 #>
 function Resolve-PSYCmd {
     param (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Name,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [hashtable] $Param
     )
 

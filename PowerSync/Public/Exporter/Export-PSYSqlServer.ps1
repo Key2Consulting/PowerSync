@@ -32,13 +32,13 @@ Exporters return a hashtable of two distinct variables:
  #>
 function Export-PSYSqlServer {
     param (
-        [Parameter(HelpMessage = "Name of the connection to extract from.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Connection,
-        [Parameter(HelpMessage = "Query which extracts data from the database.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $ExtractQuery,
-        [Parameter(HelpMessage = "The table to extract against. Not used if ExtractQuery is specified.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Table,
-        [Parameter(HelpMessage = "The command timeout used when executing the extract query.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [int] $Timeout
     )
 

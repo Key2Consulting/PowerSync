@@ -30,11 +30,11 @@ A variable should be locked for the shortest amount of time possible. Think seco
 function Lock-PSYVariable {
     param
     (
-        [Parameter(HelpMessage = "Name of the variable. Variable names must be unique.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Name,
-        [Parameter(HelpMessage = "The scriptblock to execute for the duration of the lock.", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [scriptblock] $ScriptBlock,
-        [Parameter(HelpMessage = "The duration to wait to acquire a lock on a variable. If timeout is exceeded, the lock will fail.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [int] $Timeout = 10000
     )
 

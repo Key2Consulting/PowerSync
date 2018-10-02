@@ -68,37 +68,37 @@ Timeout before aborting the copy operation. If no Timeout is specified, uses val
 function Copy-PSYTable {
     [CmdletBinding()]
     param (
-        [parameter(HelpMessage = "The provider of the connection (e.g. SQLServer, TextFile, Json, MySql). Controls what class is instantiated to establish the connection.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [PSYDbConnectionProvider] $SProvider,
-        [parameter(HelpMessage = "A Connection String used by the given provider.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $SConnectionString,
-        [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $SServer,
-        [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $SDatabase,
-        [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [PSYTextFileFormat] $SFormat,
-        [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $SHeader,
-        [parameter(HelpMessage = "The table to copy.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $STable,
-        [parameter(HelpMessage = "The provider of the connection (e.g. SQLServer, TextFile, Json, MySql). Controls what class is instantiated to establish the connection.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [PSYDbConnectionProvider] $TProvider,
-        [parameter(HelpMessage = "A Connection String used by the given provider.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $TConnectionString,
-        [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $TServer,
-        [parameter(HelpMessage = "If ConnectionString is omitted, Set-PSYConnection will infer ConnectionString from Server and Database parameters.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $TDatabase,
-        [Parameter(HelpMessage = "The format of the file (CSV, Tab).", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [PSYTextFileFormat] $TFormat,
-        [Parameter(HelpMessage = "Whether the first row of the text file contains header information.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [switch] $THeader,
-        [parameter(HelpMessage = "The table to copy to.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [string] $TTable,
-        [parameter(HelpMessage = "Compresses the table or the text file.", Mandatory = $false)]
+        [parameter(Mandatory = $false)]
         [switch] $TCompress,
-        [Parameter(HelpMessage = "Timeout before aborting the copy operation.", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [int] $Timeout
     )
 

@@ -15,11 +15,11 @@ function Write-PSYInformationLog {
     [CmdletBinding()]
     param
     (
-        [parameter(HelpMessage = "TODO", Mandatory = $true, ValueFromPipeline = $true, ParameterSetName='Pipe')]
+        [parameter(Mandatory = $true, ValueFromPipeline = $true, ParameterSetName='Pipe')]
             [object] $InputObject,
-        [Parameter(HelpMessage = "The primary text describing something useful regarding the log.", Mandatory = $true, ParameterSetName='Explicit', Position=0)]
+        [Parameter(Mandatory = $true, ParameterSetName='Explicit', Position=0)]
             [string] $Message,
-        [Parameter(HelpMessage = "An optional category to help organize different messages.", Mandatory = $false, ParameterSetName='Explicit', Position=1)]
+        [Parameter(Mandatory = $false, ParameterSetName='Explicit', Position=1)]
             [string] $Category
     )
 

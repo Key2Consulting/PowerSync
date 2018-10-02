@@ -1,11 +1,11 @@
 function Import-PSYOleDb {
     param
     (
-        [Parameter(HelpMessage = "TODO", Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string] $Connection,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string] $Table,
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [int] $Timeout
     )
 

@@ -1,6 +1,6 @@
 function Get-EnumName {
     param(
-        [Parameter(HelpMessage = "TODO", Mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [object] $Member
     )
     
