@@ -36,6 +36,7 @@ function Resolve-PSYCmd {
         if ($storedCommandPath) {
             [void] $searchPaths.AddRange($storedCommandPath.Split(';'))
         }
+        [void] $searchPaths.Add($PSYSession.WorkingFolder + '\*.*')     # always add our working folder
         [void] $searchPaths.Add($PSYSession.Module + '\Asset\*.*')      # always add our current module location as a the final default
         
         # Find the stored command along the path in order they're entered
