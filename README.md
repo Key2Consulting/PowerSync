@@ -317,7 +317,7 @@ Stored Commands are SQL files defined as part of a PowerSync project with the pu
 
 Alternatively, you can use an explicit query defined in your script instead of a separate file by specifying the `-CommandText` parameter.
 
-Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value defined in the script (i.e. a default).
+Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value defined in the script (i.e. a default). In addition to simple scalar values, lists of hashtables can be passed into scripts as well. The list will be converted into the INSERT VALUES format i.e. ('Field', Field), ('Field', Field).
 
 If the Stored Command returns a resultset, it is converted into an ArrayList of hashtables and returned to the caller. A single row just returns a hashtable.
 
@@ -326,23 +326,31 @@ Sophisticated projects requiring complex configuration structures and custom wor
 Example using a custom table in the PowerSync repository to retrieve list of tables to extract.
 ```PowerShell
 # Use a custom script. The parameter Frequency is passed into the script, but Category is not.
-$extractWorkload = Invoke-PSYCmd -Connection 'MyConnection' -Name "GetExtractWorkload.sql" -Param @{Frequency = 'Daily'}
+$ExcludeList = @(
+    [ordered]@{TableName = 'Table1'},
+    [ordered]@{TableName = 'Table2'})
+$extractWorkload = Invoke-PSYCmd -Connection 'MyConnection' -Name "GetExtractWorkload.sql" -Param @{Frequency = 'Daily'; ExcludeList = $ExcludeList}
 
 # Do extraction and loading...
 
 # Update the high water mark for next extraction. Although using a script is recommended, it's not 
 # required (and PowerShell makes it easy to pass parameters).
-Invoke-PSYCmd -Connection 'MyConnection' -Command "UPDATE dbo.MyDataFeed WHERE HighWaterMark = '$maxModifiedDateTime'"
+Invoke-PSYCmd -Connection 'MyConnection' -CommandText "UPDATE dbo.MyDataFeed WHERE HighWaterMark = '$maxModifiedDateTime'"
 ```
 *GetExtractWorkload.sql*
 ```SQL
 :setvar Frequency "Monthly"
 :setvar Category "All"      -- not passed so $(Category) defaults to All
+:setvar ExcludeList ""
+DECLARE @ExcludeList TABLE([TableName] VARCHAR(128))
+INSERT INTO @ExcludeList([TableName]) VALUES $(ExcludeList)
+
 SELECT ExtractTableName, LoadTableName, HighWaterMark
 FROM dbo.MyDataFeed
 WHERE 
     Frequency = '$(Frequency)'
     AND (Category = '$(Category)' OR $(Category) = 'All')
+    AND TableName NOT IN (SELECT TableName FROM @ExcludeList)
 ```
 
 ## Exporters and Importers
