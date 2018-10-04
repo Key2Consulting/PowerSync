@@ -34,12 +34,20 @@ function Invoke-PSYCmd {
         [Parameter(Mandatory = $false)]
         [string] $Name,
         [Parameter(Mandatory = $false)]
+        [string] $CommandText,
+        [Parameter(Mandatory = $false)]
         [hashtable] $Param
     )
 
     $conn = $null
     try {
-        $cmdText = Resolve-PSYCmd -Name $Name -Param $Param
+        # Use the explicitly passed command if present. Otherwise, attempt to load it from a file.
+        if ($CommandText) {
+            $cmdText = $CommandText
+        }
+        else {
+            $cmdText = Resolve-PSYCmd -Name $Name -Param $Param
+        }
         $connDef = Get-PSYConnection -Name $Connection
         $providerName = [Enum]::GetName([PSYDbConnectionProvider], $connDef.Provider)
         $conn = New-FactoryObject -Connection -TypeName $providerName

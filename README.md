@@ -292,8 +292,6 @@ Connections define all of the required information required to establish a conne
 
 Connections definitions are fairly generic and platform agnostic. The specific properties required to establish a connection to a data system depend on the provider of a connection, but most providers support the notion of a Connection String.
 
-> PowerSync automatically defines a connection to the PowerSync repository using the name *PSYRepository*.
-
 ```PowerShell
 Set-PSYConnection -Name "MyConnection" -Provider SqlServer -ConnectionString "Server=MyServer;Integrated Security=true;Database=MyDatabase"      # creates or overwrites
 Get-PSYConnection -Name "MyConnection"       # you would rarely use this function
@@ -314,8 +312,10 @@ Set-PSYConnection -Name "FileConnection" -Provider TextFile -ConnectionString "D
 Data systems enforce some level of access security, whether via integrated security of the current principle, a user name and password, or certificates. PowerSync only supports integrated security, and user name / password defined within the connection string. It is generally recommended to handle authorization from within your hosting environment such that the credentials executing your PowerSync application are authorized to access backend data systems.
 
 ## Stored Commands
-Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. PowerSync will attempt to locate the script (via the `-Name` param) in the Project Folder, which defaults to the location of the script that imported PowerSync. 
+Stored Commands are SQL files defined as part of a PowerSync project with the purpose of executing a TSQL command against a database connection. PowerSync will attempt to locate the script (via the `-Name` param) in the Working Folder, which defaults to the location of the script that imported PowerSync. Additional folders can be specified by updating the `PSYCmdPath` environment variable (each path separated by a semicolon).
 > Specifying the file extension in the script name is optional.
+
+Alternatively, you can use an explicit query defined in your script instead of a separate file by specifying the `-CommandText` parameter.
 
 Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(VarName). All SQLCMD Mode syntax is removed prior to execution, so Stored Commands work against non-SQL Server databases. Any defined variable reference that's not explicitly passed in as a parameter gets replaced with the :setvar's value defined in the script (i.e. a default).
 
@@ -326,13 +326,13 @@ Sophisticated projects requiring complex configuration structures and custom wor
 Example using a custom table in the PowerSync repository to retrieve list of tables to extract.
 ```PowerShell
 # Use a custom script. The parameter Frequency is passed into the script, but Category is not.
-$extractWorkload = Invoke-PSYCmd -Connection 'PSYRepository' -Name "GetExtractWorkload.sql" -Param @{Frequency = 'Daily'}
+$extractWorkload = Invoke-PSYCmd -Connection 'MyConnection' -Name "GetExtractWorkload.sql" -Param @{Frequency = 'Daily'}
 
 # Do extraction and loading...
 
 # Update the high water mark for next extraction. Although using a script is recommended, it's not 
 # required (and PowerShell makes it easy to pass parameters).
-Invoke-PSYCmd -Connection 'PSYRepository' -Command "UPDATE dbo.MyDataFeed WHERE HighWaterMark = '$maxModifiedDateTime'"
+Invoke-PSYCmd -Connection 'MyConnection' -Command "UPDATE dbo.MyDataFeed WHERE HighWaterMark = '$maxModifiedDateTime'"
 ```
 *GetExtractWorkload.sql*
 ```SQL
