@@ -132,6 +132,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                     Queue = $Queue                  # if set, activity is executed remotely by a receiver monitoring this queue name
                     OriginatingServer = $env:COMPUTERNAME
                     ExecutionServer = $null
+                    ExecutionPID = $null
                     # Invocation Information
                     InputObject = $InputObject
                     ScriptBlock = $ScriptBlock.Ast.ToString().TrimStart('{').TrimEnd('}')       # without trim, Invoke-Command will just return a scriptblock
@@ -200,6 +201,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         $activity.Status = 'Executing'
                         $activity.ExecutionDateTime = Get-Date | ConvertTo-PSYCompatibleType
                         $activity.ExecutionServer = $env:COMPUTERNAME
+                        $activity.ExecutionPID = $PID
                         Checkpoint-PSYActivity $activity
 
                         try {
@@ -239,6 +241,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         $activity.Status = 'Executing'
                         $activity.ExecutionDateTime = Get-Date | ConvertTo-PSYCompatibleType
                         $activity.ExecutionServer = $env:COMPUTERNAME
+                        $activity.ExecutionPID = $PID
                         Checkpoint-PSYActivity $activity
 
                         $global:PSItem = $activity.InputObject                              # set $_ automatic variable so script can reference

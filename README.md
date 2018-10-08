@@ -349,7 +349,7 @@ SELECT ExtractTableName, LoadTableName, HighWaterMark
 FROM dbo.MyDataFeed
 WHERE 
     Frequency = '$(Frequency)'
-    AND (Category = '$(Category)' OR $(Category) = 'All')
+    AND (Category = '$(Category)' OR '$(Category)' = 'All')
     AND TableName NOT IN (SELECT TableName FROM @ExcludeList)
 ```
 

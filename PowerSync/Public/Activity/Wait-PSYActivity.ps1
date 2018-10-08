@@ -145,6 +145,7 @@ function Wait-PSYActivity {
                         $_.Queue = $activity.Queue
                         $_.OriginatingServer = $activity.OriginatingServer
                         $_.ExecutionServer = $activity.ExecutionServer
+                        $_.ExecutionPID = $activity.ExecutionPID
                         $_.InputObject = $activity.InputObject
                         $_.ScriptBlock = $activity.ScriptBlock
                         $_.ScriptPath = $activity.ScriptPath
