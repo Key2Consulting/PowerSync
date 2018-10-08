@@ -17,7 +17,7 @@ function Import-PSYModule {
 
     try {
         $PSYSession.UserModules.Add($Name)
-        Import-Module -Name $Name
+        Import-Module -Name $Name -Global
     }
     catch {
         Write-PSYErrorLog $_
