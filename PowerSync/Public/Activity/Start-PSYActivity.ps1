@@ -97,6 +97,14 @@ $async | Wait-PSYActivity       # echos any log information collected during the
         }
         #$ErrorActionPreference = 'Stop'        # let the caller decide how to deal with exceptions
 
+        # Allow forcing of all activities to run sequentially if PSYForceSequential is set. The purpose is to facilitate development
+        # and debugging since you lose breakpoint capability with asynchronous processing.
+        if (Get-PSYVariable -Name 'PSYForceSequential' -DefaultValue $false) {
+            $Async = $false
+            $Queue = $null
+            $Parallel = $false
+        }
+
         $activities = [System.Collections.ArrayList]::new()
         $itemIndex = 0
     }
@@ -178,7 +186,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         }
                         Import-Module $environmentInfo.PSYSession.Module
                         $global:PSYSession = $environmentInfo.PSYSession
-                        $PSYSession.UserModules | ForEach-Object { Import-Module $_ }       # load any user modules
+                        $PSYSession.UserModules.Clone() | ForEach-Object { Import-Module $_ }       # load any user modules
                         Set-Location -Path $PSYSession.WorkingFolder                        # default to parent session's working folder
                         $PSYSession.UserInteractive = $false                                # force false since out-of-process jobs are unattended
                     

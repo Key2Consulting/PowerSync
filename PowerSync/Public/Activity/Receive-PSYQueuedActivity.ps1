@@ -68,7 +68,7 @@ function Receive-PSYQueuedActivity {
                 # Execute the activity
                 if ($async) {
                     $queuedActivity = Start-PSYActivity -QueuedActivity $queuedActivity -Async -ScriptBlock {}
-                    $processing.Add($queuedActivity)
+                    [void] $processing.Add($queuedActivity)
                 }
                 else {
                     Start-PSYActivity -QueuedActivity $queuedActivity -ScriptBlock {}
