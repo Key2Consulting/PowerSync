@@ -178,7 +178,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         }
                         Import-Module $environmentInfo.PSYSession.Module
                         $global:PSYSession = $environmentInfo.PSYSession
-                        $PSYSession.UserModules | ForEach-Object { Import-Module $_ }       # load any user modules
+                        $PSYSession.UserModules.Clone() | ForEach-Object { Import-Module $_ }       # load any user modules
                         Set-Location -Path $PSYSession.WorkingFolder                        # default to parent session's working folder
                         $PSYSession.UserInteractive = $false                                # force false since out-of-process jobs are unattended
                     
