@@ -97,6 +97,14 @@ $async | Wait-PSYActivity       # echos any log information collected during the
         }
         #$ErrorActionPreference = 'Stop'        # let the caller decide how to deal with exceptions
 
+        # Allow forcing of all activities to run sequentially if PSYForceSequential is set. The purpose is to facilitate development
+        # and debugging since you lose breakpoint capability with asynchronous processing.
+        if (Get-PSYVariable -Name 'PSYForceSequential' -DefaultValue $false) {
+            $Async = $false
+            $Queue = $null
+            $Parallel = $false
+        }
+
         $activities = [System.Collections.ArrayList]::new()
         $itemIndex = 0
     }
