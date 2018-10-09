@@ -26,12 +26,15 @@ Additional properties used by the provider. These vary from provider to provider
 .PARAMETER Credentials
 The credentials to use when establishing the connection. If no credentials are defined, the credentials of the current user are used.
 
+.PARAMETER AsObject
+A connection object is created and returned, without saving to the repository.
+
 .EXAMPLE
 Set-PSYConnection -Name 'MySource' -Provider SqlServer -ConnectionString 'Server=MyServer;Integrated Security=true;Database=MyDatabase'
 #>
 function Set-PSYConnection {
     param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string] $Name,
         [Parameter(Mandatory = $true)]
         [PSYDbConnectionProvider] $Provider,
@@ -44,14 +47,18 @@ function Set-PSYConnection {
         [Parameter(Mandatory = $false)]
         [hashtable] $Properties,
         [Parameter(Mandatory = $false)]
-        [System.Management.Automation.PSCredential] $Credentials
+        [System.Management.Automation.PSCredential] $Credentials,
+        [Parameter(Mandatory = $false)]
+        [switch] $AsObject
     )
 
     try {
         $repo = New-FactoryObject -Repository
         
-        # Log
-        Write-PSYVariableLog "Connection.$Name" "Provider = $Provider, ConnectionString = $ConnectionString, Properties = $Properties"
+        if (-not $AsObject) {
+            # Log
+            Write-PSYVariableLog "Connection.$Name" "Provider = $Provider, ConnectionString = $ConnectionString, Properties = $Properties"
+        }
 
         # If ConnectionString is omitted, attempt to create a default connection string. Can only perform this for databases which support trusted connections.
         if (-not $ConnectionString) {
@@ -64,12 +71,14 @@ function Set-PSYConnection {
         }
 
         # Determine if existing
-        $existing = $repo.FindEntity('Connection', 'Name', $Name)
-        if ($existing.Count -eq 0) {
-            $existing = $null
-        }
-        else {
-            $existing = $existing[0]
+        if (-not $AsObject) {
+            $existing = $repo.FindEntity('Connection', 'Name', $Name)
+            if ($existing.Count -eq 0) {
+                $existing = $null
+            }
+            else {
+                $existing = $existing[0]
+            }
         }
 
         # If not exists then create, otherwise update.
@@ -92,6 +101,11 @@ function Set-PSYConnection {
             $existing.ModifiedDateTime = Get-Date | ConvertTo-PSYCompatibleType
             [void] $repo.UpdateEntity('Connection', $existing)
         }
+
+        # If an object was requested, return it.
+        if ($AsObject) {
+            $o
+        }        
     }
     catch {
         Write-PSYErrorLog $_

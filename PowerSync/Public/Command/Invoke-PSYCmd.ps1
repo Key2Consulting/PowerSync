@@ -10,7 +10,7 @@ Stored Commands accept parameters using the SQLCMD Mode syntax of :setvar and $(
 If the Stored Command returns a resultset, it is converted into an ArrayList of hashtables and returned to the caller.
 
 .PARAMETER Connection
-The connection to execute the Stored Query against.
+The connection to execute the Stored Query against. Can either be a the name of the connection, or the connection object itself.
 
 .PARAMETER Name
 The name of the Stored Command used to find the SQL file. The extension can be omitted.
@@ -30,7 +30,7 @@ function Invoke-PSYCmd {
     param
     (
         [Parameter(Mandatory = $false)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [string] $Name,
         [Parameter(Mandatory = $false)]
@@ -48,7 +48,15 @@ function Invoke-PSYCmd {
         else {
             $cmdText = Resolve-PSYCmd -Name $Name -Param $Param
         }
-        $connDef = Get-PSYConnection -Name $Connection
+        
+        # If a connection name passed, load it. Otherwise it's an actual object, so just us it.
+        if ($Connection -is [string]) {
+            $connDef = Get-PSYConnection -Name $Connection
+        }
+        else {
+            $connDef = $Connection
+        }
+
         $providerName = [Enum]::GetName([PSYDbConnectionProvider], $connDef.Provider)
         $conn = New-FactoryObject -Connection -TypeName $providerName
 
