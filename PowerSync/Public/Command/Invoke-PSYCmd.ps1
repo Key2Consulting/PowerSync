@@ -15,6 +15,9 @@ The connection to execute the Stored Query against. Can either be a the name of 
 .PARAMETER Name
 The name of the Stored Command used to find the SQL file. The extension can be omitted.
 
+.PARAMETER SP
+Indicates the Name refers to a stored procedure. The parameters will be passed by name, however OleDb connections require parameters be listed in the correct order.
+
 .PARAMETER Param
 Hashtable of SQLCMD Mode parameters to pass into the script. If a hash field is an array list, it is converted into a SQL statement in the INSERT VALUES format i.e. ('A', B), ('C', D).
 
@@ -36,17 +39,26 @@ function Invoke-PSYCmd {
         [Parameter(Mandatory = $false)]
         [string] $CommandText,
         [Parameter(Mandatory = $false)]
-        [hashtable] $Param
+        [switch] $SP,
+        [Parameter(Mandatory = $false)]
+        [object] $Param
     )
 
     $conn = $null
     try {
-        # Use the explicitly passed command if present. Otherwise, attempt to load it from a file.
+        # Resolve the query either by using the explicitly passed command,  load it from a file, or 
+        # invoke a stored procedure.
         if ($CommandText) {
             $cmdText = $CommandText
+            $cmdType = [System.Data.CommandType]::Text
+        }
+        elseif ($SP) {
+            $cmdText = $Name
+            $cmdType = [System.Data.CommandType]::StoredProcedure
         }
         else {
             $cmdText = Resolve-PSYCmd -Name $Name -Param $Param
+            $cmdType = [System.Data.CommandType]::Text
         }
         
         # If a connection name passed, load it. Otherwise it's an actual object, so just us it.
@@ -64,7 +76,18 @@ function Invoke-PSYCmd {
         $conn.Open()
         $cmd = $conn.CreateCommand()
         $cmd.CommandText = $cmdText
+        $cmd.CommandType = $cmdType
         $cmd.CommandTimeout = (Get-PSYVariable -Name 'PSYDefaultCommandTimeout')
+
+        # If a stored procedure, set its parameters.
+        if ($SP) {
+            # Add each passed in parameter to the command.
+            foreach ($paramName in $Param.Keys) {
+                $paramValue = $Param[$paramName]
+                $p = $cmd.Parameters.AddWithValue($paramName, $paramValue)
+            }
+        }
+
         Write-PSYQueryLog -Name $Name -Connection $Connection -Query $cmdText -Param $Param
         $r = $cmd.ExecuteReader()
         
