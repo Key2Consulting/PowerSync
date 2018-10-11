@@ -12,7 +12,7 @@ function New-FactoryObject {
 
     # Confirm we're connected and initialized
     if (-not $PSYSession -or -not $PSYSession.Initialized) {
-        throw "PowerSync is not properly initialized. See Start-PSYMainActivity for more information."
+        throw "PowerSync is not properly initialized. See Start-PSYActivity for more information."
     }
 
     # Instantial new object based on type
