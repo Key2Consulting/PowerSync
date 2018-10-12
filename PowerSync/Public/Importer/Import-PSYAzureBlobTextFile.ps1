@@ -36,7 +36,7 @@ function Import-PSYAzureBlobTextFile {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
         [Parameter(Mandatory = $false)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [string] $Container,
         [Parameter(Mandatory = $false)]
@@ -48,8 +48,13 @@ function Import-PSYAzureBlobTextFile {
     )
 
     try {
-        # Initialize source connection
-        $connDef = Get-PSYConnection -Name $Connection
+        # If the passed Connection is a name, load it. Otherwise it's an actual object, so just us it.
+        if ($Connection -is [string]) {
+            $connDef = Get-PSYConnection -Name $Connection
+        }
+        else {
+            $connDef = $Connection
+        }
 
         # Create the Blob
         $ctx = New-AzureStorageContext -ConnectionString $connDef.ConnectionString
@@ -72,7 +77,7 @@ function Import-PSYAzureBlobTextFile {
         # Write the file
         $writer = [PowerSync.TextFileDataWriter]::new($gzStream, $Format, $Header)
         $writer.Write($InputObject.DataReaders[0])
-        Write-PSYInformationLog -Message "Uploaded $Format text data to Blob [$Connection]:$Container/$Path."
+        Write-PSYInformationLog -Message "Uploaded $Format text data to Blob [$($connDef.Name)]:$Container/$Path."
     }
     catch {
         Write-PSYErrorLog $_

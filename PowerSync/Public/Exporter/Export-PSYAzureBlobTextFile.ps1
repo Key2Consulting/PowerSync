@@ -37,7 +37,7 @@ Export-PSYAzureBlobTextFile -Connection "TestAzureBlob" -Container 'data' -Path 
  function Export-PSYAzureBlobTextFile {
     param (
         [Parameter(Mandatory = $false)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [string] $Container,
         [Parameter(Mandatory = $false)]
@@ -51,9 +51,14 @@ Export-PSYAzureBlobTextFile -Connection "TestAzureBlob" -Container 'data' -Path 
     )
     
     try {
-        # Initialize source connection
-        $connDef = Get-PSYConnection -Name $Connection
-
+        # If the passed Connection is a name, load it. Otherwise it's an actual object, so just us it.
+        if ($Connection -is [string]) {
+            $connDef = Get-PSYConnection -Name $Connection
+        }
+        else {
+            $connDef = $Connection
+        }
+        
         # Connect to the Blob
         $ctx = New-AzureStorageContext -ConnectionString $connDef.ConnectionString
         $blob = Get-AzureStorageBlob -Container $Container -Blob $Path -Context $ctx

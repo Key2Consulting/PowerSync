@@ -2,7 +2,7 @@ function Import-PSYOleDb {
     param
     (
         [Parameter(Mandatory = $true)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [string] $Table,
         [Parameter(Mandatory = $false)]

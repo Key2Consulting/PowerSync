@@ -23,7 +23,7 @@ function Write-PSYQueryLog {
         [Parameter(Mandatory = $false)]
         [string] $Name,
         [Parameter(Mandatory = $false)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [string] $Query,
         [Parameter(Mandatory = $false)]
@@ -33,13 +33,21 @@ function Write-PSYQueryLog {
     try {
         $repo = New-FactoryObject -Repository
         
+        # If the passed Connection is a name, load it. Otherwise it's an actual object, so just us it.
+        if ($Connection -is [string]) {
+            $connectionName = $Connection
+        }
+        else {
+            $connectionName = $Connection.Name
+        }
+
         # Write Log and output to screen
         if ($PSYSession.Initialized) {
             $o = @{
                 ID = $null                          # let the repository assign the surrogate key
                 Type = 'Query'
                 Name = $Name
-                Connection = $Connection
+                Connection = $connectionName
                 Query = $Query
                 Param = ConvertTo-Json -InputObject $Param -Depth 3 -Compress
                 CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
