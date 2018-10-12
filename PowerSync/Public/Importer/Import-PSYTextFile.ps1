@@ -86,7 +86,7 @@ function Import-PSYTextFile {
 
         # If the file path points to a Gzip archive.
         if ($filePath.EndsWith('.gz')) {
-            $gzStream = [System.IO.Compression.GzipStream]::new($stream, [IO.Compression.CompressionMode]::Compress, $false)
+            $gzStream = [System.IO.Compression.GzipStream]::new($stream, [IO.Compression.CompressionLevel]::Fastest, $false)
         }
         else {
             $gzStream = $stream
