@@ -33,7 +33,7 @@ Exporters return a hashtable of two distinct variables:
 function Export-PSYSqlServer {
     param (
         [Parameter(Mandatory = $true)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [string] $ExtractQuery,
         [Parameter(Mandatory = $false)]
@@ -43,8 +43,15 @@ function Export-PSYSqlServer {
     )
 
     try {
+        # If the passed Connection is a name, load it. Otherwise it's an actual object, so just us it.
+        if ($Connection -is [string]) {
+            $connDef = Get-PSYConnection -Name $Connection
+        }
+        else {
+            $connDef = $Connection
+        }
+
         # Initialize source connection
-        $connDef = Get-PSYConnection -Name $Connection
         $providerName = [Enum]::GetName([PSYDbConnectionProvider], $connDef.Provider)
         $conn = New-FactoryObject -Connection -TypeName $providerName
 
@@ -64,14 +71,14 @@ function Export-PSYSqlServer {
         
         # Log
         if ($Table) {
-            Write-PSYInformationLog -Message "Exported $providerName data from [$Connection]:$Table"
+            Write-PSYInformationLog -Message "Exported $providerName data from [$($connDef.Name)]:$Table"
         }
         else {
             $extractSnippet = $ExtractQuery
             if ($extractSnippet.Length -gt 100) {
                 $extractSnippet = $extractSnippet.SubString(0,100)
             }
-            Write-PSYInformationLog -Message "Exported $providerName data from [$Connection]:$extractSnippet"
+            Write-PSYInformationLog -Message "Exported $providerName data from [$($connDef.Name)]:$extractSnippet"
         }
 
         # Return the reader, as well as some general information about what's being exported. This is to inform the importer

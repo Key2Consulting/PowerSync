@@ -48,7 +48,7 @@ function Import-PSYSqlServer {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
         [Parameter(Mandatory = $false)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [string] $Table,
         [Parameter(Mandatory = $false)]
@@ -68,10 +68,17 @@ function Import-PSYSqlServer {
     )
 
     try {
+        # If the passed Connection is a name, load it. Otherwise it's an actual object, so just us it.
+        if ($Connection -is [string]) {
+            $connDef = Get-PSYConnection -Name $Connection
+        }
+        else {
+            $connDef = $Connection
+        }
+
         # Initialize target connection
-        $conn = Get-PSYConnection -Name $Connection
-        $providerName = [Enum]::GetName([PSYDbConnectionProvider], $conn.Provider)
-        $targetSchemaTable = @(ConvertTo-TargetSchemaTable -SourceProvider $InputObject.Provider -TargetProvider $conn.Provider -SchemaTable $InputObject.DataReaders[0].GetSchemaTable())
+        $providerName = [Enum]::GetName([PSYDbConnectionProvider], $connDef.Provider)
+        $targetSchemaTable = @(ConvertTo-TargetSchemaTable -SourceProvider $InputObject.Provider -TargetProvider $connDef.Provider -SchemaTable $InputObject.DataReaders[0].GetSchemaTable())
         $readers = $InputObject.DataReaders
 
         # Information about the final table we're importing into.
@@ -99,7 +106,7 @@ function Import-PSYSqlServer {
             # Note: no need to create final table in this case. It either exists already, and we're reusing it. Or it 
             # doesn't exist, and we'll swap the load table as the final during publish.
             $loadTableCreated = $true
-            Write-PSYVerboseLog -Message "Created table [$Connection]:$loadTableFQN."
+            Write-PSYVerboseLog -Message "Created table [$($connDef.Name)]:$loadTableFQN."
         }
         else {
             # If Create, create the final table if doesn't exist. If not consistent, we need to rebuild now since there's no
@@ -110,13 +117,13 @@ function Import-PSYSqlServer {
                 # If the table exists and we're overwriting it, drop it first.
                 if ($finalExists -and $Overwrite) {
                     Invoke-PSYCmd -Connection $Connection -Name "$providerName.DropTable" -Param @{Table = $finalTableFQN}
-                    Write-PSYVerboseLog -Message "Dropped existing table [$Connection]:$finalTableFQN."
+                    Write-PSYVerboseLog -Message "Dropped existing table [$($connDef.Name)]:$finalTableFQN."
                 }
                 # Create the target table based on the data reader's schema.
                 if (-not $finalExists -or $Overwrite) {
                     Invoke-PSYCmd -Connection $Connection -Name "$providerName.AutoCreate" -Param @{Table = $finalTableFQN; SchemaTable = $targetSchemaTable}
                     $finalTableCreated = $true
-                    Write-PSYVerboseLog -Message "Created table [$Connection]:$finalTableFQN."
+                    Write-PSYVerboseLog -Message "Created table [$($connDef.Name)]:$finalTableFQN."
                 }
             }
         }
@@ -146,7 +153,7 @@ function Import-PSYSqlServer {
             $tasks = [System.Collections.ArrayList]::new()
             foreach ($reader in $readers) {
                 # Load via SqlBulkCopy
-                $blk = [Data.SqlClient.SqlBulkCopy]::new($conn.ConnectionString, [Data.SqlClient.SqlBulkCopyOptions]::TableLock)        # [Data.SqlClient.SqlBulkCopyOptions]::TableLock -bor [Data.SqlClient.SqlBulkCopyOptions]::UseInternalTransaction 
+                $blk = [Data.SqlClient.SqlBulkCopy]::new($connDef.ConnectionString, [Data.SqlClient.SqlBulkCopyOptions]::TableLock)        # [Data.SqlClient.SqlBulkCopyOptions]::TableLock -bor [Data.SqlClient.SqlBulkCopyOptions]::UseInternalTransaction 
                 $blk.DestinationTableName = if ($Consistent) { $loadTableFQN } else { $finalTableFQN }
                 $blk.BulkCopyTimeout = $timeout
                 $blk.BatchSize = $batchSize
@@ -182,12 +189,12 @@ function Import-PSYSqlServer {
             # load since inserting into a CCIX is more resource intensive. We need to create the index anytime a new final table is created.
             if ($Index) {
                 Invoke-PSYCmd -Connection $Connection -Name "$providerName.AutoIndex" -Param @{Table = $finalTable; Schema = $finalSchema; IndexSuffix = $Table}
-                Write-PSYVerboseLog -Message "Created index for [$Connection]:$finalTableFQN."
+                Write-PSYVerboseLog -Message "Created index for [$($connDef.Name)]:$finalTableFQN."
             }
             # Compression is a similar situation to Index.
             if ($Compress) {
                 Invoke-PSYCmd -Connection $Connection -Name "$providerName.AutoCompress" -Param @{Table = $finalTable; Schema = $finalSchema}
-                Write-PSYVerboseLog -Message "Added compression to [$Connection]:$finalTableFQN."
+                Write-PSYVerboseLog -Message "Added compression to [$($connDef.Name)]:$finalTableFQN."
             }
         }
         if ($loadTableCreated -and -not $finalExists) {
@@ -196,12 +203,12 @@ function Import-PSYSqlServer {
             # it doesn't exist, the publish script will swap the load table as the publish table, so in that case we need the CCIX on the load.
             if ($Index) {
                 Invoke-PSYCmd -Connection $Connection -Name "$providerName.AutoIndex" -Param @{Table = $loadTable; Schema = $loadSchema; IndexSuffix = $Table}
-                Write-PSYVerboseLog -Message "Created index for [$Connection]:$finalTableFQN."
+                Write-PSYVerboseLog -Message "Created index for [$($connDef.Name)]:$finalTableFQN."
             }
             # Compression is a similar situation to Index.
             if ($Compress) {
                 Invoke-PSYCmd -Connection $Connection -Name "$providerName.AutoCompress" -Param @{Table = $loadTable; Schema = $loadSchema}
-                Write-PSYVerboseLog -Message "Added compression to [$Connection]:$finalTableFQN."
+                Write-PSYVerboseLog -Message "Added compression to [$($connDef.Name)]:$finalTableFQN."
             }
         }
 
@@ -217,7 +224,7 @@ function Import-PSYSqlServer {
             }
         }
 
-        Write-PSYInformationLog -Message "Imported $providerName data to [$Connection]:$Table."
+        Write-PSYInformationLog -Message "Imported $providerName data to [$($connDef.Name)]:$Table."
     }
     catch {
         Write-PSYErrorLog $_

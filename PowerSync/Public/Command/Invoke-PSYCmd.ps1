@@ -61,7 +61,7 @@ function Invoke-PSYCmd {
             $cmdType = [System.Data.CommandType]::Text
         }
         
-        # If a connection name passed, load it. Otherwise it's an actual object, so just us it.
+        # If the passed Connection is a name, load it. Otherwise it's an actual object, so just us it.
         if ($Connection -is [string]) {
             $connDef = Get-PSYConnection -Name $Connection
         }
@@ -88,7 +88,7 @@ function Invoke-PSYCmd {
             }
         }
 
-        Write-PSYQueryLog -Name $Name -Connection $Connection -Query $cmdText -Param $Param
+        Write-PSYQueryLog -Name $Name -Connection $connDef.Name -Query $cmdText -Param $Param
         $r = $cmd.ExecuteReader()
         
         # Copy results into arraylist of hashtables

@@ -2,7 +2,7 @@ function Export-PSYOleDb {
     param
     (
         [Parameter(Mandatory = $true)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [object] $ExtractQuery,
         [Parameter(Mandatory = $false)]

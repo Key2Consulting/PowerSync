@@ -35,7 +35,7 @@ function Import-PSYTextFile {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
         [Parameter(Mandatory = $false)]
-        [string] $Connection,
+        [object] $Connection,
         [Parameter(Mandatory = $false)]
         [string] $Path,
         [Parameter(Mandatory = $true)]
@@ -48,11 +48,12 @@ function Import-PSYTextFile {
 
     try {
         # Initialize source connection
-        if ($Connection) {
+        # If the passed Connection is a name, load it. Otherwise it's an actual object, so just us it.
+        if ($Connection -is [string]) {
             $connDef = Get-PSYConnection -Name $Connection
         }
         else {
-            $connDef = $null
+            $connDef = $Connection
         }
         
         # Construct the full path to the file, which for files is a combination of the base ConnectionString and the Path. Either

@@ -214,6 +214,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
 
                         try {
                             $global:PSItem = $activity.InputObject                              # set $_ automatic variable so script can reference
+                            $global:_ = $activity.InputObject
                             $activity.OutputObject = Invoke-Command -ScriptBlock $scriptBlock   # run client code
                         }
                         catch {
@@ -253,6 +254,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         Checkpoint-PSYActivity $activity
 
                         $global:PSItem = $activity.InputObject                              # set $_ automatic variable so script can reference
+                        $global:_ = $activity.InputObject
                         $activity.OutputObject = Invoke-Command -ScriptBlock $ScriptBlock   # run client code
                         
                         $activity.HadErrors = $false

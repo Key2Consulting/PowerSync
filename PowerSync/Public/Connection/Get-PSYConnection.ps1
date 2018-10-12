@@ -5,8 +5,8 @@ Gets a PowerSync connection.
 .DESCRIPTION
 Retrieves a connection from the currently connected repository. See Set-PSYConnection for more information.
 
-.PARAMETER Name
-The name of the connection.
+.PARAMETER Connection
+The name of the connection. If it's an actual connection object, the same object is simply returned.
 
 .EXAMPLE
 Get-PSYConnection -Name 'MySource'
@@ -15,7 +15,7 @@ function Get-PSYConnection {
     param
     (
         [Parameter(Mandatory = $false)]
-        [string] $Name
+        [object] $Name
     )
 
     try {
