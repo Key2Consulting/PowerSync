@@ -32,7 +32,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     ) | Wait-PSYActivity
 
     Set-PSYVariable 'TestVariable' 0
-    (1..10) | Start-PSYActivity -Name 'Test ForEach Incorrect Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
+    $a = (1..10) | Start-PSYActivity -Name 'Test ForEach Incorrect Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
         [int] $x = (Get-PSYVariable 'TestVariable') + 1
         Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)
         Set-PSYVariable 'TestVariable' $x      # will not work as expected
@@ -42,7 +42,7 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     }
 
     Set-PSYVariable 'TestVariable' 0
-    (1..10) | Start-PSYActivity -Name 'Test ForEach Correct Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
+    $a = (1..10) | Start-PSYActivity -Name 'Test ForEach Correct Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
         Lock-PSYVariable -Name 'TestVariable' {
             [int] $x = (Get-PSYVariable 'TestVariable') + 1
             Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)

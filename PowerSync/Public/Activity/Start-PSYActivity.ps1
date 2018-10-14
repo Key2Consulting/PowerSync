@@ -8,7 +8,9 @@ PowerSync activities organize your data integration workload into atomic units o
  - Automatic error handling and logging.
  - Sequential or parallel execution (using remote jobs).
 
- By default, activities execute sequentially unless the -Async switch is set.
+ By default, activities execute sequentially unless the -Async switch is set. 
+ 
+ Async, Queue, and Parallel always return activities to the caller so that return values and error conditions can be checked. Sequential does not return an activity, but does return any output.
 
 .PARAMETER InputObject
 Specifies the input objects, and runs the activity on each input object. Use the $_ automatic variable in the ScriptBlock to reference the object.
@@ -113,16 +115,18 @@ $async | Wait-PSYActivity       # echos any log information collected during the
         try {
             # If we've met our throttle limit, wait until at least one of them finishes before continuing. Does not apply to queued activities
             # since the remote reciver processing those activities has its own throttling.
-            while (@(Get-Job -State Running).Count -ge $Throttle -and -not $Queue) {
-                $now = Get-Date
-                foreach ($job in @(Get-Job -State Running)) {
-                    if ($Timeout) {
-                        if ($now - (Get-Job -Id $job.id).PSBeginTime -gt [TimeSpan]::FromSeconds($Timeout)) {
-                            Stop-Job $job
+            if ($Parallel) {
+                while (@(Get-Job -State Running).Count -ge $Throttle -and -not $Queue) {
+                    $now = Get-Date
+                    foreach ($job in @(Get-Job -State Running)) {
+                        if ($Timeout) {
+                            if ($now - (Get-Job -Id $job.id).PSBeginTime -gt [TimeSpan]::FromSeconds($Timeout)) {
+                                Stop-Job $job
+                            }
                         }
                     }
+                    Start-Sleep -Milliseconds 500
                 }
-                Start-Sleep -Milliseconds 500
             }
 
             # Construct the activity objrect to process (or use the one provided).
@@ -291,24 +295,26 @@ $async | Wait-PSYActivity       # echos any log information collected during the
     }
 
     end {
+        # Async, Queue, and Parallel always return activities to the caller.  Sequential does not.
+
+        # Return activities to caller when executing async.
         if ($Async) {
-            # Return activities to caller when executing async.
+            $activities
+        }
+        # If not running async, wait for activities to complete before returning control to the caller. This
+        # is always the defaults case since it's a safer paradigm for client code.
+        elseif ($Queue -or $Parallel) {
+            $results = $activities | Wait-PSYActivity       # if this hangs on Queued activities, there's no receiver processing the queue
             $activities
         }
         else {
-            # If not running async, wait for activities to complete before returning control to the caller. This
-            # is always the defaults case since it's a safer paradigm for client code.
-            if ($Queue -or $Parallel) {
-                $results = $activities | Wait-PSYActivity
-            }
-
-            # Output anything returned by the activity, or nothing if not. This option keeps client code
-            # from having to set the output to a temp variable, even when they're not expecting one.
+            # Just a simple, sequential activity, so output anything returned by the activity, or nothing if not. Exceptions
+            # would have already been thrown to the caller.
             $activities | ForEach-Object {
                 if ($_.OutputObject) {
                     $_.OutputObject
                 }
             }
-        }            
+        }
     }
 }
