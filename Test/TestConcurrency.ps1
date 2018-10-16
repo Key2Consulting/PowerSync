@@ -1,10 +1,10 @@
 Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
-    "Sequential Activity" | Start-PSYActivity -Name 'Test Simple Sequential Execution' -ScriptBlock {
+    $a = "Sequential Activity" | Start-PSYActivity -Name 'Test Simple Sequential Execution' -ScriptBlock {
         "...$($_)..."
     }
 
-    (1..10) | Start-PSYActivity -Name 'Test Simple ForEach Sequential Execution' -ScriptBlock {
+    $a = (1..10) | Start-PSYActivity -Name 'Test Simple ForEach Sequential Execution' -ScriptBlock {
         "...$($_)..."
     }
 

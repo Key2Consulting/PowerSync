@@ -185,9 +185,6 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         param ($activityID, $environmentInfo)
                         
                         # Initialize environment
-                        if ($environmentInfo.WaitDebugger) {
-                            Wait-Debugger       # WaitDebugger was set, step into Invoke-Command below to debug client code
-                        }
                         Import-Module $environmentInfo.PSYSession.Module
                         $global:PSYSession = $environmentInfo.PSYSession
                         $PSYSession.UserModules.Clone() | ForEach-Object { Import-Module $_ }       # load any user modules
@@ -219,6 +216,11 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         try {
                             $global:PSItem = $activity.InputObject                              # set $_ automatic variable so script can reference
                             $global:_ = $activity.InputObject
+                            
+                            if ($environmentInfo.WaitDebugger) {
+                                Wait-Debugger       # WaitDebugger was set, step into Invoke-Command below to debug client code
+                            }
+    
                             $activity.OutputObject = Invoke-Command -ScriptBlock $scriptBlock   # run client code
                         }
                         catch {
@@ -242,7 +244,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
 
                     # If WaitDebugger was set, the remote jobs will be waiting for the debugger, but the main thread still needs
                     # to call Debug-Job to complete the cycle.
-                    if ($WaitDebugger -and $Async) {
+                    if ($WaitDebugger -and ($Async -or $Parallel)) {
                         Start-Sleep -Milliseconds 500       # isn't there a better way? needed b/c of what appears to be timing issues
                         $null = Debug-Job $job
                     }
@@ -305,6 +307,9 @@ $async | Wait-PSYActivity       # echos any log information collected during the
         # is always the defaults case since it's a safer paradigm for client code.
         elseif ($Queue -or $Parallel) {
             $results = $activities | Wait-PSYActivity       # if this hangs on Queued activities, there's no receiver processing the queue
+            $activities
+        }
+        elseif ($InputObject) {
             $activities
         }
         else {
