@@ -104,6 +104,9 @@ function Set-PSYConnection {
 
         # If an object was requested, return it.
         if ($AsObject) {
+            if (-not $o.Name) {     # if we don't have a name, make up something unique to correlate with logging
+                $o.Name = (New-Guid).ToString()
+            }
             $o
         }        
     }

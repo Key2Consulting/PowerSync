@@ -53,8 +53,13 @@ function Write-PSYErrorLog {
     $caller = $stack[2]
 
     # Determine if caller is a PowerSync module (must honor Error Preference in that case)
-    if ($caller.ScriptName.Contains('/PowerSync/')) {
-        $internalCaller = $true
+    if ($caller) {
+        if ($caller.ScriptName.Contains('/PowerSync/')) {
+            $internalCaller = $true
+        }
+        else {
+            $internalCaller = $false
+        }        
     }
     else {
         $internalCaller = $false

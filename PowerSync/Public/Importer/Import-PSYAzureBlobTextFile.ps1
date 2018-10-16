@@ -68,7 +68,7 @@ function Import-PSYAzureBlobTextFile {
 
         # If we're compressing
         if ($Path.EndsWith('.gz')) {
-            $gzStream = [System.IO.Compression.GzipStream]::new($blobStream, [IO.Compression.CompressionMode]::Compress, $false)
+            $gzStream = [System.IO.Compression.GzipStream]::new($blobStream, [IO.Compression.CompressionLevel]::Fastest, $false)
         }
         else {
             $gzStream = $blobStream

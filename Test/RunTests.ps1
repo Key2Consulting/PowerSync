@@ -10,6 +10,7 @@ $oleDbRepoCS = "Provider=SQLNCLI11;Server=$testSqlServer;Database=PSYRepository;
 # Initialize Tests
 ######################################################
 $ErrorActionPreference = "Continue"     # we want to run through all tests
+New-Item -Path "$PSScriptRoot\TempFiles\" -ErrorAction SilentlyContinue
 
 # Import dependent modules
 Import-Module "$rootPath\PowerSync"
