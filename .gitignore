@@ -1,3 +1,4 @@
 Temp*.*
+TempFiles\*.*
 Test/CSharpLibrary/bin/*
 Test/CSharpLibrary/obj/*
