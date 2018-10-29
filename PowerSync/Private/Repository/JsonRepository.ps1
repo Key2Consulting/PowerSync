@@ -9,30 +9,37 @@ class JsonRepository : FileRepository {
     JsonRepository ([hashtable] $State) : base($State) {
     }
 
-    [void] LoadRepository() {
-        # Attempt to initialize from the existing log and configuration files. If it fails, it will be recreated on save.
-        $data = Get-Content -Path $this.State.Path -ErrorAction SilentlyContinue | ConvertFrom-Json
-        if ($data) {
-            $this.State.TableList.Variable = [System.Collections.ArrayList] $data.Variable
-            $this.State.TableList.Connection = [System.Collections.ArrayList] $data.Connection
-            $this.State.TableList.Activity = [System.Collections.ArrayList] $data.Activity
-            $this.State.TableList.ErrorLog = [System.Collections.ArrayList] $data.ErrorLog
-            $this.State.TableList.MessageLog = [System.Collections.ArrayList] $data.MessageLog
-            $this.State.TableList.VariableLog = [System.Collections.ArrayList] $data.VariableLog
-            $this.State.TableList.QueryLog = [System.Collections.ArrayList] $data.QueryLog
+    [void] LoadRepository([string] $EntityType) {
+        # Attempt to initialize from the existing log and configuration files. Limit to a single entity type, if specified.
+        $path = $this.State.Path.TrimEnd('\')
+        if ($EntityType -eq 'All') {
+            $this.State.TableList.Variable =  [System.Collections.ArrayList] (Get-Content -Path "$path\PSYVariable.json" -ErrorAction SilentlyContinue | ConvertFrom-Json)
+            $this.State.TableList.Connection = [System.Collections.ArrayList] (Get-Content -Path "$path\PSYConnection.json" -ErrorAction SilentlyContinue | ConvertFrom-Json)
+            $this.State.TableList.Activity = [System.Collections.ArrayList] (Get-Content -Path "$path\PSYActivity.json" -ErrorAction SilentlyContinue | ConvertFrom-Json)
+            $this.State.TableList.ErrorLog = [System.Collections.ArrayList] (Get-Content -Path "$path\PSYErrorLog.json" -ErrorAction SilentlyContinue | ConvertFrom-Json)
+            $this.State.TableList.MessageLog = [System.Collections.ArrayList] (Get-Content -Path "$path\PSYMessageLog.json" -ErrorAction SilentlyContinue | ConvertFrom-Json)
+            $this.State.TableList.VariableLog = [System.Collections.ArrayList] (Get-Content -Path "$path\PSYVariableLog.json" -ErrorAction SilentlyContinue | ConvertFrom-Json)
+            $this.State.TableList.QueryLog = [System.Collections.ArrayList] (Get-Content -Path "$path\PSYQueryLog.json" -ErrorAction SilentlyContinue | ConvertFrom-Json)
+        }
+        else {
+            $this.State.TableList[$EntityType] =  [System.Collections.ArrayList] (Get-Content -Path "$path\PSY$EntityType.json" -ErrorAction SilentlyContinue | ConvertFrom-Json)
         }
     }
 
-    [void] SaveRepository() {
-        # Since you can't really update just part of a JSON file, we rewrite the entire thing.
-        @{
-            Variable = $this.State.TableList.Variable
-            Connection = $this.State.TableList.Connection
-            Activity = $this.State.TableList.Activity
-            ErrorLog = $this.State.TableList.ErrorLog
-            MessageLog = $this.State.TableList.MessageLog
-            VariableLog = $this.State.TableList.VariableLog
-            QueryLog = $this.State.TableList.QueryLog
-        } | ConvertTo-Json -Depth 5 | Set-Content -Path $this.State.Path -Force
+    [void] SaveRepository([string] $EntityType) {
+        # Write the JSON files. Limit to a single entity type, if specified.
+        $path = $this.State.Path.TrimEnd('\')
+        if ($EntityType -eq 'All') {
+            ConvertTo-Json -InputObject $this.State.TableList.Variable -Depth 5 | Set-Content -Path "$path\PSYVariable.json" -Force
+            ConvertTo-Json -InputObject $this.State.TableList.Connection -Depth 5 | Set-Content -Path "$path\PSYConnection.json" -Force
+            ConvertTo-Json -InputObject $this.State.TableList.Activity -Depth 5 | Set-Content -Path "$path\PSYActivity.json" -Force
+            ConvertTo-Json -InputObject $this.State.TableList.ErrorLog -Depth 5 | Set-Content -Path "$path\PSYErrorLog.json" -Force
+            ConvertTo-Json -InputObject $this.State.TableList.MessageLog -Depth 5 | Set-Content -Path "$path\PSYMessageLog.json" -Force
+            ConvertTo-Json -InputObject $this.State.TableList.VariableLog -Depth 5 | Set-Content -Path "$path\PSYVariableLog.json" -Force
+            ConvertTo-Json -InputObject $this.State.TableList.QueryLog -Depth 5 | Set-Content -Path "$path\PSYQueryLog.json" -Force
+        }
+        else {
+            ConvertTo-Json -InputObject $this.State.TableList[$EntityType] -Depth 5 | Set-Content -Path "$path\PSY$EntityType.json" -Force
+        }
     }
 }

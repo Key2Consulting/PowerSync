@@ -101,7 +101,6 @@ The Json file repository is the quickest and easiest way to start using PowerSyn
 
 The following is an example of creating, connecting, and then removing a Json repository (of course, in a real project you probably wouldn't create and then immediately remove a repository).
 ```PowerShell
-New-PSYJsonRepository '.\MyPSYRepo.json'
 Connect-PSYJsonRepository '.\MyPSYRepo.json'
 # Do some work
 Remove-PSYJsonRepository '.\MyPSYRepo.json'

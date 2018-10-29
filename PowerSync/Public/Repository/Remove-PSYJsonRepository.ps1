@@ -17,11 +17,29 @@ function Remove-PSYJsonRepository {
     param
     (
         [Parameter(Mandatory = $true)]
-        [string] $Path
+        [string] $RootPath
     )
 
     try {
         Remove-Item $Path -ErrorAction SilentlyContinue
+
+        # Build paths to each store type.
+        $activityPath = Join-Path -Path $RootPath -ChildPath "PSYActivity.json"
+        $errorLogPath = Join-Path -Path $RootPath -ChildPath "PSYErrorLog.json"
+        $messageLogPath = Join-Path -Path $RootPath -ChildPath "PSYMessageLog.json"
+        $variableLogPath = Join-Path -Path $RootPath -ChildPath "PSYVariableLog.json"
+        $queryLogPath = Join-Path -Path $RootPath -ChildPath "PSYQueryLog.json"
+        $variablePath = Join-Path -Path $RootPath -ChildPath "PSYVariable.json"
+        $connectionPath = Join-Path -Path $RootPath -ChildPath "PSYConnection.json"
+
+        # Remove the files, if they exist.
+        Remove-Item $errorLogPath -ErrorAction SilentlyContinue
+        Remove-Item $messageLogPath -ErrorAction SilentlyContinue
+        Remove-Item $variableLogPath -ErrorAction SilentlyContinue
+        Remove-Item $queryLogPath -ErrorAction SilentlyContinue
+        Remove-Item $activityPath -ErrorAction SilentlyContinue
+        Remove-Item $connectionPath -ErrorAction SilentlyContinue
+        Remove-Item $variablePath -ErrorAction SilentlyContinue
     }
     catch {
         Write-PSYErrorLog $_

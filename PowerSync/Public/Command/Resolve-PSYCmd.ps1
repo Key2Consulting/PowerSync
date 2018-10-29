@@ -41,12 +41,19 @@ function Resolve-PSYCmd {
         
         # Find the stored command along the path in order they're entered
         $template = ""
+        $found = $false
         foreach ($path in $searchPaths) {
             $files = @(Get-ChildItem -Path $path -Recurse -Filter "$Name.*" -File)
             if ($files.Length -gt 0) {
                 $template = [System.IO.File]::ReadAllText($files[0].FullName)
+                $found = $true
                 break
             }
+        }
+
+        # If we couldn't find the command, inform the user.
+        if (-not $found) {
+            throw "Unable to find script '$Name' in path " + ($searchPaths -join ';')
         }
 
         # TODO: SHOULD AUTOMATICALLY PASS CERTAIN CONTEXTUAL VARIABLES (E.G. ActivityID FOR LOGGING PURPOSES)

@@ -3,7 +3,8 @@
 ######################################################
 $rootPath = Resolve-Path -Path "$PSScriptRoot\..\"
 $testSqlServer = "(LocalDb)\MSSQLLocalDB"
-$jsonRepoPath = "$PSScriptRoot\TempFiles\TempRepository.json"
+# $jsonRepoPath = "$PSScriptRoot\TempFiles\TempRepository.json"
+$jsonRepoPath = "$PSScriptRoot\TempFiles\"
 $oleDbRepoCS = "Provider=SQLNCLI11;Server=$testSqlServer;Database=PSYRepository;Trusted_Connection=yes;"
 
 ######################################################
@@ -38,7 +39,7 @@ function Invoke-Tests {
     # Initialize PowerSync repository
     Write-PSYHost "Resetting repository..."
     if ($JsonDbRepository) {
-        Connect-PSYJsonRepository -Path $jsonRepoPath -Recreate
+        Connect-PSYJsonRepository -RootPath $jsonRepoPath -ClearLogs -ClearActivities -ClearConnections -ClearVariables
     }
     elseif ($OleDbRepository) {
         Connect-PSYOleDbRepository -ConnectionString $oleDbRepoCS -Schema '[PSY]'
@@ -56,6 +57,7 @@ function Invoke-Tests {
 
     # Run required tests
     Write-PSYHost "RUNNING Test Scripts"
+
     .\Test\TestQuickCommand.ps1
     .\Test\TestGeneral.ps1
     .\Test\TestVariables.ps1
