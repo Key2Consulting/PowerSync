@@ -38,7 +38,7 @@ class FileRepository : Repository {
     }
 
     [void] CreateEntity([string] $EntityType, [object] $Entity) {
-        $this.CriticalSection({
+        $this.CriticalSection($EntityType, {
             # Assign the new entity a surrogate key
             if (-not $Entity.ID) {
                 $Entity.ID = New-Guid
@@ -50,7 +50,7 @@ class FileRepository : Repository {
     }
     
     [object] ReadEntity([string] $EntityType, [object] $EntityID) {
-        return $this.CriticalSection({
+        return $this.CriticalSection($EntityType, {
             $table = $this.GetEntityTable($EntityType)
             $e = $table.Where({$_.ID -eq $EntityID})
             if ($e) {
@@ -66,7 +66,7 @@ class FileRepository : Repository {
     }
 
     [void] UpdateEntity([string] $EntityType, [object] $Entity) {
-        $this.CriticalSection({
+        $this.CriticalSection($EntityType, {
             $table = $this.GetEntityTable($EntityType)
             $existing = $table.Where({$_.ID -eq $Entity.ID})[0]      # we can't use ReadEntity for this since it reloads the repo and we'll get a different entity instance
             
@@ -83,7 +83,7 @@ class FileRepository : Repository {
     }
 
     [void] DeleteEntity([string] $EntityType, [object] $EntityID) {
-        $this.CriticalSection({
+        $this.CriticalSection($EntityType, {
             $table = $this.GetEntityTable($EntityType)
             $match = $table.Where({$_.ID -eq $EntityID})
             if ($match.Count -eq 0) {
@@ -94,7 +94,7 @@ class FileRepository : Repository {
     }
 
     [object] FindEntity([string] $EntityType, [string] $EntityField, [object] $EntityFieldValue, [bool] $Wildcards) {
-        $entities = $this.CriticalSection({
+        $entities = $this.CriticalSection($EntityType, {
             $entityList = [System.Collections.ArrayList]::new()
             $table = $this.GetEntityTable($EntityType)
             if ($Wildcards) {
@@ -122,7 +122,7 @@ class FileRepository : Repository {
 
     [object] SearchLogs([string] $Search, [bool] $Wildcards) {
         # Search all logs in the repository and return any that match
-        $entities = $this.CriticalSection({
+        $entities = $this.CriticalSection('All', {
             $logs = [System.Collections.ArrayList]::new()
             if (-not $Type -or $Type -eq 'Debug' -or $Type -eq 'Information' -or $Type -eq 'Verbose') {
                 $logs.AddRange($this.FindEntity('MessageLog', 'Message', $Search, $true))
@@ -179,7 +179,7 @@ class FileRepository : Repository {
     }
 
     [object] DequeueActivity([string] $Queue) {
-        return $this.CriticalSection({
+        return $this.CriticalSection('Activity', {
             # Get the next activity off the queue (FIFO)
             $q = $this.State.TableList.Activity
             for ($i = 0; $i -lt $q.Count; $i++) {
@@ -200,7 +200,7 @@ class FileRepository : Repository {
     # it must still deal with concurrency when multiple threads are invoking the repo simultaneously. Instead,
     # the repo will read and write the entire file for every operation. It's slower, but ensures consistency.
     # A database repository should be used in process intensive scenarios.
-    [object] CriticalSection([scriptblock] $ScriptBlock) {
+    [object] CriticalSection([string] $EntityType, [scriptblock] $ScriptBlock) {
         try {
             # Grab an exclusive lock using a Mutex, which works across process spaces.
             #
@@ -227,7 +227,7 @@ class FileRepository : Repository {
             # Reload the repository in case another process made changes
             for ($attempts = 0; $attempts -lt $this.maxLockAttempts; $attempts++) {
                 try {
-                    $this.LoadRepository()
+                    $this.LoadRepository($EntityType)
                     break
                 }
                 catch [System.IO.IOException] {
@@ -246,7 +246,7 @@ class FileRepository : Repository {
             # Save the repository back to disk
             for ($attempts = 0; $attempts -lt $this.maxLockAttempts; $attempts++) {
                 try {
-                    $this.SaveRepository()
+                    $this.SaveRepository($EntityType)
                     break
                 }
                 catch [System.IO.IOException] {
