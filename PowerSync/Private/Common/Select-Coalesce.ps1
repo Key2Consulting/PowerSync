@@ -1,6 +1,6 @@
 function Select-Coalesce {
     param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [object[]] $InputObject
     )
 
