@@ -135,7 +135,7 @@ class FileRepository : Repository {
                 $logs.AddRange($this.FindEntity('ErrorLog', 'ActivityID', $Search, $false))
             }
             if (-not $Type -or $Type -eq 'Variable') {
-                $logs.AddRange($this.FindEntity('VariableLog', 'VariableName', $Search, $true))
+                $logs.AddRange($this.FindEntity('VariableLog', 'Name', $Search, $true))
                 $logs.AddRange($this.FindEntity('VariableLog', 'ActivityID', $Search, $false))
             }
             if (-not $Type -or $Type -eq 'Query') {
