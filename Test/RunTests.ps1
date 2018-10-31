@@ -43,7 +43,6 @@ function Invoke-Tests {
     }
     elseif ($OleDbRepository) {
         Connect-PSYOleDbRepository -ConnectionString $oleDbRepoCS -Schema '[PSY]'
-        #$PSYCmdPath = "$rootPath" + "PowerSync\Asset\StoredQuery\Repository"
     }
     
     # Create default connections
@@ -54,16 +53,17 @@ function Invoke-Tests {
 
     # Set environment variables
     Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot                         # needed so Stored Command finds our custom scripts
+    Set-PSYVariable -Name 'PSYForceSequential' -Value $false                        # set this to force all tests to run sequential for debugging purposes.
 
     # Run required tests
     Write-PSYHost "RUNNING Test Scripts"
 
-    #.\Test\TestQuickCommand.ps1
-    #.\Test\TestGeneral.ps1
-    #.\Test\TestVariables.ps1
+    .\Test\TestQuickCommand.ps1
+    .\Test\TestGeneral.ps1
+    .\Test\TestVariables.ps1
     .\Test\TestConcurrency.ps1
-    #.\Test\TestCSVToSQL.ps1
-    #.\Test\TestSQLToSQL.ps1
+    .\Test\TestCSVToSQL.ps1
+    .\Test\TestSQLToSQL.ps1
     #.\Test\TestAzure.ps1
     Write-PSYHost "FINISHED Runing Test Scripts"
 }
