@@ -110,8 +110,8 @@ class OleDbRepository : Repository {
                 $r = $this.Exec("[VariableLogCreate]", $false, [ordered] @{
                     ActivityID = $Entity.ActivityID
                     Type = $Entity.Type
-                    VariableName = $Entity.VariableName
-                    VariableValue = $ValueString
+                    Name = $Entity.Name
+                    Value = $ValueString
                 })
                 $Entity.ID = $r[0].VariableLogID    
             }
@@ -129,9 +129,9 @@ class OleDbRepository : Repository {
                 $r = $this.Exec("[VariableCreate]", $false, [ordered] @{
                     Name = $Entity.Name
                     Value = $ValueString 
-                    DataType = $Entity.Value.GetType().fullname
+                    DataType = $Entity.Value.GetType().FullName
                 })
-                $Entity.ID = $r[0].VariableName              
+                $Entity.ID = $r[0].ID
             }
             'Connection' {
                 #If The Properties Type is  Hashtable or Array, Flaten all the rows in the Hashtable into a String.
@@ -210,7 +210,7 @@ class OleDbRepository : Repository {
                 $r = $this.Exec("[VariableUpdate]", $false, [ordered] @{
                     Name = $Entity.Name
                     Value = $ValueString
-                    DataType = $Entity.Value.GetType().fullname
+                    DataType = $Entity.Value.GetType().FullName
                 })
             }
             'Connection' {

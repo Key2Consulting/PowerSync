@@ -20,11 +20,11 @@ Import-Module "$rootPath\PowerSync"
 Write-PSYHost "Resetting test databases..."
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testSqlServer -Variable "DatabaseName=PSYTestTarget"
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testSqlServer -Variable "DatabaseName=PSYTestSource"
-#Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testSqlServer -Variable "DatabaseName=PSYRepository" -ErrorAction SilentlyContinue
+Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testSqlServer -Variable "DatabaseName=PSYRepository" -ErrorAction SilentlyContinue
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Source Database.sql" -ServerInstance $testSqlServer
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Target Database.sql" -ServerInstance $testSqlServer
-#Invoke-Sqlcmd -Query "CREATE DATABASE [PSYRepository]" -ServerInstance $testSqlServer
-#Invoke-Sqlcmd -InputFile "$($rootPath)Kit\SqlServerRepository\CreateDatabase.sql" -ServerInstance $testSqlServer -Database "PSYRepository"
+Invoke-Sqlcmd -Query "CREATE DATABASE [PSYRepository]" -ServerInstance $testSqlServer
+Invoke-Sqlcmd -InputFile "$($rootPath)Kit\SqlServerRepository\CreateDatabase.sql" -ServerInstance $testSqlServer -Database "PSYRepository"
 
 ######################################################
 # Run Tests
@@ -58,15 +58,15 @@ function Invoke-Tests {
     # Run required tests
     Write-PSYHost "RUNNING Test Scripts"
 
-    .\Test\TestQuickCommand.ps1
-    .\Test\TestGeneral.ps1
-    .\Test\TestVariables.ps1
+    #.\Test\TestQuickCommand.ps1
+    #.\Test\TestGeneral.ps1
+    #.\Test\TestVariables.ps1
     .\Test\TestConcurrency.ps1
-    .\Test\TestCSVToSQL.ps1
-    .\Test\TestSQLToSQL.ps1
+    #.\Test\TestCSVToSQL.ps1
+    #.\Test\TestSQLToSQL.ps1
     #.\Test\TestAzure.ps1
     Write-PSYHost "FINISHED Runing Test Scripts"
 }
 
-Invoke-Tests -JsonDbRepository
-#Invoke-Tests -OleDbRepository
+# Invoke-Tests -JsonDbRepository
+Invoke-Tests -OleDbRepository
