@@ -169,11 +169,11 @@ class OleDbRepository : Repository {
                     OriginatingServer = $Entity.OriginatingServer
                     ExecutionServer = $Entity.ExecutionServer
                     ExecutionPID = $Entity.ExecutionPID
-                    InputObject = $Entity.InputObject
+                    InputObject = $Entity.InputObject | ConvertTo-Json -Depth 5
                     ScriptBlock = $Entity.ScriptBlock
                     ScriptPath = $Entity.ScriptPath
                     JobInstanceID = $Entity.JobInstanceID
-                    OutputObject = $Entity.OutputObject
+                    OutputObject = $Entity.OutputObject | ConvertTo-Json -Depth 5
                     HadErrors = $Entity.HadErrors
                     Error = $ErrorText
                 })
@@ -197,18 +197,18 @@ class OleDbRepository : Repository {
                     ParentID = $r[0].ParentActivityID
                     Name = $r[0].Name
                     Status = $r[0].Status
-                    StartDateTime = $r[0].StartDateTime
-                    ExecutionDateTime = $r[0].ExecutionDateTime
-                    EndDateTime = $r[0].EndDateTime
+                    StartDateTime = $r[0].StartDateTime | ConvertTo-PSYCompatibleType
+                    ExecutionDateTime = $r[0].ExecutionDateTime | ConvertTo-PSYCompatibleType
+                    EndDateTime = $r[0].EndDateTime | ConvertTo-PSYCompatibleType
                     Queue = $r[0].Queue
                     OriginatingServer = $r[0].OriginatingServer
                     ExecutionServer = $r[0].ExecutionServer
                     ExecutionPID = $r[0].ExecutionPID
-                    InputObject = $r[0].InputObject
+                    InputObject = $r[0].InputObject | ConvertFrom-Json
                     ScriptBlock = $r[0].ScriptBlock
                     ScriptPath = $r[0].ScriptPath
                     JobInstanceID = $r[0].JobInstanceID
-                    OutputObject = $r[0].OutputObject
+                    OutputObject = $r[0].OutputObject | ConvertFrom-Json
                     HadErrors = $r[0].HadErrors
                     Error = $r[0].Error
                 }
@@ -274,8 +274,8 @@ class OleDbRepository : Repository {
                     JobInstanceID = $Entity.JobInstanceID
                     EndDateTime = $Entity.EndDateTime
                     Queue = $Entity.Queue
-                    InputObject = $Entity.InputObject
-                    OutputObject = $Entity.OutputObject
+                    InputObject = $Entity.InputObject | ConvertTo-Json -Depth 5
+                    OutputObject = $Entity.OutputObject | ConvertTo-Json -Depth 5
                     HadErrors = $Entity.HadErrors
                     Error = $ErrorText
                 })
@@ -453,9 +453,9 @@ class OleDbRepository : Repository {
                 ParentID = $r[0].ParentActivityID
                 Name = $r[0].Name
                 Status = $r[0].Status
-                StartDateTime = $r[0].StartDateTime
-                ExecutionDateTime = $r[0].ExecutionDateTime
-                EndDateTime = $r[0].EndDateTime
+                StartDateTime = $r[0].StartDateTime | ConvertTo-PSYCompatibleType
+                ExecutionDateTime = $r[0].ExecutionDateTime | ConvertTo-PSYCompatibleType
+                EndDateTime = $r[0].EndDateTime | ConvertTo-PSYCompatibleType
                 Queue = $r[0].Queue
                 OriginatingServer = $r[0].OriginatingServer
                 ExecutionServer = $r[0].ExecutionServer
