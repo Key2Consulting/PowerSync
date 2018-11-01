@@ -33,8 +33,8 @@ The new value of the variable.
             $o = @{
                 ID = $null                          # let the repository assign the surrogate key
                 Type = 'Variable'
-                VariableName = $Name
-                VariableValue = $logValue
+                Name = $Name
+                Value = $logValue
                 CreatedDateTime = Get-Date | ConvertTo-PSYCompatibleType
             }
             if ($PSYSession.ActivityStack.Count -gt 0) {

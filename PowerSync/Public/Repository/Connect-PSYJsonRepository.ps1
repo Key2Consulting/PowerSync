@@ -7,14 +7,20 @@ PowerSync uses a repository to manage all of its configuration and state, and mu
 
 A Json repository is a convenient way to get up and running with PowerSync without much overhead. Json files are limited, so for more complex projects, use a database repository (i.e. Connect-PSYOleDbRepository).
 
-.PARAMETER Path
-Path of the Json repository to connect to. If just a filename is specified, will resolve to the current working folder.
+.PARAMETER RootPath
+Path of the folder where the Json repository files are placed. Used to connect and/or create the repository.
 
-.PARAMETER Create
-Automatically creates the repository if it doesn't exist.
+.PARAMETER ClearLogs
+Clears/truncates all logs in the repository.
 
-.PARAMETER Recreate
-Automatically recreates the repository if it doesn't exist, clearing any previous contents.
+.PARAMETER ClearActivities
+Clears/truncates all activities in the repository.
+
+.PARAMETER ClearConnections
+Clears/truncates all connections in the repository.
+
+.PARAMETER ClearVariables
+Clears/truncates all variables in the repository.
 
 .PARAMETER LockTimeout
 The timeout, in milliseconds, to wait for exclusive access to the repository before failing. You normally do not need to specify this parameter.

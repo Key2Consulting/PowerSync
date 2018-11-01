@@ -5,12 +5,12 @@
 /****** Object:  Schema [PSY]    Script Date: 10/30/2018 4:32:17 PM ******/
 CREATE SCHEMA [PSY]
 GO
-/****** Object:  Table [PSY].[ActivityLog]    Script Date: 10/30/2018 4:32:17 PM ******/
+/****** Object:  Table [PSY].[Activity]    Script Date: 10/30/2018 4:32:17 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [PSY].[ActivityLog](
+CREATE TABLE [PSY].[Activity](
 	[ActivityID] [int] IDENTITY(1,1) NOT NULL,
 	[ParentActivityID] [int] NULL,
 	[Name] [varchar](100) NULL,
@@ -21,6 +21,7 @@ CREATE TABLE [PSY].[ActivityLog](
 	[Queue] [varchar](100) NULL,
 	[OriginatingServer] [varchar](100) NOT NULL,
 	[ExecutionServer] [varchar](100) NULL,
+	[ExecutionPID] [int] NULL,	
 	[InputObject] [varchar](max) NULL,
 	[ScriptBlock] [varchar](max) NOT NULL,
 	[ScriptPath] [varchar](max) NOT NULL,
@@ -28,7 +29,7 @@ CREATE TABLE [PSY].[ActivityLog](
 	[OutputObject] [varchar](max) NULL,
 	[HadErrors] [bit] NULL,
 	[Error] [varchar](max) NULL,
- CONSTRAINT [PK_ActivityLog] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Activity] PRIMARY KEY CLUSTERED 
 (
 	[ActivityID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -86,7 +87,7 @@ CREATE TABLE [PSY].[MessageLog](
 	[Category] [varchar](100) NULL,
 	[Message] [varchar](max) NOT NULL,
 	[CreatedDateTime] [datetime] NOT NULL,
- CONSTRAINT [PK_MessageLog] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_MessageLog] PRIMARY KEY CLUSTERED
 (
 	[MessageLogID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -138,8 +139,8 @@ CREATE TABLE [PSY].[VariableLog](
 	[VariableLogID] [int] IDENTITY(1,1) NOT NULL,
 	[ActivityID] [int] NULL,
 	[Type] [varchar](50) NOT NULL,
-	[VariableName] [varchar](100) NOT NULL,
-	[VariableValue] [varchar](max) NULL,
+	[Name] [varchar](100) NOT NULL,
+	[Value] [varchar](max) NULL,
 	[CreatedDateTime] [datetime] NOT NULL,
  CONSTRAINT [PK_VariableLog] PRIMARY KEY CLUSTERED 
 (
@@ -174,6 +175,7 @@ CREATE PROCEDURE [PSY].[ActivityCreate]
 	@Queue VARCHAR(100),
 	@OriginatingServer VARCHAR(100),
 	@ExecutionServer VARCHAR(100) = NULL,
+	@ExecutionPID INT = NULL,
 	@InputObject VARCHAR(MAX) = NULL,
 	@ScriptBlock VARCHAR(MAX),
 	@ScriptPath VARCHAR(MAX),
@@ -185,12 +187,13 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	INSERT INTO [PSY].[ActivityLog]
+	INSERT INTO [PSY].[Activity]
 		([ParentActivityID]
 		,[Name]
 		,[Status]
 		,[StartDateTime]
 		,[ExecutionDateTime]
+		,[ExecutionPID]
 		,[EndDateTime]
 		,[Queue]
 		,[OriginatingServer]
@@ -208,6 +211,7 @@ BEGIN
 		,@Status
 		,@StartDateTime
 		,@ExecutionDateTime
+		,@ExecutionPID
 		,@EndDateTime
 		,@Queue
 		,@OriginatingServer
@@ -234,6 +238,9 @@ CREATE PROCEDURE [PSY].[ActivityUpdate]
 	@ActivityID INT,
 	@Status VARCHAR(50),
 	@ExecutionDateTime DATETIME = NULL,
+	@ExecutionServer VARCHAR(100) = NULL,
+	@ExecutionPID INT = NULL,
+	@JobInstanceID VARCHAR(50) = NULL,
 	@EndDateTime DATETIME = NULL,
 	@Queue VARCHAR(100) = NULL,
 	@InputObject VARCHAR(MAX) = NULL,
@@ -246,15 +253,31 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	UPDATE [PSY].[ActivityLog]
+	UPDATE [PSY].[Activity]
 	SET	[Status] = @Status
 		,[ExecutionDateTime] = @ExecutionDateTime
+		,[ExecutionServer] = @ExecutionServer
+		,[ExecutionPID] = @ExecutionPID
+		,[JobInstanceID] = @JobInstanceID
 		,[EndDateTime] = @EndDateTime
 		,[Queue] = @Queue
 		,[InputObject] = @InputObject
 		,[OutputObject] = @OutputObject
 		,[HadErrors] = @HadErrors
 		,[Error] = @Error
+	WHERE ActivityID = @ActivityID
+
+END
+GO
+CREATE PROCEDURE [PSY].[ActivityRead]
+	@ActivityID INT
+AS
+
+BEGIN
+	SET NOCOUNT ON
+
+	SELECT *
+	FROM [PSY].[Activity]
 	WHERE ActivityID = @ActivityID
 
 END
@@ -561,8 +584,8 @@ GO
 CREATE PROCEDURE [PSY].[VariableLogCreate]
 	@ActivityID INT = NULL,
 	@Type VARCHAR(50),
-	@VariableName VARCHAR(100),
-	@VariableValue VARCHAR(MAX) = NULL
+	@Name VARCHAR(100),
+	@Value VARCHAR(MAX) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -570,14 +593,14 @@ BEGIN
 	INSERT INTO [PSY].[VariableLog]
 		([ActivityID]
 		,[Type]
-		,[VariableName]
-		,[VariableValue]
+		,[Name]
+		,[Value]
 		,[CreatedDateTime])
 	VALUES
 		(@ActivityID
 		,@Type
-		,@VariableName
-		,@VariableValue
+		,@Name
+		,@Value
 		,GETDATE())
 
 	SELECT @@IDENTITY VariableLogID
@@ -606,6 +629,111 @@ BEGIN
 		,[ModifiedDateTime] = GETDATE()
 	WHERE [Name] = @Name
 	
-	SELECT @Name AS [VariableName]
+	SELECT @Name AS [Name]
+END
+GO
+
+CREATE PROCEDURE [PSY].[LogSearch]
+	@Attribute VARCHAR(128),
+	@Search VARCHAR(MAX),
+	@Wildcards BIT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	-- Convert PowerShell's wildcard tokens to SQL Server compatible ones.
+	IF @Wildcards = 1
+	BEGIN
+		SET @Search = REPLACE(@Search, '*', '%')
+		SET @Search = REPLACE(@Search, '?', '_')
+	END
+
+	;WITH Logs AS
+	(
+		SELECT
+			[ErrorLogID] [ID]
+			,[ActivityID]
+			,[Type]
+			,[CreatedDateTime]
+			,[Message] [Generic1]
+			,[Exception] [Generic2]
+			,[StackTrace] [Generic3]
+			,[Invocation] [Generic4]
+		FROM [PSY].[ErrorLog]
+		UNION ALL
+		SELECT
+			[MessageLogID]
+			,[ActivityID]
+			,[Type]
+			,[CreatedDateTime]
+			,[Category] [Generic1]
+			,[Message] [Generic2]
+			,NULL [Generic3]
+			,NULL [Generic4]
+		FROM [PSY].[MessageLog]
+		UNION ALL
+		SELECT
+			[QueryLogID]
+			,[ActivityID]
+			,[Type]
+			,[CreatedDateTime]
+			,[Connection] [Generic1]
+			,[QueryName] [Generic2]
+			,[Query] [Generic3]
+			,[QueryParam] [Generic4]
+		FROM [PSY].[QueryLog]
+		UNION ALL
+		SELECT 
+			[VariableLogID]
+			,[ActivityID]
+			,[Type]
+			,[CreatedDateTime]
+			,[Name] [Generic1]
+			,[Value] [Generic2]
+			,NULL [Generic3]
+			,NULL [Generic4]
+		FROM [PSY].[VariableLog]
+	)
+	SELECT *
+	FROM Logs
+	WHERE
+		([ActivityID] = @Search AND (@Attribute = 'ActivityID' OR @Attribute IS NULL))
+		OR [Generic1] LIKE '%' + @Search + '%'
+		OR [Generic2] LIKE '%' + @Search + '%'
+		OR [Generic3] LIKE '%' + @Search + '%'
+		OR [Generic4] LIKE '%' + @Search + '%'
+		
+END
+GO
+
+CREATE PROCEDURE [PSY].[ActivityDequeue]
+	@Queue VARCHAR(100)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	-- Remove any available activity from the given queue concurrent with other processes. The update should
+	-- block anyone else trying to do the same.
+	DECLARE @affected TABLE(ActivityID INT)
+
+	;WITH Available AS
+	(
+		SELECT TOP 1 *
+		FROM [PSY].[Activity]
+		WHERE
+			[Queue] = @Queue				-- in our queue
+			AND [Status] = 'Started'		-- started (which is the first phase of an activity)
+		ORDER BY ActivityID ASC
+	)
+	UPDATE Available
+	SET [Status] = 'Dequeued'
+	OUTPUT inserted.ActivityID
+	INTO @affected
+	
+	-- Return the dequeued activity.
+	SELECT *
+	FROM [PSY].[Activity]
+	WHERE ActivityID IN (SELECT ActivityID FROM @affected)
+		
 END
 GO

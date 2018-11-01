@@ -120,27 +120,27 @@ class FileRepository : Repository {
         return @($entities)     # single item case
     }
 
-    [object] SearchLogs([string] $Search, [bool] $Wildcards) {
+    [object] SearchLogs([string] $Attribute, [string] $Search, [bool] $Wildcards) {
         # Search all logs in the repository and return any that match
         $entities = $this.CriticalSection('All', {
             $logs = [System.Collections.ArrayList]::new()
             if (-not $Type -or $Type -eq 'Debug' -or $Type -eq 'Information' -or $Type -eq 'Verbose') {
-                $logs.AddRange($this.FindEntity('MessageLog', 'Message', $Search, $true))
-                $logs.AddRange($this.FindEntity('MessageLog', 'ActivityID', $Search, $false))
+                if (-not $Attribute -or $Attribute -eq 'Message') { $logs.AddRange($this.FindEntity('MessageLog', 'Message', $Search, $true)) }
+                if (-not $Attribute -or $Attribute -eq 'ActivityID') { $logs.AddRange($this.FindEntity('MessageLog', 'ActivityID', $Search, $false)) }
             }
             if (-not $Type -or $Type -eq 'Error') {
-                $logs.AddRange($this.FindEntity('ErrorLog', 'Message', $Search, $true))
-                $logs.AddRange($this.FindEntity('ErrorLog', 'Exception', $Search, $true))
-                $logs.AddRange($this.FindEntity('ErrorLog', 'StackTrace', $Search, $true))
-                $logs.AddRange($this.FindEntity('ErrorLog', 'ActivityID', $Search, $false))
+                if (-not $Attribute -or $Attribute -eq 'Message') { $logs.AddRange($this.FindEntity('ErrorLog', 'Message', $Search, $true)) }
+                if (-not $Attribute -or $Attribute -eq 'Exception') { $logs.AddRange($this.FindEntity('ErrorLog', 'Exception', $Search, $true)) }
+                if (-not $Attribute -or $Attribute -eq 'StackTrace') { $logs.AddRange($this.FindEntity('ErrorLog', 'StackTrace', $Search, $true)) }
+                if (-not $Attribute -or $Attribute -eq 'ActivityID') { $logs.AddRange($this.FindEntity('ErrorLog', 'ActivityID', $Search, $false)) }
             }
             if (-not $Type -or $Type -eq 'Variable') {
-                $logs.AddRange($this.FindEntity('VariableLog', 'VariableName', $Search, $true))
-                $logs.AddRange($this.FindEntity('VariableLog', 'ActivityID', $Search, $false))
+                if (-not $Attribute -or $Attribute -eq 'Name') { $logs.AddRange($this.FindEntity('VariableLog', 'Name', $Search, $true)) }
+                if (-not $Attribute -or $Attribute -eq 'ActivityID') { $logs.AddRange($this.FindEntity('VariableLog', 'ActivityID', $Search, $false)) }
             }
             if (-not $Type -or $Type -eq 'Query') {
-                $logs.AddRange($this.FindEntity('QueryLog', 'Query', $Search, $true))
-                $logs.AddRange($this.FindEntity('QueryLog', 'ActivityID', $Search, $false))
+                if (-not $Attribute -or $Attribute -eq 'Query') { $logs.AddRange($this.FindEntity('QueryLog', 'Query', $Search, $true)) }
+                if (-not $Attribute -or $Attribute -eq 'ActivityID') { $logs.AddRange($this.FindEntity('QueryLog', 'ActivityID', $Search, $false)) }
             }
             
             # If the caller wants to filter on log type, apply that here in addition to above since some logs use

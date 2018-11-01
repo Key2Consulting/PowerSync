@@ -20,11 +20,11 @@ Import-Module "$rootPath\PowerSync"
 Write-PSYHost "Resetting test databases..."
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testSqlServer -Variable "DatabaseName=PSYTestTarget"
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testSqlServer -Variable "DatabaseName=PSYTestSource"
-#Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testSqlServer -Variable "DatabaseName=PSYRepository" -ErrorAction SilentlyContinue
+Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Remove Database.sql" -ServerInstance $testSqlServer -Variable "DatabaseName=PSYRepository" -ErrorAction SilentlyContinue
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Source Database.sql" -ServerInstance $testSqlServer
 Invoke-Sqlcmd -InputFile "$($rootPath)Test\Setup\Create Target Database.sql" -ServerInstance $testSqlServer
-#Invoke-Sqlcmd -Query "CREATE DATABASE [PSYRepository]" -ServerInstance $testSqlServer
-#Invoke-Sqlcmd -InputFile "$($rootPath)Kit\SqlServerRepository\CreateDatabase.sql" -ServerInstance $testSqlServer -Database "PSYRepository"
+Invoke-Sqlcmd -Query "CREATE DATABASE [PSYRepository]" -ServerInstance $testSqlServer
+Invoke-Sqlcmd -InputFile "$($rootPath)Kit\SqlServerRepository\CreateDatabase.sql" -ServerInstance $testSqlServer -Database "PSYRepository"
 
 ######################################################
 # Run Tests
@@ -43,7 +43,6 @@ function Invoke-Tests {
     }
     elseif ($OleDbRepository) {
         Connect-PSYOleDbRepository -ConnectionString $oleDbRepoCS -Schema '[PSY]'
-        #$PSYCmdPath = "$rootPath" + "PowerSync\Asset\StoredQuery\Repository"
     }
     
     # Create default connections
@@ -54,6 +53,7 @@ function Invoke-Tests {
 
     # Set environment variables
     Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot                         # needed so Stored Command finds our custom scripts
+    #Set-PSYVariable -Name 'PSYForceSequential' -Value $false                        # set this to force all tests to run sequential for debugging purposes.
 
     # Run required tests
     Write-PSYHost "RUNNING Test Scripts"
@@ -68,5 +68,5 @@ function Invoke-Tests {
     Write-PSYHost "FINISHED Runing Test Scripts"
 }
 
-Invoke-Tests -JsonDbRepository
-#Invoke-Tests -OleDbRepository
+# Invoke-Tests -JsonDbRepository
+Invoke-Tests -OleDbRepository

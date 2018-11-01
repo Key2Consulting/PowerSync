@@ -110,10 +110,10 @@ class OleDbRepository : Repository {
                 $r = $this.Exec("[VariableLogCreate]", $false, [ordered] @{
                     ActivityID = $Entity.ActivityID
                     Type = $Entity.Type
-                    VariableName = $Entity.VariableName
-                    VariableValue = $ValueString
+                    Name = $Entity.Name
+                    Value = $ValueString
                 })
-                $Entity.ID = $r[0].VariableLogID    
+                $Entity.ID = $r[0].VariableLogID
             }
             'Variable' {
                 [string] $ValueString = ""
@@ -129,9 +129,9 @@ class OleDbRepository : Repository {
                 $r = $this.Exec("[VariableCreate]", $false, [ordered] @{
                     Name = $Entity.Name
                     Value = $ValueString 
-                    DataType = $Entity.Value.GetType().fullname
+                    DataType = $Entity.Value.GetType().FullName
                 })
-                $Entity.ID = $r[0].VariableName              
+                $Entity.ID = $r[0].VariableName
             }
             'Connection' {
                 #If The Properties Type is  Hashtable or Array, Flaten all the rows in the Hashtable into a String.
@@ -168,12 +168,12 @@ class OleDbRepository : Repository {
                     Queue = $Entity.Queue
                     OriginatingServer = $Entity.OriginatingServer
                     ExecutionServer = $Entity.ExecutionServer
-                    #ExecutionPID = $Entity.ExecutionPID
-                    InputObject = $Entity.InputObject
+                    ExecutionPID = $Entity.ExecutionPID
+                    InputObject = $Entity.InputObject | ConvertTo-Json -Depth 5
                     ScriptBlock = $Entity.ScriptBlock
                     ScriptPath = $Entity.ScriptPath
                     JobInstanceID = $Entity.JobInstanceID
-                    OutputObject = $Entity.OutputObject
+                    OutputObject = $Entity.OutputObject | ConvertTo-Json -Depth 5
                     HadErrors = $Entity.HadErrors
                     Error = $ErrorText
                 })
@@ -188,6 +188,32 @@ class OleDbRepository : Repository {
     
     [object] ReadEntity([string] $EntityType, [object] $EntityID) {
         switch ($EntityType) {
+            'Activity' {
+                $r = $this.Exec("[ActivityRead]", $false, [ordered] @{
+                    ActivityID = $EntityID
+                })
+                $o = @{
+                    ID = $r[0].ActivityID
+                    ParentID = $r[0].ParentActivityID
+                    Name = $r[0].Name
+                    Status = $r[0].Status
+                    StartDateTime = $r[0].StartDateTime | ConvertTo-PSYCompatibleType
+                    ExecutionDateTime = $r[0].ExecutionDateTime | ConvertTo-PSYCompatibleType
+                    EndDateTime = $r[0].EndDateTime | ConvertTo-PSYCompatibleType
+                    Queue = $r[0].Queue
+                    OriginatingServer = $r[0].OriginatingServer
+                    ExecutionServer = $r[0].ExecutionServer
+                    ExecutionPID = $r[0].ExecutionPID
+                    InputObject = $r[0].InputObject | ConvertFrom-Json
+                    ScriptBlock = $r[0].ScriptBlock
+                    ScriptPath = $r[0].ScriptPath
+                    JobInstanceID = $r[0].JobInstanceID
+                    OutputObject = $r[0].OutputObject | ConvertFrom-Json
+                    HadErrors = $r[0].HadErrors
+                    Error = $r[0].Error
+                }
+                return $o
+            }
             default { 
                 throw "Unknown entity type '$EntityType'. found in ReadEntity."
             }
@@ -210,7 +236,7 @@ class OleDbRepository : Repository {
                 $r = $this.Exec("[VariableUpdate]", $false, [ordered] @{
                     Name = $Entity.Name
                     Value = $ValueString
-                    DataType = $Entity.Value.GetType().fullname
+                    DataType = $Entity.Value.GetType().FullName
                 })
             }
             'Connection' {
@@ -243,10 +269,13 @@ class OleDbRepository : Repository {
                     ActivityID = $Entity.ID
                     Status = $Entity.Status
                     ExecutionDateTime = $Entity.ExecutionDateTime
+                    ExecutionServer = $Entity.ExecutionServer
+                    ExecutionPID = $Entity.ExecutionPID
+                    JobInstanceID = $Entity.JobInstanceID
                     EndDateTime = $Entity.EndDateTime
                     Queue = $Entity.Queue
-                    InputObject = $Entity.InputObject
-                    OutputObject = $Entity.OutputObject
+                    InputObject = $Entity.InputObject | ConvertTo-Json -Depth 5
+                    OutputObject = $Entity.OutputObject | ConvertTo-Json -Depth 5
                     HadErrors = $Entity.HadErrors
                     Error = $ErrorText
                 })
@@ -353,12 +382,95 @@ class OleDbRepository : Repository {
         return $entityList 
     }
 
-    [object] SearchLogs([string] $Search, [bool] $Wildcards) {
-        throw "Method should be overridden by derived classes."
+    [object] SearchLogs([string] $Attribute, [string] $Search, [bool] $Wildcards) {
+        $r = $this.Exec("[LogSearch]", $false, [ordered] @{
+            Attribute = $Attribute
+            Search = $Search
+            Wildcards = $Wildcards
+        })
+
+        $logs = [System.Collections.ArrayList]::new()
+        foreach ($log in $r) {
+            switch ($log.Type) {
+                'Error' {
+                    [void] $logs.Add(@{
+                        ID = $log.ID
+                        ActivityID = $log.ActivityID
+                        Type = $log.Type
+                        CreatedDateTime = $log.CreatedDateTime
+                        Message = $log.Generic1
+                        Exception = $log.Generic2
+                        StackTrace = $log.Generic3
+                        Invocation = $log.Generic4
+                    })
+                }
+                {$_ -in 'Information', 'Verbose', 'Debug'} {
+                    [void] $logs.Add(@{
+                        ID = $log.ID
+                        ActivityID = $log.ActivityID
+                        Type = $log.Type
+                        CreatedDateTime = $log.CreatedDateTime
+                        Category = $log.Generic1
+                        Message = $log.Generic2
+                    })
+                }
+                'Query' {
+                    [void] $logs.Add(@{
+                        ID = $log.ID
+                        ActivityID = $log.ActivityID
+                        Type = $log.Type
+                        CreatedDateTime = $log.CreatedDateTime
+                        Connection = $log.Generic1
+                        QueryName = $log.Generic2
+                        Query = $log.Generic3
+                        QueryParam = $log.Generic4
+                    })
+                }
+                'Variable' {
+                    [void] $logs.Add(@{
+                        ID = $log.ID
+                        ActivityID = $log.ActivityID
+                        Type = $log.Type
+                        CreatedDateTime = $log.CreatedDateTime
+                        Name = $log.Generic1
+                        Value = $log.Generic2
+                    })
+                }
+            }
+        }
+        return $logs
     }
 
     # Removes an activity from a queue, blocking other concurrent processes which might be doing the same.
     [object] DequeueActivity([string] $Queue) {
-        throw "Method should be overridden by derived classes."
+        $r = $this.Exec("[ActivityDequeue]", $false, [ordered] @{
+            Queue = $Queue
+        })
+
+        if ($r) {
+            $o = @{
+                ID = $r[0].ActivityID
+                ParentID = $r[0].ParentActivityID
+                Name = $r[0].Name
+                Status = $r[0].Status
+                StartDateTime = $r[0].StartDateTime | ConvertTo-PSYCompatibleType
+                ExecutionDateTime = $r[0].ExecutionDateTime | ConvertTo-PSYCompatibleType
+                EndDateTime = $r[0].EndDateTime | ConvertTo-PSYCompatibleType
+                Queue = $r[0].Queue
+                OriginatingServer = $r[0].OriginatingServer
+                ExecutionServer = $r[0].ExecutionServer
+                ExecutionPID = $r[0].ExecutionPID
+                InputObject = $r[0].InputObject
+                ScriptBlock = $r[0].ScriptBlock
+                ScriptPath = $r[0].ScriptPath
+                JobInstanceID = $r[0].JobInstanceID
+                OutputObject = $r[0].OutputObject
+                HadErrors = $r[0].HadErrors
+                Error = $r[0].Error
+            }
+            return $o
+        }
+
+        return $null
     }    
 }

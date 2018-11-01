@@ -1,6 +1,6 @@
 Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
-    $a = "Sequential Activity" | Start-PSYActivity -Name 'Test Simple Sequential Execution' -ScriptBlock {
+     $a = "Sequential Activity" | Start-PSYActivity -Name 'Test Simple Sequential Execution' -ScriptBlock {
         "...$($_)..."
     }
 
@@ -12,20 +12,20 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
     $a = (
         (Start-PSYActivity -Name 'Test Async Race Execution 1' -Async -ScriptBlock {
             Write-PSYInformationLog 'Async scriptblock 1 is executing'
-            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 1"
             Start-Sleep -Seconds 5
+            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 1"
             if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Async Race Execution'"}
         }), 
-        (Start-PSYActivity -Name 'Test Parallel Race Execution 2' -Async -ScriptBlock {
+        (Start-PSYActivity -Name 'Test Async Race Execution 2' -Async -ScriptBlock {
             Write-PSYInformationLog 'Async scriptblock 2 is executing'
-            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 2"
             Start-Sleep -Seconds 3
+            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 2"
             if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Async Race Execution'"}
         }),
         (Start-PSYActivity -Name 'Test Async Race Execution 3' -Async -ScriptBlock {
             Write-PSYInformationLog 'Async scriptblock 3 is executing'
-            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 3"
             Start-Sleep -Seconds 0
+            Set-PSYVariable -Name 'TestVariable' -Value "Concurrent update 3"
             Get-PSYVariable 'TestVariable'
             if ((Get-PSYVariable 'TestVariable') -ne 'Concurrent update 3') { throw "Failed test 'Test Async Race Execution'"}
         })
