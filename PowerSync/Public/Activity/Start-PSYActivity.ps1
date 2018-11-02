@@ -204,6 +204,10 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         elseif (-not $activity.JobInstanceID) {
                             throw "Synchronization error with activity '$($activity.Name)'. JobInstanceID not set."     # hopefully this never happens
                         }
+                        
+                        # Force activity to top of the stack to ensure logging is correlated correctly.
+                        $PSYSession.ActivityStack.Clear()
+                        [void] $PSYSession.ActivityStack.Add($activity.ID)
 
                         # Execute the input scriptblock
                         $scriptBlock = [Scriptblock]::Create($activity.ScriptBlock)                     # only the text was serialized, not the object, so reconstruct
@@ -226,7 +230,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                         catch {
                             $activity.OutputObject = $r
                             $activity.HadErrors = $true
-                            $activity.Error = $_
+                            $activity.Error = $_.Exception.Message
                             Write-PSYErrorLog $_
                         }
 
@@ -271,7 +275,7 @@ $async | Wait-PSYActivity       # echos any log information collected during the
                     catch {
                         $activity.OutputObject = $null
                         $activity.HadErrors = $true
-                        $activity.Error = $_
+                        $activity.Error = $_.Exception.Message
                         $activity.Status = 'Completed'
                         $activity.EndDateTime = Get-Date | ConvertTo-PSYCompatibleType
                         Checkpoint-PSYActivity $activity

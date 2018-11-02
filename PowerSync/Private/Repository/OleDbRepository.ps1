@@ -64,11 +64,30 @@ class OleDbRepository : Repository {
         return $returnValue
     }
 
+    [object] ConvertErrorToText([object] $Var) {
+        if (-not $Var) {
+            return $null
+        }
+        elseif ($Var -eq 'null') {
+            return $null
+        }
+        elseif ($Var -is [string]) {
+            return $Var
+        } 
+        else {
+            $r = $Var | ConvertTo-Json -Depth 3
+            if ($r -eq 'null') {        # Json will output the word null sometimes when it evaluates to nothing
+                return $null
+            }
+            return $r
+        }
+    }
+
     [void] CreateEntity([string] $EntityType, [object] $Entity) {
         switch ($EntityType) {
             'ErrorLog' {
                 $r = $this.Exec("[ErrorLogCreate]", $false, [ordered] @{
-                    ActivityID = $Entity.ID
+                    ActivityID = $Entity.ActivityID
                     Type = $Entity.Type
                     Message = $Entity.Message
                     Exception = $Entity.Exception
@@ -150,14 +169,7 @@ class OleDbRepository : Repository {
                 })
                 $Entity.ID = $r[0].ConnectionID              
             }
-            'Activity'{
-                if ($Entity.Error -is [HashTable] -or $Entity.Error -is [array] -or $Entity.Error -is [System.Object] ){
-                    $ErrorText = $Entity.Error | ConvertTo-Json -Depth 3 
-                    } 
-                else {
-                    $ErrorText = $Entity.Error
-                }
-                
+            'Activity' {
                 $r = $this.Exec("[ActivityCreate]", $false, [ordered] @{
                     ParentActivityID = $Entity.ParentID
                     Name = $Entity.Name
@@ -175,7 +187,7 @@ class OleDbRepository : Repository {
                     JobInstanceID = $Entity.JobInstanceID
                     OutputObject = $Entity.OutputObject | ConvertTo-Json -Depth 5
                     HadErrors = $Entity.HadErrors
-                    Error = $ErrorText
+                    Error = $this.ConvertErrorToText($Entity.Error)
                 })
                 $Entity.ID = $r[0].ActivityID     
                 
@@ -227,9 +239,9 @@ class OleDbRepository : Repository {
                 [string] $ValueString = ""
                
                 #If The Value Type is  Hashtable or Array, Flaten all the rows in the Hashtable into a String.
-                if ($Entity.Value -is [HashTable] -or $Entity.Value -is [array]){
-                    $ValueString = $Entity.Value | ConvertTo-Json -Depth 3 
-                    } 
+                if ($Entity.Value -is [HashTable] -or $Entity.Value -is [array]) {
+                    $ValueString = $Entity.Value | ConvertTo-Json -Depth 3
+                } 
                 else {
                     $ValueString = $Entity.Value
                 }
@@ -258,13 +270,6 @@ class OleDbRepository : Repository {
                 })
             }
             'Activity' {
-                if ($Entity.Error -is [HashTable] -or $Entity.Error -is [array] -or $Entity.Error -is [System.Object] ){
-                    $ErrorText = $Entity.Error | ConvertTo-Json -Depth 3 
-                    } 
-                else {
-                    $ErrorText = $Entity.Error
-                }
-
                 $r = $this.Exec("[ActivityUpdate]", $false, [ordered] @{
                     ActivityID = $Entity.ID
                     Status = $Entity.Status
@@ -277,7 +282,7 @@ class OleDbRepository : Repository {
                     InputObject = $Entity.InputObject | ConvertTo-Json -Depth 5
                     OutputObject = $Entity.OutputObject | ConvertTo-Json -Depth 5
                     HadErrors = $Entity.HadErrors
-                    Error = $ErrorText
+                    Error = $this.ConvertErrorToText($Entity.Error)
                 })
             }
             default {
