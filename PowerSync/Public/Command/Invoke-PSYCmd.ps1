@@ -48,13 +48,13 @@ function Invoke-PSYCmd {
     try {
         # Resolve the query either by using the explicitly passed command,  load it from a file, or 
         # invoke a stored procedure.
-        if ($CommandText) {
+        if ($SP) {
+            $cmdText = Select-Coalesce $CommandText, $Name
+            $cmdType = [System.Data.CommandType]::StoredProcedure
+        }
+        elseif ($CommandText) {
             $cmdText = $CommandText
             $cmdType = [System.Data.CommandType]::Text
-        }
-        elseif ($SP) {
-            $cmdText = $Name
-            $cmdType = [System.Data.CommandType]::StoredProcedure
         }
         else {
             $cmdText = Resolve-PSYCmd -Name $Name -Param $Param
@@ -84,6 +84,7 @@ function Invoke-PSYCmd {
             # Add each passed in parameter to the command.
             foreach ($paramName in $Param.Keys) {
                 $paramValue = $Param[$paramName]
+                $parameterDirection = [System.Data.ParameterDirection]::Input
                 $p = $cmd.Parameters.AddWithValue($paramName, $paramValue)
             }
         }
