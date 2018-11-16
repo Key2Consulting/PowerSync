@@ -40,9 +40,9 @@ function Lock-PSYVariable {
 
     try {
         # Grab an exclusive lock on the variable name
-        [object] $mutex = [System.Threading.Mutex]::new($false, "Global\PSY-$Name")
+        [object] $mutex = [System.Threading.Mutex]::new($false, "PSY-$Name")
         [void] $mutex.WaitOne($Timeout)
-        Write-PSYDebugLog -Message "Acquired mutex Global\PSY-$Name"
+        Write-PSYDebugLog -Message "Acquired mutex PSY-$Name"
         
         # Lock the variable and execute the caller's code.
         Invoke-Command -ScriptBlock $ScriptBlock
@@ -52,6 +52,6 @@ function Lock-PSYVariable {
     }
     finally {
         $mutex.ReleaseMutex()
-        Write-PSYDebugLog -Message "Released mutex Global\PSY-$Name"
+        Write-PSYDebugLog -Message "Released mutex PSY-$Name"
     }
 }

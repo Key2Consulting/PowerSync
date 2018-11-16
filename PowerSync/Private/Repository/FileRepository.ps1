@@ -213,12 +213,12 @@ class FileRepository : Repository {
             else {
                 $LockName = "GlobalFileRepositoryLock"
             }
-            $mutex = [System.Threading.Mutex]::new($false, "Global\PSY-$LockName")
+            $mutex = [System.Threading.Mutex]::new($false, "PSY-$LockName")
             $acquired = $mutex.WaitOne($this.State.LockTimeout)
             if (-not $acquired) {
                 throw "Unable to acquire lock in FileRepository after waiting $($this.State.LockTimeout) milliseconds."
             }
-            Write-Debug "Acquired mutex Global\PSY-$LockName"       # can't use Write-PSYDebugLog since it writes to the repo and acquires a lock
+            Write-Debug "Acquired mutex PSY-$LockName"       # can't use Write-PSYDebugLog since it writes to the repo and acquires a lock
 
             # The critical section should handle concurrency within our process, but we're still getting runtime errors regarding
             # the file already being open. This could be VS Code, or perhaps the Set/Get-Content isn't disposing quick enough. In
@@ -271,7 +271,7 @@ class FileRepository : Repository {
         }
         finally {
             $mutex.ReleaseMutex()
-            Write-Debug "Released mutex Global\PSY-$LockName"       # can't use Write-PSYDebugLog since it writes to the repo and acquires a lock
+            Write-Debug "Released mutex PSY-$LockName"       # can't use Write-PSYDebugLog since it writes to the repo and acquires a lock
         }
     }    
 }
