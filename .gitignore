@@ -1,4 +1,4 @@
 Temp*.*
 Test/TempFiles/*
-Test/CSharpLibrary/bin/*
-Test/CSharpLibrary/obj/*
+PSYDotNet/bin/*
+PSYDotNet/obj/*

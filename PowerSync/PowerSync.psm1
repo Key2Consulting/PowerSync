@@ -26,18 +26,15 @@
     UserInteractive = [Environment]::UserInteractive            # determine if functions like Write-Host are available (although Write-Output is generally recommended over Write-host, it affects function output streams)
 }
 
-# Import CSharp Library Dependencies
-Add-Type -IgnoreWarnings `
-    -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
-    -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TypeConversionDataReader.cs"))
-
-Add-Type -IgnoreWarnings `
-    -ReferencedAssemblies ('System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
-    -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TextFileDataReader.cs"))
-
-Add-Type -IgnoreWarnings `
-    -ReferencedAssemblies ('System.IO', 'System.Data', 'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089') `
-    -TypeDefinition ([System.IO.File]::ReadAllText("$PSScriptRoot\Private\CSharpLibrary\TextFileDataWriter.cs"))
+# Import DotNet Library Dependencies
+try {
+    Add-Type -Path "$PSScriptRoot\Private\bin\PSYDotNet.dll" -IgnoreWarnings
+}
+catch {
+    $x = $_.Exception.LoaderExceptions | ForEach-Object {
+        Write-Error $_.Message
+    }
+}
 
 # REFERENCES
 # https://github.com/PowerShell/PowerShell/issues/3173
