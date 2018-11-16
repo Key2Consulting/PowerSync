@@ -53,7 +53,7 @@ function Invoke-Tests {
 
     # Set environment variables
     Set-PSYVariable -Name 'PSYCmdPath' -Value $PSScriptRoot                         # needed so Stored Command finds our custom scripts
-    Set-PSYVariable -Name 'PSYForceSequential' -Value $false                        # set this to force all tests to run sequential for debugging purposes.
+    #Set-PSYVariable -Name 'PSYForceSequential' -Value $false                        # set this to force all tests to run sequential for debugging purposes.
 
     # Run required tests
     Write-PSYHost "RUNNING Test Scripts"
