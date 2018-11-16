@@ -68,5 +68,5 @@ function Invoke-Tests {
     Write-PSYHost "FINISHED Runing Test Scripts"
 }
 
-# Invoke-Tests -JsonDbRepository
-Invoke-Tests -OleDbRepository
+Invoke-Tests -JsonDbRepository
+# Invoke-Tests -OleDbRepository

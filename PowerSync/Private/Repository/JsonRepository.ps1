@@ -27,19 +27,29 @@ class JsonRepository : FileRepository {
     }
 
     [void] SaveRepository([string] $EntityType) {
+
         # Write the JSON files. Limit to a single entity type, if specified.
         $path = $this.State.Path.TrimEnd('\')
         if ($EntityType -eq 'All') {
-            ConvertTo-Json -InputObject $this.State.TableList.Variable -Depth 5 | Set-Content -Path "$path\PSYVariable.json" -Force
-            ConvertTo-Json -InputObject $this.State.TableList.Connection -Depth 5 | Set-Content -Path "$path\PSYConnection.json" -Force
-            ConvertTo-Json -InputObject $this.State.TableList.Activity -Depth 5 | Set-Content -Path "$path\PSYActivity.json" -Force
-            ConvertTo-Json -InputObject $this.State.TableList.ErrorLog -Depth 5 | Set-Content -Path "$path\PSYErrorLog.json" -Force
-            ConvertTo-Json -InputObject $this.State.TableList.MessageLog -Depth 5 | Set-Content -Path "$path\PSYMessageLog.json" -Force
-            ConvertTo-Json -InputObject $this.State.TableList.VariableLog -Depth 5 | Set-Content -Path "$path\PSYVariableLog.json" -Force
-            ConvertTo-Json -InputObject $this.State.TableList.QueryLog -Depth 5 | Set-Content -Path "$path\PSYQueryLog.json" -Force
+            ConvertTo-Json -InputObject $this.State.TableList.Variable -Depth 5 | Set-Content -Path "$path\PSYVariable.json"
+            ConvertTo-Json -InputObject $this.State.TableList.Connection -Depth 5 | Set-Content -Path "$path\PSYConnection.json"
+            ConvertTo-Json -InputObject $this.State.TableList.Activity -Depth 5 | Set-Content -Path "$path\PSYActivity.json"
+            ConvertTo-Json -InputObject $this.State.TableList.ErrorLog -Depth 5 | Set-Content -Path "$path\PSYErrorLog.json"
+            ConvertTo-Json -InputObject $this.State.TableList.MessageLog -Depth 5 | Set-Content -Path "$path\PSYMessageLog.json"
+            ConvertTo-Json -InputObject $this.State.TableList.VariableLog -Depth 5 | Set-Content -Path "$path\PSYVariableLog.json"
+            ConvertTo-Json -InputObject $this.State.TableList.QueryLog -Depth 5 | Set-Content -Path "$path\PSYQueryLog.json"
         }
         else {
-            ConvertTo-Json -InputObject $this.State.TableList[$EntityType] -Depth 5 | Set-Content -Path "$path\PSY$EntityType.json" -Force
+            $json = ConvertTo-Json -InputObject $this.State.TableList[$EntityType] -Depth 5
+            
+            if ($json.Length -eq 0) {
+                throw "Unexpected Error: $EntityType produced empty Json string during save."
+            }
+            Set-Content -Path "$path\PSY$EntityType.json" -Value $json
+
+            if ([System.IO.File]::ReadAllText("$path\PSY$EntityType.json").Length -eq 0) {
+                throw "Unexpected Error: PSY$EntityType.json is empty during save."
+            }    
         }
     }
 }

@@ -1,12 +1,12 @@
 Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
 
-     $a = "Sequential Activity" | Start-PSYActivity -Name 'Test Simple Sequential Execution' -ScriptBlock {
-        "...$($_)..."
-    }
+   $a = "Sequential Activity" | Start-PSYActivity -Name 'Test Simple Sequential Execution' -ScriptBlock {
+       "...$($_)..."
+   }
 
-    $a = (1..10) | Start-PSYActivity -Name 'Test Simple ForEach Sequential Execution' -ScriptBlock {
-        "...$($_)..."
-    }
+   $a = (1..10) | Start-PSYActivity -Name 'Test Simple ForEach Sequential Execution' -ScriptBlock {
+       "...$($_)..."
+   }
 
     Set-PSYVariable -Name 'TestVariable' -Value "Initial value"
     $a = (
@@ -31,72 +31,72 @@ Start-PSYActivity -Name 'Test Concurrency' -ScriptBlock {
         })
     ) | Wait-PSYActivity
 
-    Set-PSYVariable 'TestVariable' 0
-    $a = (1..10) | Start-PSYActivity -Name 'Test ForEach Incorrect Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
-        [int] $x = (Get-PSYVariable 'TestVariable') + 1
-        Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)
-        Set-PSYVariable 'TestVariable' $x      # will not work as expected
-    }
-    if ((Get-PSYVariable 'TestVariable') -eq 10) {
-        throw "Failed test 'Test ForEach Incorrect Concurrency Execution'"      # the code above isn't synchronized, so TestVariable should never equal 10
-    }
+   Set-PSYVariable 'TestVariable' 0
+   $a = (1..10) | Start-PSYActivity -Name 'Test ForEach Incorrect Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
+       [int] $x = (Get-PSYVariable 'TestVariable') + 1
+       Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 1000)
+       Set-PSYVariable 'TestVariable' $x      # will not work as expected
+   }
+   if ((Get-PSYVariable 'TestVariable') -eq 10) {
+       throw "Failed test 'Test ForEach Incorrect Concurrency Execution'"      # the code above isn't synchronized, so TestVariable should never equal 10
+   }
 
-    Set-PSYVariable 'TestVariable' 0
-    $a = (1..10) | Start-PSYActivity -Name 'Test ForEach Correct Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
-        Lock-PSYVariable -Name 'TestVariable' {
-            [int] $x = (Get-PSYVariable 'TestVariable') + 1
-            Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 2000)
-            Set-PSYVariable 'TestVariable' $x     # will work as expected since we're locking the variable prior to updating it
-        }
-    }
-    if ((Get-PSYVariable 'TestVariable') -ne 10) {
-        throw "Failed test 'Test ForEach Correct Concurrency Execution'"
-    }
- 
-    $a = Start-PSYActivity -Name 'Test Queued Execution' -ScriptBlock {
+   Set-PSYVariable 'TestVariable' 0
+   $a = (1..10) | Start-PSYActivity -Name 'Test ForEach Correct Concurrency Execution' -Parallel -Throttle 5 -ScriptBlock {
+       Lock-PSYVariable -Name 'TestVariable' {
+           [int] $x = (Get-PSYVariable 'TestVariable') + 1
+           Start-Sleep -Milliseconds (Get-Random -Minimum 0 -Maximum 2000)
+           Set-PSYVariable 'TestVariable' $x     # will work as expected since we're locking the variable prior to updating it
+       }
+   }
+   if ((Get-PSYVariable 'TestVariable') -ne 10) {
+       throw "Failed test 'Test ForEach Correct Concurrency Execution'"
+   }
 
-        # Simulate a remote activity execution by self-hosting the receiver. Normally this would be done by a remote process.
-        $receiver = Start-PSYActivity -Name 'Self-Hosted Receiver' -Async -ScriptBlock {
-            Receive-PSYQueuedActivity -Queue 'Outgoing' -Continous
-        }
+   $a = Start-PSYActivity -Name 'Test Queued Execution' -ScriptBlock {
 
-      $activities = (
-            ("input 1" | Start-PSYActivity -Name 'Test Queued Activity Execution 1' -Async -Queue 'Outgoing' -ScriptBlock {
-                Start-Sleep -Seconds 5
-                Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
-                Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
-                "Hello 1"
-            }),
-            ("input 2" | Start-PSYActivity -Name 'Test Queued Activity Execution 2' -Async -Queue 'Outgoing' -ScriptBlock {
-                Start-Sleep -Seconds 3
-                Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
-                Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
-                "Hello 2"
-            }),
-            ("input 3" | Start-PSYActivity -Name 'Test Queued Activity Execution 3' -Async -Queue 'Outgoing' -ScriptBlock {
-                Start-Sleep -Seconds 0
-                Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
-                Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
-                "Hello 3"
-            })
-        )
+       # Simulate a remote activity execution by self-hosting the receiver. Normally this would be done by a remote process.
+       $receiver = Start-PSYActivity -Name 'Self-Hosted Receiver' -Async -ScriptBlock {
+           Receive-PSYQueuedActivity -Queue 'Outgoing' -Continous
+       }
 
-        # Wait until all activities are complete.
-        $activities | Wait-PSYActivity
-        
-        # Output
-        $activities | ForEach-Object { Write-PSYInformationLog $_.OutputObject }
- 
-        # Queued ForEach
-        Start-PSYActivity -Name "Queue ForEach" -ScriptBlock {
-            (1..10) | Start-PSYActivity -Name 'Test ForEach Queued Execution' -Queue 'Outgoing' -ScriptBlock {
-                Write-PSYInformationLog -Message "...$($_)..."
-            }
-        }
+     $activities = (
+           ("input 1" | Start-PSYActivity -Name 'Test Queued Activity Execution 1' -Async -Queue 'Outgoing' -ScriptBlock {
+               Start-Sleep -Seconds 5
+               Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
+               Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
+               "Hello 1"
+           }),
+           ("input 2" | Start-PSYActivity -Name 'Test Queued Activity Execution 2' -Async -Queue 'Outgoing' -ScriptBlock {
+               Start-Sleep -Seconds 3
+               Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
+               Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
+               "Hello 2"
+           }),
+           ("input 3" | Start-PSYActivity -Name 'Test Queued Activity Execution 3' -Async -Queue 'Outgoing' -ScriptBlock {
+               Start-Sleep -Seconds 0
+               Set-PSYVariable -Name 'TestVariable' -Value "...$($_)..."
+               Write-PSYInformationLog (Get-PSYVariable -Name 'TestVariable')
+               "Hello 3"
+           })
+       )
 
-        # Terminate our self-hosted receiver
-        Stop-PSYActivity $receiver
-    }
+       # Wait until all activities are complete.
+       $activities | Wait-PSYActivity
+       
+       # Output
+       $activities | ForEach-Object { Write-PSYInformationLog $_.OutputObject }
 
-    Remove-PSYVariable 'TestVariable'
+       # Queued ForEach
+       Start-PSYActivity -Name "Queue ForEach" -ScriptBlock {
+           (1..10) | Start-PSYActivity -Name 'Test ForEach Queued Execution' -Queue 'Outgoing' -ScriptBlock {
+               Write-PSYInformationLog -Message "...$($_)..."
+           }
+       }
+
+       # Terminate our self-hosted receiver
+       Stop-PSYActivity $receiver
+   }
+
+   Remove-PSYVariable 'TestVariable'
 }
