@@ -24,19 +24,22 @@ BEGIN TRY
         BEGIN
             TRUNCATE TABLE [$(FinalSchema)].[$(FinalTable)]
             
-            INSERT INTO [$(FinalSchema)].[$(FinalTable)] WITH (TABLOCK)     -- TODO: Use explicit column list, throw error when they don't match
-            SELECT *
-            FROM [$(LoadSchema)].[$(LoadTable)]
-            
+            EXEC sp_executesql N'  -- Must use dynamic SQL to avoid compilation errors when this condition is not executed
+                INSERT INTO [$(FinalSchema)].[$(FinalTable)] WITH (TABLOCK)
+                SELECT *
+                FROM [$(LoadSchema)].[$(LoadTable)]
+            '
             DROP TABLE [$(LoadSchema)].[$(LoadTable)]                       -- clean up load table
         END
         -- and no Overwrite is set, which means Append. So we simply tack on the new data to the old table.
         ELSE
         BEGIN
-            INSERT INTO [$(FinalSchema)].[$(FinalTable)] WITH (TABLOCK)     -- TODO: Use explicit column list, throw error when they don't match
-            SELECT *
-            FROM [$(LoadSchema)].[$(LoadTable)]
-
+            EXEC sp_executesql N'  -- Must use dynamic SQL to avoid compilation errors when this condition is not executed
+                INSERT INTO [$(FinalSchema)].[$(FinalTable)] WITH (TABLOCK)
+                SELECT *
+                FROM [$(LoadSchema)].[$(LoadTable)]
+            '
+            
             DROP TABLE [$(LoadSchema)].[$(LoadTable)]                       -- clean up load table
         END
     END
